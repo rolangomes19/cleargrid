@@ -14,7 +14,7 @@ const F={
      dt:new Intl.DateTimeFormat('ar-AE-u-ca-gregory-nu-latn',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false}),
      n:new Intl.NumberFormat('ar-AE-u-nu-latn')}};
 
-let S={rec:'omar',lang:'en',sel:0,tab:'i',scope:'a',compare:false,entry:false,justLogged:null};
+let S={rec:'omar',lang:'en',sel:0,tab:'i',scope:'a',compare:false,entry:false,justLogged:null,navCollapsed:false};
 
 const t=()=>T[S.lang];
 const L=o=>o==null?null:(typeof o==='string'?o:(o[S.lang]??o.en));
@@ -25,7 +25,7 @@ const M=v=>v==null?dash():F[S.lang].m.format(v);
 const D=v=>v?F[S.lang].d.format(new Date(v)):dash();
 const DT=v=>v?F[S.lang].dt.format(new Date(v)):dash();
 const N=v=>v==null?dash():F[S.lang].n.format(v);
-const ltr=s=>s?`<span class="ltr num">${esc(s)}</span>`:dash();   // inline island only
+const ltr=(s,plain)=>s?`<span class="ltr${plain?'':' num'}" title="${esc(s)}">${esc(s)}</span>`:dash();   // inline island only; plain=phone/email text, not an ID
 const E=(g,k)=>(t().e[g]&&t().e[g][k])||k;
 
 /* accounts always sorted by outstanding desc. deterministic, never by flag. */

@@ -3,25 +3,30 @@
 /* ═══ 6 · REGION 1 · spine ═══ */
 function spine(){
  const r=rec(),T_=t(),n=r.accts.length,w=worst(r),rs=reasons(r);
- const openPtp=r.accts.find(a=>a.ptp&&a.ptp.state==='open');
+ const openAccts=r.accts.filter(a=>a.ptp&&a.ptp.state==='open');
+ const openPtp=openAccts[0];
  const brokenN=r.accts.reduce((s,a)=>s+a.broken,0);
+ /* T1: never a bare amount. multi-account records name the account + a count-across-accounts
+    line in `sub`; single-account records keep the short date form. Always exactly
+    eyebrow -> t-display -> sub, same shape as the other two spine stats, never a 3rd row. */
  const promise=openPtp
-   ? `<div class="t-display sm">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promised)} ${D(openPtp.ptp.date)}${brokenN?` · ${esc(T_.brokenN(brokenN))}`:''}</span>`
+   ? (n>1
+     ? `<div class="t-display sm">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promiseAcross(openAccts.length,n))} · ${esc(E('product',openPtp.product))}</span>`
+     : `<div class="t-display sm">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promised)} ${D(openPtp.ptp.date)}${brokenN?` · ${esc(T_.brokenN(brokenN))}`:''}</span>`)
    : `<div class="t-display sm empty">${esc(T_.noPromise)}</div><span class="sub">${brokenN?esc(T_.brokenN(brokenN)):'&nbsp;'}</span>`;
 
  const chState=k=>({ok:null,window:T_.ch.window,cap:T_.ch.cap,review:T_.ch.review,dnc:T_.ch.dnc})[k];
  const chOff=k=>k==='review'||k==='dnc';
- const btn=(k,label,pri)=>{
+ const btn=(k,label,pri,id)=>{
    const st=chState(r.ch[k]),off=chOff(r.ch[k]);
-   return `<button class="act ${pri&&!off?'primary':''} ${off?'off':''}" ${off?'disabled':''}>
+   return `<button ${id?`id="${id}"`:''} class="act ${pri&&!off?'primary':''} ${off?'off':''}" ${off?'disabled':''}>
      <span>${esc(label)}</span>${st?`<span class="st">${esc(st)}</span>`:''}</button>`;
  };
 
  const band=rs.length
   ? `<div class="why" data-alert="1" data-g="why"><span class="badge alert"><i class="dot"></i>${esc(T_.why)}</span>
-     <span><b>${esc(rs[0].x)}</b>${rs[1]?` ${esc(rs[1].x)}`:''}${rs.length>2?` <span class="dim">${esc(T_.more(rs.length-2))}</span>`:''}</span>
-     <span class="prop">${esc(T_.proposed)}</span></div>`
-  : `<div class="why calm" data-g="why"><span>${esc(T_.calm)}</span><span class="prop">${esc(T_.proposed)}</span></div>`;
+     <span><b>${esc(rs[0].x)}</b>${rs[1]?` ${esc(rs[1].x)}`:''}${rs.length>2?` <span class="dim">${esc(T_.more(rs.length-2))}</span>`:''}</span></div>`
+  : `<div class="why calm" data-g="why"><span>${esc(T_.calm)}</span></div>`;
 
  return `<div class="spine">
   <div class="spine-row">
@@ -50,13 +55,10 @@ function spine(){
   </div>
   <div class="band">
    ${band}
-   <div class="ai" data-g="ai"><span class="eyebrow">${esc(T_.lastAi)}</span>
-    <span>${r.calls.lastAi?DT(r.calls.lastAi):dash()}</span>
-    <span>${r.calls.ai_sum?esc(L(r.calls.ai_sum)):`<span class="empty">${esc(T_.noAi)}</span>`}</span>
-    ${r.calls.ai_sum?`<span class="prop">${esc(T_.proposed)}</span>`:''}</div>
   </div>
   <div class="rail" data-g="rail">
    ${btn('call',T_.call,true)}${btn('sms',T_.sms)}${btn('wa',T_.wa)}${btn('email',T_.email)}
+   ${btn('email',T_.emailInbox,false,'b-inbox')}
   </div>
  </div>`;
 }
@@ -65,42 +67,55 @@ function borrowerCol(){
  const r=rec(),T_=t(),h=hot(r),list=accts();
  const cards=list.map((a,i)=>{
   const flag=h.has(a.ref),p=Math.round((a.out/a.total)*100);
+  /* T3: the card already spends one coral element on its status badge when disputed+flagged.
+     the dot is a fallback, not an addition — it only fires when neither badge on this card
+     is already carrying the coral for the same fact, so one alert is never marked twice. */
+  const dotDue=flag&&a.status!=='disputed';
   return `<div class="card${i===S.sel?' on':''}${flag?' hot':''}" data-a="${i}">
    ${i<9?`<span class="kbd">${i+1}</span>`:''}
-   <div class="t-pri">${esc(L(a.lender))}</div>
+   <div class="t-pri">${dotDue?'<i class="flagdot"></i>':''}${esc(L(a.lender))}</div>
    <div class="t-sec">${esc(E('product',a.product))} · ${ltr(a.ref)}</div>
    <div class="card-r"><span class="t-display sm">${M(a.out)}</span>
     <span class="t-sec">${esc(T_.of)} ${M(a.total)}</span></div>
-   <div class="bar ${a.plan?'plan':''}"><i style="inline-size:${p}%"></i></div>
+   <div class="bar"><i style="inline-size:${p}%"></i></div>
    <div class="card-b">${statusBadge(a,flag)}${dpdBadge(a,flag&&a.status!=='disputed')}
     ${a.broken?`<span class="badge q">${esc(T_.brokenN(a.broken))}</span>`:''}
     ${a.plan?`<span class="badge ok">${M(a.plan.emi)}/${S.lang==='en'?'mo':'شهر'}</span>`:''}</div>
+   ${dotDue?`<div class="t-sec reasoncue">${esc(T_.reasonCue)}</div>`:''}
   </div>`;
  }).join('');
+
+ const c=r.calls||{};
+ const contactHistory=(c.h||c.ai)?`<div class="rows grid2">
+   ${row(T_.f.humanCalls,N(c.h))}${row(T_.f.aiCalls,N(c.ai))}
+   ${row(T_.f.lastHuman,c.lastH?DT(c.lastH):null)}${row(T_.lastAi,c.lastAi?DT(c.lastAi):null)}
+  </div>
+  <div class="row prose">${c.ai_sum?esc(L(c.ai_sum)):`<span class="empty">${esc(T_.noAi)}</span>`}</div>
+  ${sparkline(r.logs)}`
+  :`<div class="emptyline">${esc(T_.noContact)}</div>`;
 
  return `<div class="col" id="c-bor">
   <div class="colhead"><span class="eyebrow">${esc(T_.accounts)} · ${N(list.length)}</span>
    <button class="mini" id="b-compare">${esc(S.compare?T_.back:T_.compare)}</button></div>
   <div class="colbody">
-   <div class="note"><b>Borrower column, scope 1.</b> The brief's deal table rendered as navigation.
-    Sorted by outstanding, always, never by flag: a list that reorders as flags change destroys the
-    positional memory it exists to build. Coral accent marks only the accounts the escalation line names.</div>
    <div class="totals"><span class="eyebrow">${esc(T_.outstanding)}</span>
     <span class="t-pri num">${M(sumOut(r))}</span></div>
    ${cards}
+   ${block('calls',contactHistory)}
+   <!-- single-column on purpose: at 320px this column only has ~64px of label space, and
+        labels like "Emirates ID" / "Date of birth" need close to that — a 2-column split
+        would wrap them. Fields ordered narrow-first, wide-last so no row goes stranded. -->
    <div class="blk"><div class="blk-h"><span class="eyebrow">${esc(T_.reference)}</span></div>
     <div class="blk-b"><div class="rows">
-     ${row(T_.f.phone,r.phone?ltr(r.phone):null)}
-     ${row(T_.f.mail,r.mail?ltr(r.mail):null)}
-     ${row(T_.f.eid,r.eid?ltr(r.eid):null)}
      ${row(T_.f.dob,r.dob?D(r.dob):null)}
      ${row(T_.f.gender,r.gender?esc(E('gender',r.gender)):null)}
      ${row(T_.f.nat,r.nat?esc(r.nat):null)}
-     ${row(T_.f.visa,r.visa?esc(L(r.visa)):null)}
      ${row(T_.f.submit,r.submit?D(r.submit):null)}
+     ${row(T_.f.phone,r.phone?ltr(r.phone,true):null)}
+     ${row(T_.f.mail,r.mail?ltr(r.mail,true):null)}
+     ${row(T_.f.visa,r.visa?esc(L(r.visa)):null)}
+     ${row(T_.f.eid,r.eid?ltr(r.eid):null)}
     </div></div></div>
-   <div class="note"><b>Below the accounts on purpose.</b> Borrower-scope reference data. The agent
-    does not read a phone number, they press Call. Required by the brief, not first-class.</div>
   </div></div>`;
 }
 /* ═══ 8 · REGION 3 · account column. fixed block order, no disclosure controls. ═══ */
@@ -114,8 +129,8 @@ function accountCol(){
     <span class="sub">${N(p)}% ${esc(T_.of)} ${M(a.total)}</span>
     <div class="bar"><i style="inline-size:${p}%"></i></div></div>
    <div class="stat"><span class="eyebrow">${esc(T_.f.dpd)}</span>
-    <div class="t-display sm">${N(d)}</div>
-    <span class="sub">${esc(T_.asOf)} ${D(TODAY.toISOString())}</span>${dpdScale(d)}</div>
+    <div class="t-display">${N(d)}</div>
+    <span class="sub">${esc(T_.asOf)} ${D(TODAY.toISOString())}</span></div>
   </div>
   <div class="rows grid2">
    ${row(T_.f.over,M(a.over))}${row(T_.f.due,D(a.due))}
@@ -136,6 +151,7 @@ function accountCol(){
    ${row(T_.f.ptpState,a.ptp?`<span class="badge ${a.ptp.state==='broken'?'q':'ok'}">${esc(E('ptp',a.ptp.state))}</span>`:null)}
    ${row(T_.f.broken,N(a.broken))}
    ${row(T_.f.brokenLast,a.brokenLast?D(a.brokenLast):null)}
+   ${row(T_.f.brokenType,a.brokenType?esc(E('brokenType',a.brokenType)):null,false,true)}
   </div>`:`<div class="emptyline">${esc(T_.noPromise)}</div>`);
 
  const f=a.fields||{},fv=k=>f[k]===undefined?null:(f[k]==='yes'?esc(T_.yes):f[k]==='no'?esc(T_.no):esc(L(f[k])));
@@ -145,25 +161,18 @@ function accountCol(){
    ${row(T_.f.verif,fv('verif'))}${row(T_.f.settle,fv('settle'))}
    ${row(T_.f.churn,fv('churn'))}${row(T_.f.repo,fv('repo'))}
    ${row(T_.f.hardship,fv('hardship'))}${row(T_.f.employer,fv('employer'))}
-  </div>
-  <div class="note"><b>Label-driven, not hardcoded.</b> Ten sealed environments across four verticals,
-   so the field set varies by portfolio. Telecom shows churn, auto shows repossession, cards show
-   settlement authority. Same coordinates, different labels. This is the configuration that replaced
-   per-agent customisation.</div>`);
+  </div>`);
 
  const m=a.meta||{};
  const meta=block('meta',`<div class="rows grid2">
    ${row(T_.f.cby,esc(m.cby))}${row(T_.f.cat,D(m.cat))}
    ${row(T_.f.uby,esc(m.uby))}${row(T_.f.uat,D(m.uat))}
-   ${row(T_.f.lenderId,ltr(a.lid))}
+   ${row(T_.f.lenderId,ltr(a.lid),false,true)}
   </div>`);
 
  return `<div class="col" id="c-acc">
-  <div class="colhead"><span class="eyebrow">${esc(T_.selected)} · ${ltr(a.ref)}</span>${statusBadge(a,false)}</div>
+  <div class="colhead"><span class="eyebrow">${esc(T_.selected)} · ${esc(L(a.lender))} · ${esc(E('product',a.product))} · ${ltr(a.ref)}</span>${statusBadge(a,false)}</div>
   <div class="colbody">
-   <div class="note"><b>Account column, scope 1..n.</b> Only the selected account. Fixed block order,
-    argued top to bottom by how much each changes what the agent says next. Nothing behind a disclosure
-    control: an accordion expand mid-sentence costs the agent the thread of the conversation.</div>
    ${balance}${plan}${promises}${fields}${meta}
   </div></div>`;
 }
@@ -211,10 +220,6 @@ function activityCol(){
     <button class="mini pri" id="b-entry">${esc(T_.logOutcome)}</button></span>
   </div>
   <div class="colbody">
-   <div class="note"><b>Activity column, scope events.</b> Read before the call, written after it, so the
-    write action sits at the top of the column that already holds the history. The form opens inline, not
-    as a modal: a modal would cover the record the agent is transcribing from. A saved row stays marked
-    rather than announcing itself with a toast that fades in four seconds.</div>
    ${entry}${body}
   </div></div>`;
 }
@@ -232,8 +237,5 @@ function compareView(){
     <td class="n">${M(a.out)}</td><td class="n">${M(a.total)}</td><td>${D(a.due)}</td>
     <td class="n">${N(dpd(a))}</td><td>${statusBadge(a,false)}</td>
     <td><button class="mini" data-a="${i}">${esc(h.open)}</button></td></tr>`).join('')}</tbody></table>
-   <div style="padding:10px 12px"><div class="note"><b>A separate instrument.</b> A table weighs accounts
-    against each other, which an agent does when a borrower offers one payment across several debts.
-    It is the wrong tool for navigation, so it is not the default.</div></div>
   </div></div>`;
 }

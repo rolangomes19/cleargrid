@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ClearGrid — Borrower Profile v3.1</title>
+<title>ClearGrid — Borrower Profile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Tajawal:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tokens.css">
 </head>
-<body class="notes">
+<body>
 
 <div class="harness">
   <span class="k">Record</span>
@@ -21,8 +21,6 @@
   </div>
   <div class="seg" id="sw-dir"><button data-v="ltr" class="on">EN · LTR</button><button data-v="rtl">AR · RTL</button></div>
   <span class="sp"></span>
-  <label class="chk"><input type="checkbox" id="c-notes" checked> Notes</label>
-  <label class="chk"><input type="checkbox" id="c-grey"> Greyscale</label>
   <label class="chk"><input type="checkbox" id="c-squint"> Squint</label>
 </div>
 
@@ -31,7 +29,8 @@
   <div class="stack" id="stack"></div>
 </div>
 
-<div class="audit open" id="audit"><h4><span>Layout audit (live)</span><span>▾</span></h4><div class="b" id="auditb"></div></div>
+<div class="audit" id="audit"><h4><span>Layout audit (live)</span><span>▾</span></h4><div class="b" id="auditb"></div></div>
+<div id="nav-flyout" hidden></div>
 
 <script src="core.js"></script>
 <script src="i18n.js"></script>

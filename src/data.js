@@ -60,7 +60,7 @@ aisha:{
    {ref:'DL-20481',aref:'AC-90812-EFIN',lender:{en:'Emirates Finance',ar:'إمارات للتمويل'},lid:'EFN-014',
     merchant:null,product:'personal',total:10000,out:7420,over:1000,principal:10000,due:'2026-06-10',
     status:'coll',interest:'3.5% flat',plan:null,
-    ptp:{amt:1000,date:'2026-09-18',state:'open'},broken:1,brokenLast:'2026-08-18',
+    ptp:{amt:1000,date:'2026-09-18',state:'open'},broken:1,brokenLast:'2026-08-18',brokenType:'missed',
     fields:{verif:'yes',employer:{en:'Private sector',ar:'القطاع الخاص'},hardship:{en:'Medium',ar:'متوسط'}},
     meta:{cby:'System',cat:'2026-07-14',uby:'Nadia Karim',uat:'2026-09-02'}}],
   logs:[
@@ -96,19 +96,19 @@ sparse:{
  b.name={en:'Mohammed Al Suwaidi',ar:'محمد السويدي'};b.ini='MS';b.lang='ar';b.gender='m';b.nat='AE';
  b.dob='1979-11-05';b.eid='784-1979-6620143-1';b.owner='Rabab Abbas';b.stage='rpc';
  const seed=[
-  ['FB-8802','First Abu Dhabi Bank','بنك أبوظبي الأول','card',56000,44210,'2024-11-02','coll',3],
-  ['TM-8815','Tamara','تمارا','bnpl',2400,2400,'2026-05-19','disputed',0],
-  ['ET-8820','Etisalat','اتصالات','telecom',1310,980,'2026-07-01','coll',1],
-  ['AD-8834','ADCB','بنك أبوظبي التجاري','auto',132000,88400,'2026-08-25','plan',0],
-  ['EN-8841','Emirates NBD','بنك الإمارات دبي الوطني','personal',90000,71250,'2025-06-30','legal',4],
-  ['PP-8855','Postpay','بوست باي','bnpl',760,760,'2026-04-12','coll',2],
-  ['RK-8860','RAKBANK','بنك رأس الخيمة','sme',210000,153900,'2026-01-15','coll',0]];
- b.accts=seed.map(([ref,l,la,p,tot,out,due,st,bk],i)=>({
+  ['FB-8802','First Abu Dhabi Bank','بنك أبوظبي الأول','card',56000,44210,'2024-11-02','coll',3,'missed'],
+  ['TM-8815','Tamara','تمارا','bnpl',2400,2400,'2026-05-19','disputed',0,null],
+  ['ET-8820','Etisalat','اتصالات','telecom',1310,980,'2026-07-01','coll',1,'partial'],
+  ['AD-8834','ADCB','بنك أبوظبي التجاري','auto',132000,88400,'2026-08-25','plan',0,null],
+  ['EN-8841','Emirates NBD','بنك الإمارات دبي الوطني','personal',90000,71250,'2025-06-30','legal',4,'noContact'],
+  ['PP-8855','Postpay','بوست باي','bnpl',760,760,'2026-04-12','coll',2,'missed'],
+  ['RK-8860','RAKBANK','بنك رأس الخيمة','sme',210000,153900,'2026-01-15','coll',0,null]];
+ b.accts=seed.map(([ref,l,la,p,tot,out,due,st,bk,bt],i)=>({
   ref,aref:`AC-77${i}0-${l.slice(0,3).toUpperCase()}`,lender:{en:l,ar:la},lid:`${l.slice(0,3).toUpperCase()}-0${i}`,
   merchant:p==='bnpl'?{en:l,ar:la}:null,product:p,total:tot,out,over:st==='plan'?3100:out,
   principal:Math.round(tot*.94),due,status:st,interest:null,
   plan:st==='plan'?{emi:3100,paid:7,of:48,next:'2026-10-02',flags:{en:'On schedule',ar:'ملتزم بالجدول'}}:null,
-  ptp:bk?{amt:1500,date:'2026-08-30',state:'broken'}:null,broken:bk,brokenLast:bk?'2026-08-30':null,
+  ptp:bk?{amt:1500,date:'2026-08-30',state:'broken'}:null,broken:bk,brokenLast:bk?'2026-08-30':null,brokenType:bt,
   dispute:st==='disputed'?{date:'2026-06-01',why:{en:'Duplicate charge',ar:'رسوم مكررة'}}:null,
   fields:{verif:i%2?'yes':'no'},
   meta:{cby:'System',cat:'2026-01-15',uby:'System',uat:'2026-09-09'}}));
