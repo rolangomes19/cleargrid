@@ -1,0 +1,43 @@
+# Task queue
+
+One task per Claude Code session. Paste the block, then run `./build.sh && node test/verify.js`.
+
+## v3.1 — behavioural pass (architecture frozen)
+
+### T1 · Scope the promise stat  [src/regions.js, src/i18n.js]
+The spine promise stat shows an amount with no scope. On Omar it reads "AED 1,420 promised
+6 Oct 2026" while the working account (the disputed card) shows "None on record". Two figures
+on screen contradict each other.
+Change the stat to: count across accounts, then amount, then the account it belongs to.
+  EN: "1 open across 2 accounts" / "AED 1,420 · Personal loan"
+  AR: "وعد قائم واحد على حسابين" / "‏1,420 د.إ.‏ · قرض شخصي"
+Single-account records keep the short form: "AED 1,000 · 18 Sep 2026".
+Keep `display-sm`. Do not add a fourth spine stat.
+
+### T2 · Name the working account  [src/regions.js, src/i18n.js]
+The account column head reads "Selected · CC-77102". Change to
+"Working account · Gulf Meridian Bank · Credit card", reference moving to the end.
+Same string key drives the Arabic build.
+
+### T3 · Make the escalation-to-account link visible  [src/regions.js, src/i18n.js]
+A flagged card currently carries only a coral accent. Add a short text cue tying it to the
+escalation line, e.g. "Reason for assignment". Quiet styling: the card already spends one
+coral element on its status badge. Must not push the coral count above three on the stress record.
+
+### T4 · Task-success checks in the audit  [src/app.js]
+The audit measures geometry only. Add a per-record behavioural check listing the facts the
+agent must reach for that record, and whether each is visible in the first screen:
+  Omar     dispute · disputed account identified · WhatsApp restriction · investigation context
+  Aisha    hardship · open promise · call available
+  Mohammed largest account · switch · compare
+  Sparse   spatial vocabulary intact with nulls everywhere
+Render as a short pass/fail list under the existing metrics.
+
+## Later
+
+### T5 · Visual polish pass  [src/tokens.css only]
+Do not touch structure. Colour tuning, spacing rhythm, icon set, microcopy.
+
+### T6 · Figma export frames
+F1 EN Omar · F2 AR Omar · F3 compare · F4 entry open · F5 Aisha · F6 stress.
+See the Figma handoff pack for redlines.
