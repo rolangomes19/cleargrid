@@ -11,16 +11,15 @@ function spine(){
     eyebrow -> t-display -> sub, same shape as the other two spine stats, never a 3rd row. */
  const promise=openPtp
    ? (n>1
-     ? `<div class="t-display sm">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promiseAcross(openAccts.length,n))} · ${esc(E('product',openPtp.product))}</span>`
-     : `<div class="t-display sm">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promised)} ${D(openPtp.ptp.date)}${brokenN?` · ${esc(T_.brokenN(brokenN))}`:''}</span>`)
-   : `<div class="t-display sm empty">${esc(T_.noPromise)}</div><span class="sub">${brokenN?esc(T_.brokenN(brokenN)):'&nbsp;'}</span>`;
+     ? `<div class="t-display">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promiseAcross(openAccts.length,n))} · ${esc(E('product',openPtp.product))}</span>`
+     : `<div class="t-display">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promised)} ${D(openPtp.ptp.date)}${brokenN?` · ${esc(T_.brokenN(brokenN))}`:''}</span>`)
+   : `<div class="t-display empty">${esc(T_.noPromise)}</div><span class="sub">${brokenN?esc(T_.brokenN(brokenN)):'&nbsp;'}</span>`;
 
- const chState=k=>({ok:null,window:T_.ch.window,cap:T_.ch.cap,review:T_.ch.review,dnc:T_.ch.dnc})[k];
  const chOff=k=>k==='review'||k==='dnc';
  const btn=(k,label,pri,id)=>{
-   const st=chState(r.ch[k]),off=chOff(r.ch[k]);
+   const off=chOff(r.ch[k]);
    return `<button ${id?`id="${id}"`:''} class="act ${pri&&!off?'primary':''} ${off?'off':''}" ${off?'disabled':''}>
-     <span>${esc(label)}</span>${st?`<span class="st">${esc(st)}</span>`:''}</button>`;
+     <span>${esc(label)}</span></button>`;
  };
 
  const band=rs.length
