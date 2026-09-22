@@ -1,7 +1,9 @@
 // nav, render, live audit, event wiring.
 
 /* ═══ 11 · nav + render ═══ */
-const MARK='<svg class="logo-mark" viewBox="0 0 24 24" fill="#fff"><path d="M2,2 H22 V14 L14,22 H2 Z"/></svg>';
+/* the real mark, cropped to its content box and downscaled to 96px — not a
+   hand-vectored guess. source: assets/cleargrid-icon.webp. */
+const MARK='<img class="logo-mark" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAADe0lEQVR4nO2cy27TQBSGz5m4di40Eiv6HqxYIfGGvBAbNjwIqpBYILWp7dQzPujYThpSokrQ+g/4/6rKGc9YtubzzPhyxtpUzYcokkmK0pMNy136GOY/X/0k0fKu2i6W8zylE+XJy6GtZGZal1W8SBZFJRyVaI/SzH+++unzMlPVoDMNZiJ6kK0iarPu98Fq5j9T/ezWBtOHEr7wtG8sw+8uf7eJMd/+pn583YGCYMOIYCf9nIb5f1c/XsLEHgTsTLnFUxt7GebLn9fPL2K0K9+PCr4VgRD60divQSkBwfF1ExkZH4gJjMd3XmRkKAAMBYChADAUAIYCwFAAGAoAQwFgKAAMBYChADAUAIYCwFAAGAoAQwFgKADMLlIUhpmH5OEiAjwwUKYsoChyFf8DKWia6CfBNAWYmW3vt9/EJPqpqDZmgFIfJmVib0IIOUpChqr4LMs0xqZug7xfF8VXH4+ur69Hq4UQgl5dXbWbqv68nOdv76rGg6P6aNopdUFNSqWqVqj935YVdGYEWIBKUJ2ZdZGp4TcB9S+7cxHbVPXTcbT/cwswj2lV9V6pW462XzMfduy2hDW+Dt4HgKEAgfZAFCB7AZjLULYAMBQAhgLAUAAYCgBDAWAoAAwFgKEAMBQAhgLAUAAYCgBDAdMWYDJ14C2gRr8RmaoAVfX/+8sYyyk3B3QLaFPaf7B0kqAFiAfEyYSBC5g6FACGAsDAI+NCCJnH6nbfbhw3RLnb36batrsvaY+8/7MQYOv1+jvyADZltfJ6WC1ySF3oTVndhNns0pJ18yTGIoQgKcVaxD76/VgYYnPHis71uNBFUWi1rV8vijxW29h1x2E4gHaUzrnFCXBUVZZzbCNsyuZdvsq/THWGjGzK++5GTK3dn3m2vzbwE8LX6zOnzb/X2b5azkMKuhrGIJ+ckaY2Boiq9seg/eSUxy0/vEjaJLmJrt9T1TiEx48ugJehYCgADAWAoQAwFACGAsBMWIDKOUABgn0hN2EB5wEFgKEAMBQg2MdhFACGAsBQABgKAEMBYCgADAWAoQAwFACGAsBQABgKAEMBZ/AosPUwMU/YwTy5p17YHcdx/2vlRbWPUQRPDsxUdL0qLs7jBem4zM7heXQWJHyq6rhqU5Q+RNzPiSBpdiJQfFh9/JnxdKozO9PyQdp2uZqHtrUfU54mK1PnJwi6jeSZlDYMAAAAAElFTkSuQmCC">';
 function nav(){
  const n=t().nav;
  const i=(k,ic,on,key)=>`<div class="item${on?' on':''}"${key?` data-nav="${key}" tabindex="0" role="button"`:''}>${icon(ic)}<span class="label">${esc(k)}</span></div>`;
