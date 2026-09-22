@@ -1,4 +1,4 @@
-// atoms: badge, field row, block, bars, icons, sparkline.
+// atoms: badge, field row, block, bars, icons.
 
 /* ═══ 5 · atoms ═══ */
 function statusBadge(a,flag){
@@ -7,11 +7,11 @@ function statusBadge(a,flag){
 }
 function dpdBadge(a,flag){
  const d=dpd(a),f=flag&&d>=180;
- return `<span class="badge ${f?'alert':'q'}" data-alert="${f?1:0}">${N(d)} ${S.lang==='en'?'d':'يوم'}</span>`;
+ return `<span class="badge ${f?'alert':'q'}" data-alert="${f?1:0}">${N(d)} ${esc(t().dUnit)}</span>`;
 }
 function row(k,v,mono,wide){
  const e=v==null||v==='';
- return `<div class="row${e?' is-empty':''}${wide?' wide':''}"><span class="k">${esc(k)}</span>
+ return `<div class="row${e?' is-empty':''}${wide?' wide':''}"><span class="k" title="${esc(k)}">${esc(k)}</span>
   <span class="v${mono?' num':''}">${e?dash():v}</span></div>`;
 }
 function block(key,body,head){
@@ -26,20 +26,30 @@ const PH={phone:'phone',chat:'chat-circle',wa:'whatsapp-logo',mail:'envelope-sim
  dash:'squares-four',users:'users',wallet:'wallet',chartbar:'chart-bar',robot:'robot',
  megaphone:'flag',flow:'flow-arrow',pencil:'pencil-simple',columns:'columns',
  timeline:'clock-countdown',ticket:'ticket',mic:'microphone',caret:'caret-down',
- dcaret:'caret-left',check:'check'};
+ dcaret:'caret-left',check:'check',lock:'lock-simple',inbox:'tray',
+ calendar:'calendar-blank',prev:'caret-left',next:'caret-right'};
 /* every icon here is decorative — the adjacent text/label always carries the meaning,
    so aria-hidden belongs on the shared atom, not repeated at each call site. */
 function icon(name,cls){ return `<i class="ph ph-${PH[name]||name} icon${cls?' '+cls:''}" aria-hidden="true"></i>`; }
 
-/* ═══ 5.2 · contact-history sparkline. buckets last 10 weeks of logs. ═══ */
-const ANSWERED=new Set(['rpc','promise','plan','kept']);
-function sparkline(logs){
- const weeks=Array.from({length:10},()=>({n:0,ans:false}));
- (logs||[]).forEach(l=>{
-  const w=Math.floor(days(l.at)/7);
-  if(w>=0&&w<10){ const b=weeks[9-w]; b.n++; if(ANSWERED.has(l.out)) b.ans=true; }
- });
- const max=Math.max(1,...weeks.map(w=>w.n));
- return `<div class="spark">${weeks.map(w=>
-   `<i class="${w.ans?'ans':''}" style="block-size:${w.n?Math.max(15,Math.round((w.n/max)*100)):4}%"></i>`).join('')}</div>`;
+/* ═══ 5.2 · select + date picker, modelled on shadcn/ui's Select and Popover+Calendar.
+   A hidden input carries the value, so forms read .value exactly as with a native
+   control. Behaviour (open/close, keyboard, calendar grid) is wired in app.js. ═══ */
+function selectMenu(id,opts,labelId){
+ const [v0,l0]=opts[0];
+ return `<div class="dd" data-dd="select">
+  <input type="hidden" id="${id}" value="${v0}">
+  <button type="button" class="dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="${labelId} ${id}-v">
+   <span class="dd-val" id="${id}-v">${esc(l0)}</span>${icon('caret')}</button>
+  <div class="dd-pop" role="listbox" aria-labelledby="${labelId}" hidden>
+   ${opts.map(([v,l],i)=>`<div class="dd-opt" role="option" tabindex="-1" data-v="${v}" aria-selected="${i===0}">
+    <span>${esc(l)}</span>${icon('check')}</div>`).join('')}
+  </div></div>`;
+}
+function datePicker(id,labelId){
+ return `<div class="dd" data-dd="date">
+  <input type="hidden" id="${id}">
+  <button type="button" class="dd-trigger date" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="${labelId} ${id}-v">
+   ${icon('calendar')}<span class="dd-val empty-val" id="${id}-v">${esc(t().pickDate)}</span></button>
+  <div class="dd-pop cal" role="dialog" aria-labelledby="${labelId}" hidden></div></div>`;
 }

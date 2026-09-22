@@ -1,14 +1,15 @@
-// nav, render, live audit, event wiring.
+// nav, render, event wiring.
 
 /* ═══ 11 · nav + render ═══ */
-/* the real mark, cropped to its content box and downscaled to 96px — not a
-   hand-vectored guess. source: assets/cleargrid-icon.webp. */
-const MARK='<img class="logo-mark" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAADe0lEQVR4nO2cy27TQBSGz5m4di40Eiv6HqxYIfGGvBAbNjwIqpBYILWp7dQzPujYThpSokrQ+g/4/6rKGc9YtubzzPhyxtpUzYcokkmK0pMNy136GOY/X/0k0fKu2i6W8zylE+XJy6GtZGZal1W8SBZFJRyVaI/SzH+++unzMlPVoDMNZiJ6kK0iarPu98Fq5j9T/ezWBtOHEr7wtG8sw+8uf7eJMd/+pn583YGCYMOIYCf9nIb5f1c/XsLEHgTsTLnFUxt7GebLn9fPL2K0K9+PCr4VgRD60divQSkBwfF1ExkZH4gJjMd3XmRkKAAMBYChADAUAIYCwFAAGAoAQwFgKAAMBYChADAUAIYCwFAAGAoAQwFgKADMLlIUhpmH5OEiAjwwUKYsoChyFf8DKWia6CfBNAWYmW3vt9/EJPqpqDZmgFIfJmVib0IIOUpChqr4LMs0xqZug7xfF8VXH4+ur69Hq4UQgl5dXbWbqv68nOdv76rGg6P6aNopdUFNSqWqVqj935YVdGYEWIBKUJ2ZdZGp4TcB9S+7cxHbVPXTcbT/cwswj2lV9V6pW462XzMfduy2hDW+Dt4HgKEAgfZAFCB7AZjLULYAMBQAhgLAUAAYCgBDAWAoAAwFgKEAMBQAhgLAUAAYCgBDAdMWYDJ14C2gRr8RmaoAVfX/+8sYyyk3B3QLaFPaf7B0kqAFiAfEyYSBC5g6FACGAsDAI+NCCJnH6nbfbhw3RLnb36batrsvaY+8/7MQYOv1+jvyADZltfJ6WC1ySF3oTVndhNns0pJ18yTGIoQgKcVaxD76/VgYYnPHis71uNBFUWi1rV8vijxW29h1x2E4gHaUzrnFCXBUVZZzbCNsyuZdvsq/THWGjGzK++5GTK3dn3m2vzbwE8LX6zOnzb/X2b5azkMKuhrGIJ+ckaY2Boiq9seg/eSUxy0/vEjaJLmJrt9T1TiEx48ugJehYCgADAWAoQAwFACGAsBMWIDKOUABgn0hN2EB5wEFgKEAMBQg2MdhFACGAsBQABgKAEMBYCgADAWAoQAwFACGAsBQABgKAEMBZ/AosPUwMU/YwTy5p17YHcdx/2vlRbWPUQRPDsxUdL0qLs7jBem4zM7heXQWJHyq6rhqU5Q+RNzPiSBpdiJQfFh9/JnxdKozO9PyQdp2uZqHtrUfU54mK1PnJwi6jeSZlDYMAAAAAElFTkSuQmCC">';
+/* the brand files as shipped in assets/, never redrawn or re-cropped. same images in
+   both directions: a logo is not mirrored or re-lettered for RTL. build.sh inlines them. */
+const LOGO=`<img class="logo-full" alt="ClearGrid" src="../assets/cleargrid-icon-lockup.webp">
+   <img class="logo-mark" alt="ClearGrid" src="../assets/cleargrid-icon.webp">`;
 function nav(){
  const n=t().nav;
  const i=(k,ic,on,key)=>`<div class="item${on?' on':''}"${key?` data-nav="${key}" tabindex="0" role="button"`:''}>${icon(ic)}<span class="label">${esc(k)}</span></div>`;
  return `<div class="nav-scroll">
-   <div class="logo">${MARK}<span class="word"><b>ClearGrid</b><small>كليرجريد</small></span></div>
+   <div class="logo">${LOGO}</div>
    <div class="gl">${esc(n.p)}</div>${i(n.dash,'dash')}${i(n.bor,'users',1,'queue')}${i(n.acc,'wallet')}
    <div class="gl">${esc(n.sup)}</div>${i(n.inbox,'mail')}${i(n.tick,'ticket')}
    <div class="gl">${esc(n.tools)}</div>${i(n.rep,'chartbar')}${i(n.ai,'robot')}${i(n.camp,'megaphone')}${i(n.wf,'flow')}
@@ -53,10 +54,7 @@ function render(){
   stack.innerHTML=spine()+
    `<div class="cols${S.mode==='compare'?' compare':''}">${borrowerCol()}${S.mode==='compare'?compareView():accountCol()+activityCol()}</div>`;
  }
- /* harness dir switch is a separate control on the same state — keep its highlight in sync */
- document.querySelectorAll('#sw-dir button').forEach(b=>
-  b.classList.toggle('on',(b.dataset.v==='rtl')===(S.lang==='ar')));
- wire(); requestAnimationFrame(audit);
+ wire();
 }
 
 /* default selection: the account the escalation line names, else the largest. */
@@ -65,99 +63,7 @@ function defaultSel(){
  const i=list.findIndex(a=>h.has(a.ref));
  return i<0?0:i;
 }
-/* ═══ 12 · audit. the layout choice is measured, not asserted. ═══ */
-const G=['name','why','out','dpd','ptp','rail'];
-/* which thresholds below are derived from cited literature vs. this project's own
-   working target — stated once here instead of leaving every number at the same
-   unearned confidence level. See cleargrid-decision-defensibility-audit.md §3. */
-function budgetNote(){
- return `<div class="h" style="margin-block-start:7px">Coral cap (3) and click cap (4): derived
-  from Cowan's ~4-chunk working-memory model, one chunk reserved for the live call. Scroll ratio
-  is a designer heuristic, not a literature number.</div>`;
-}
-function audit(){
- const vh=window.innerHeight,b=document.getElementById('auditb');
- const alerts=document.querySelectorAll('[data-alert="1"]').length;
- const c=(ok,mid)=>ok?'good':(mid?'mid':'bad');
- if(S.mode==='queue'){
-  b.innerHTML=`
-   <div class="m"><span>Screen</span><span>Queue</span></div>
-   <div class="m"><span>Cases listed</span><span>${Object.keys(R).length}</span></div>
-   <div class="m"><span>Coral elements on screen</span><span class="${c(alerts<=3,alerts<=5)}">${alerts} / 3</span></div>
-   ${budgetNote()}`;
-  return;
- }
- if(S.mode==='wrapup'){
-  b.innerHTML=`
-   <div class="m"><span>Screen</span><span>Wrap-up</span></div>
-   <div class="m"><span>Coral elements on screen</span><span class="${c(alerts<=3,alerts<=5)}">${alerts} / 3</span></div>
-   <div class="h">Spine and account context stay visible while writing — the original
-    "not a modal" rationale still holds here.</div>${budgetNote()}`;
-  return;
- }
- const vis=G.filter(k=>{const e=document.querySelector(`[data-g="${k}"]`);
-  if(!e)return false;const r=e.getBoundingClientRect();return r.top>=0&&r.bottom<=vh+1;});
- const gated=document.querySelectorAll('[data-gated="1"]').length;
- const clicks=gated+Math.max(0,accts().length-1);
- const scroll=Math.max(1,Math.round((document.documentElement.scrollHeight/vh)*10)/10);
- b.innerHTML=`
-  <div class="m"><span>Glance facts in first screen</span><span class="${c(vis.length===G.length,vis.length>=4)}">${vis.length}/${G.length}</span></div>
-  <div class="m"><span>Page scroll</span><span class="${c(scroll<=1.02,scroll<=1.3)}">${scroll}× viewport</span></div>
-  <div class="m"><span>Clicks to all brief data</span><span class="${c(clicks<=4,clicks<=9)}">${clicks}</span></div>
-  <div class="m"><span>Coral elements on screen</span><span class="${c(alerts<=3,alerts<=5)}">${alerts} / 3</span></div>
-  <div class="m"><span>Accounts</span><span>${accts().length}</span></div>
-  ${behavChecks()}
-  <div class="h">Glance set: name, escalation reason, outstanding, worst DPD, promise state, action
-   rail. Clicks = inactive tabs + account switches. No accordions exist.</div>
-  ${budgetNote()}`;
-}
-/* ═══ 12.1 · behavioural audit (T4). per-record pass/fail on the facts the agent must reach. ═══ */
-function behavChecks(){
- const r=rec(),html=document.body.innerText||'';
- const has=s=>html.indexOf(s)>=0;
- let checks=[];
- if(S.rec==='omar'){
-  checks=[
-   ['Dispute is the escalation reason', reasons(r)[0]&&reasons(r)[0].x.toLowerCase().includes('disput')],
-   ['Disputed account has the dot + reason cue', has(t().reasonCue)],
-   ['WhatsApp shown restricted', r.ch.wa!=='ok'],
-  ];
- } else if(S.rec==='aisha'){
-  checks=[
-   ['Hardship is the escalation reason', reasons(r)[0]&&reasons(r)[0].x.toLowerCase().includes('hardship')],
-   ['Open promise visible in glance', !!document.querySelector('[data-g="ptp"] .t-display:not(.empty)')],
-   ['Call available', !document.querySelector('.rail .act')?.classList.contains('off')],
-  ];
- } else if(S.rec==='stress'){
-  const list=accts();
-  checks=[
-   ['Largest account leads the rail', list[0]===[...list].sort((a,b)=>b.out-a.out)[0]],
-   ['Every account reachable in one click', document.querySelectorAll('.card[data-a]').length===list.length],
-   ['Compare reachable in one click', !!document.getElementById('b-compare')],
-  ];
- } else {
-  checks=[
-   ['Nulls render as dash, not blank', !!document.querySelector('.empty')],
-   ['Labels persist beside empty values', !!document.querySelector('.row.is-empty .k')],
-   ['Three-column layout holds', document.querySelectorAll('.cols>.col').length>=2],
-  ];
- }
- return `<div class="h" style="margin-block-start:9px;opacity:.85">Behavioural checks — ${esc(S.rec)}</div>` +
-  checks.map(([label,ok])=>
-   `<div class="m"><span>${esc(label)}</span><span class="${ok?'good':'bad'}">${ok?'pass':'fail'}</span></div>`).join('');
-}
 /* ═══ 13 · events ═══ */
-function seg(id,fn){
- document.getElementById(id).addEventListener('click',e=>{
-  const b=e.target.closest('button'); if(!b)return;
-  [...e.currentTarget.querySelectorAll('button')].forEach(x=>x.classList.remove('on'));
-  b.classList.add('on'); fn(b.dataset.v);});
-}
-/* the harness's record switcher is a QA instrument (CLAUDE.md: harness is not product) —
-   it always jumps straight to that record's profile, which is what test/verify.js's
-   existing per-record assertions expect. */
-seg('sw-rec',v=>{S.rec=v;S.mode='profile';S.wrapDone=false;S.justLogged=null;S.sel=0;S.sel=defaultSel();render();});
-seg('sw-dir',v=>{S.lang=v==='rtl'?'ar':'en';render();});
 /* product nav's own EN/AR toggle and the "Borrowers" -> queue link — #nav's innerHTML is
    replaced each render, so these listeners are delegated on the persistent container
    rather than rebound per render like wire(). */
@@ -165,8 +71,12 @@ document.getElementById('nav').addEventListener('click',e=>{
  const b=e.target.closest('.nav-lang button');
  if(b){
   /* collapsed rail only shows the active button (the inactive one is display:none),
-     so clicking it must flip rather than re-set the same value or it would be a dead end. */
-  S.lang=(b.dataset.v===S.lang)?(S.lang==='en'?'ar':'en'):b.dataset.v; render(); return;
+     so clicking it must flip rather than re-set the same value or it would be a dead end.
+     Expanded, both buttons are visible and clickable, so just set to whichever was
+     clicked — flipping there too would make clicking the already-active language switch
+     away from it, which is wrong for an ordinary two-button toggle. */
+  const collapsed=document.getElementById('nav').classList.contains('collapsed');
+  S.lang=collapsed?(S.lang==='en'?'ar':'en'):b.dataset.v; render(); return;
  }
  if(e.target.closest('[data-nav]')){ S.mode='queue'; render(); }
 });
@@ -174,10 +84,6 @@ document.getElementById('nav').addEventListener('keydown',e=>{
  if(e.key!=='Enter'&&e.key!==' ')return;
  if(e.target.closest('[data-nav]')){ e.preventDefault(); S.mode='queue'; render(); }
 });
-const chk=(id,f)=>document.getElementById(id).addEventListener('change',e=>f(e.target.checked));
-chk('c-squint',v=>document.body.classList.toggle('t-squint',v));
-document.getElementById('audit').addEventListener('click',e=>{
- if(e.target.closest('h4')) document.getElementById('audit').classList.toggle('open');});
 
 /* keyboard: selection is a many-times-a-day action, so it gets no animation.
    digits/compare only act once a case is open, so a stray keystroke on the queue
@@ -228,7 +134,9 @@ function wire(){
   el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
  });
  s.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{S.tab=b.dataset.t;render();}));
- const on=(id,f)=>{const e=document.getElementById(id); if(e)e.addEventListener('click',f);};
+ /* aria-disabled controls stay focusable (for their tooltip) but must never act */
+ const on=(id,f)=>{const e=document.getElementById(id); if(e)e.addEventListener('click',ev=>{
+  if(e.getAttribute('aria-disabled')!=='true')f(ev);});};
  on('b-compare',()=>{S.mode=S.mode==='compare'?'profile':'compare';render();});
  on('b-scope',()=>{S.scope=S.scope==='a'?'all':'a';render();});
  on('b-entry',()=>{S.mode='wrapup';S.wrapDone=false;render();});
@@ -250,7 +158,98 @@ function wire(){
  on('w-return',()=>{S.wrapDone=false;S.mode='queue';render();});
  on('b-navcollapse',()=>{S.navCollapsed=!S.navCollapsed;render();});
  wireNavFlyout();
+ s.querySelectorAll('.dd').forEach(wireDropdown);
 }
-window.addEventListener('resize',()=>requestAnimationFrame(audit));
+
+/* ═══ 13.2 · select + date picker behaviour (markup: components.js 5.2).
+   Popovers open instantly (CLAUDE.md motion), close on Escape / outside click / pick,
+   and hand focus back to their trigger. ═══ */
+const ISO=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function closeDropdowns(except){
+ document.querySelectorAll('.dd-pop:not([hidden])').forEach(p=>{
+  if(p.parentElement===except)return;
+  p.hidden=true; p.parentElement.querySelector('.dd-trigger').setAttribute('aria-expanded','false');
+ });
+}
+document.addEventListener('mousedown',e=>{ if(!e.target.closest('.dd')) closeDropdowns(); });
+
+function wireDropdown(dd){
+ const trig=dd.querySelector('.dd-trigger'),pop=dd.querySelector('.dd-pop'),input=dd.querySelector('input');
+ const open=()=>{ closeDropdowns(dd); pop.hidden=false; trig.setAttribute('aria-expanded','true'); };
+ const close=()=>{ pop.hidden=true; trig.setAttribute('aria-expanded','false'); trig.focus(); };
+ /* stopPropagation: Escape here closes the popover only, not the whole wrap-up screen */
+ pop.addEventListener('keydown',e=>{ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();} if(e.key==='Tab')close(); });
+
+ if(dd.dataset.dd==='select'){
+  const opts=[...pop.querySelectorAll('.dd-opt')];
+  const pick=o=>{ input.value=o.dataset.v; dd.querySelector('.dd-val').textContent=o.textContent.trim();
+   opts.forEach(x=>x.setAttribute('aria-selected',x===o)); close(); };
+  trig.addEventListener('click',()=>{ if(!pop.hidden){close();return;} open();
+   (opts.find(o=>o.dataset.v===input.value)||opts[0]).focus(); });
+  trig.addEventListener('keydown',e=>{ if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();trig.click();} });
+  opts.forEach(o=>o.addEventListener('click',()=>pick(o)));
+  pop.addEventListener('keydown',e=>{
+   const i=opts.indexOf(document.activeElement),n=opts.length;
+   const to={ArrowDown:(i+1)%n,ArrowUp:(i-1+n)%n,Home:0,End:n-1}[e.key];
+   if(to!==undefined){e.preventDefault();opts[to].focus();}
+   if((e.key==='Enter'||e.key===' ')&&i>=0){e.preventDefault();pick(opts[i]);}
+  });
+  return;
+ }
+
+ /* date: a month grid, weeks from Monday (UAE), past days not selectable —
+    a promise to pay can only be made for today or later. */
+ let view=new Date(TODAY.getFullYear(),TODAY.getMonth(),1);
+ const T_=t(),loc=S.lang==='ar'?'ar-AE-u-ca-gregory-nu-latn':'en-AE-u-ca-gregory';
+ const monthF=new Intl.DateTimeFormat(loc,{month:'long',year:'numeric'});
+ const dayF=new Intl.DateTimeFormat(loc,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ const wk=Array.from({length:7},(_,i)=>new Intl.DateTimeFormat(loc,{weekday:S.lang==='ar'?'narrow':'short'})
+   .format(new Date(2026,0,5+i))).map(w=>S.lang==='ar'?w:w.slice(0,2));
+ const today=ISO(TODAY);
+ const draw=focusIso=>{
+  const y=view.getFullYear(),m=view.getMonth(),days=new Date(y,m+1,0).getDate(),lead=(new Date(y,m,1).getDay()+6)%7;
+  const atStart=y===TODAY.getFullYear()&&m===TODAY.getMonth();
+  const sel=input.value;
+  const tgt=focusIso||(sel&&sel.slice(0,7)===ISO(view).slice(0,7)?sel:(atStart?today:ISO(view)));
+  let cells='<span></span>'.repeat(lead);
+  for(let d=1;d<=days;d++){
+   const iso=ISO(new Date(y,m,d)),past=iso<today;
+   cells+=past?`<span class="cal-day past" aria-hidden="true">${N(d)}</span>`
+    :`<button type="button" class="cal-day${iso===today?' today':''}${iso===sel?' on':''}" data-d="${iso}"
+       tabindex="${iso===tgt?0:-1}" aria-pressed="${iso===sel}" aria-label="${dayF.format(new Date(y,m,d))}">${N(d)}</button>`;
+  }
+  pop.innerHTML=`<div class="cal-head">
+    <button type="button" class="cal-nav" data-m="-1"${atStart?` aria-disabled="true" data-tip="${esc(T_.noPast)}"`:''} aria-label="${esc(T_.prevMonth)}">${icon('prev')}</button>
+    <span class="cal-cap" aria-live="polite">${esc(monthF.format(view))}</span>
+    <button type="button" class="cal-nav" data-m="1" aria-label="${esc(T_.nextMonth)}">${icon('next')}</button></div>
+   <div class="cal-grid" role="grid">${wk.map(w=>`<span class="cal-wd" aria-hidden="true">${esc(w)}</span>`).join('')}${cells}</div>`;
+  const f=pop.querySelector(`[data-d="${tgt}"]`)||pop.querySelector('.cal-day[data-d]');
+  if(f){f.tabIndex=0; if(focusIso!==null)f.focus();}
+ };
+ const shift=n=>{view=new Date(view.getFullYear(),view.getMonth()+n,1);};
+ trig.addEventListener('click',()=>{ if(!pop.hidden){close();return;}
+  if(input.value) view=new Date(+input.value.slice(0,4),+input.value.slice(5,7)-1,1);
+  open(); draw(); });
+ pop.addEventListener('click',e=>{
+  const nav=e.target.closest('.cal-nav');
+  if(nav){ if(nav.getAttribute('aria-disabled')!=='true'){shift(+nav.dataset.m);draw(null);
+   pop.querySelector(`.cal-nav[data-m="${nav.dataset.m}"]`).focus();} return; }
+  const b=e.target.closest('.cal-day[data-d]'); if(!b)return;
+  input.value=b.dataset.d;
+  const v=dd.querySelector('.dd-val'); v.textContent=D(b.dataset.d); v.classList.remove('empty-val');
+  close();
+ });
+ pop.addEventListener('keydown',e=>{
+  const b=e.target.closest('.cal-day[data-d]'); if(!b)return;
+  const rtl=S.lang==='ar';
+  const step={ArrowRight:rtl?-1:1,ArrowLeft:rtl?1:-1,ArrowDown:7,ArrowUp:-7}[e.key];
+  if(step===undefined)return;
+  e.preventDefault();
+  const [y,m,d]=b.dataset.d.split('-').map(Number),n=new Date(y,m-1,d+step),iso=ISO(n);
+  if(iso<today)return;
+  if(n.getMonth()!==view.getMonth()) view=new Date(n.getFullYear(),n.getMonth(),1);
+  draw(iso);
+ });
+}
 S.sel=defaultSel();
 render();

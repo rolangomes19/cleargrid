@@ -16,10 +16,12 @@ function spine(){
    : `<div class="t-display empty">${esc(T_.noPromise)}</div><span class="sub">${brokenN?esc(T_.brokenN(brokenN)):'&nbsp;'}</span>`;
 
  const chOff=k=>k==='review'||k==='dnc';
- const btn=(k,label,pri,id)=>{
+ const btn=(k,label,ic,pri,id)=>{
    const off=chOff(r.ch[k]);
-   return `<button ${id?`id="${id}"`:''} class="act ${pri&&!off?'primary':''} ${off?'off':''}" ${off?'disabled':''}>
-     <span>${esc(label)}</span></button>`;
+   /* aria-disabled, not disabled: the button stays focusable and hoverable so the
+      tooltip saying why can reach both mouse and keyboard users */
+   return `<button ${id?`id="${id}" `:''}class="act${pri&&!off?' primary':''}${off?' off':''}"${off?` aria-disabled="true" data-tip="${esc(T_.ch[r.ch[k]])}"`:''}>
+     ${icon(off?'lock':ic)}<span>${esc(label)}</span></button>`;
  };
 
  const band=rs.length
@@ -36,7 +38,7 @@ function spine(){
       <span class="n2">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
      <div class="idline">
       <span class="badge teal">${esc(E('stage',r.stage))}</span>
-      <span>${esc(T_.f.lang)}: <b>${r.lang?(r.lang==='ar'?(S.lang==='en'?'Arabic':'العربية'):(S.lang==='en'?'English':'الإنجليزية')):dash()}</b></span>
+      <span>${esc(T_.f.lang)}: <b>${r.lang?esc(T_.langName[r.lang]):dash()}</b></span>
       <span>${esc(T_.f.owner)}: ${r.owner?esc(r.owner):dash()}</span>
      </div>
     </div>
@@ -56,8 +58,11 @@ function spine(){
    ${band}
   </div>
   <div class="rail" data-g="rail">
-   ${btn('call',T_.call,true)}${btn('sms',T_.sms)}${btn('wa',T_.wa)}${btn('email',T_.email)}
-   ${btn('email',T_.emailInbox,false,'b-inbox')}
+   ${btn('call',T_.call,'phone',true)}${btn('sms',T_.sms,'chat')}${btn('wa',T_.wa,'wa')}${btn('email',T_.email,'mail')}
+   ${btn('email',T_.emailInbox,'inbox',false,'b-inbox')}
+   <!-- the post-call write lives with the other actions: the activity head can't hold
+        four tabs, a scope toggle and this button at 1280–1440 without wrapping -->
+   <button class="act log-btn" id="b-entry">${icon('pencil')}<span>${esc(T_.logOutcome)}</span></button>
   </div>
  </div>`;
 }
@@ -79,7 +84,7 @@ function borrowerCol(){
    <div class="bar"><i style="inline-size:${p}%"></i></div>
    <div class="card-b">${statusBadge(a,flag)}${dpdBadge(a,flag&&a.status!=='disputed')}
     ${a.broken?`<span class="badge q">${esc(T_.brokenN(a.broken))}</span>`:''}
-    ${a.plan?`<span class="badge ok">${M(a.plan.emi)}/${S.lang==='en'?'mo':'شهر'}</span>`:''}</div>
+    ${a.plan?`<span class="badge ok">${M(a.plan.emi)}/${esc(T_.perMo)}</span>`:''}</div>
    ${dotDue?`<div class="t-sec reasoncue">${esc(T_.reasonCue)}</div>`:''}
   </div>`;
  }).join('');
@@ -89,16 +94,13 @@ function borrowerCol(){
    ${row(T_.f.humanCalls,N(c.h))}${row(T_.f.aiCalls,N(c.ai))}
    ${row(T_.f.lastHuman,c.lastH?DT(c.lastH):null)}${row(T_.lastAi,c.lastAi?DT(c.lastAi):null)}
   </div>
-  <div class="row prose">${c.ai_sum?esc(L(c.ai_sum)):`<span class="empty">${esc(T_.noAi)}</span>`}</div>
-  ${sparkline(r.logs)}`
+  <div class="row prose">${c.ai_sum?esc(L(c.ai_sum)):`<span class="empty">${esc(T_.noAi)}</span>`}</div>`
   :`<div class="emptyline">${esc(T_.noContact)}</div>`;
 
  return `<div class="col" id="c-bor">
   <div class="colhead"><span class="eyebrow">${esc(T_.accounts)} · ${N(list.length)}</span>
    <button class="mini" id="b-compare">${esc(S.mode==='compare'?T_.back:T_.compare)}</button></div>
   <div class="colbody">
-   <div class="totals"><span class="eyebrow">${esc(T_.outstanding)}</span>
-    <span class="t-pri num">${M(sumOut(r))}</span></div>
    ${cards}
    ${block('calls',contactHistory)}
    <!-- single-column on purpose: at 320px this column only has ~64px of label space, and
@@ -141,9 +143,10 @@ function accountCol(){
 
  const plan=block('plan',a.plan?`<div class="rows grid2">
    ${row(T_.f.emi,M(a.plan.emi))}${row(T_.f.next,D(a.plan.next))}
-   ${row(T_.f.paid,`${N(a.plan.paid)} ${esc(T_.of)} ${N(a.plan.of)}`)}${row(T_.f.flags,esc(L(a.plan.flags)))}
+   ${row(T_.f.paid,`${N(a.plan.paid)} ${esc(T_.of)} ${N(a.plan.of)}`)}
+   ${row(T_.f.flags,esc(L(a.plan.flags)),false,true)}
   </div><div class="bar plan"><i style="inline-size:${Math.round(a.plan.paid/a.plan.of*100)}%"></i></div>`
-  :`<div class="emptyline">${S.lang==='en'?'No payment plan on this account.':'لا توجد خطة سداد على هذا الحساب.'}</div>`);
+  :`<div class="emptyline">${esc(T_.noPlan)}</div>`);
 
  const promises=block('promises',(a.ptp||a.broken)?`<div class="rows grid2">
    ${row(T_.f.ptpAmt,a.ptp?M(a.ptp.amt):null)}${row(T_.f.ptpDate,a.ptp?D(a.ptp.date):null)}
@@ -155,11 +158,11 @@ function accountCol(){
 
  const f=a.fields||{},fv=k=>f[k]===undefined?null:(f[k]==='yes'?esc(T_.yes):f[k]==='no'?esc(T_.no):esc(L(f[k])));
  const fields=block('fields',`<div class="rows grid2">
-   ${row(T_.f.disputed,a.dispute?`<span class="badge q">${esc(T_.yes)}</span>`:esc(T_.no))}
-   ${row(T_.f.disputeWhy,a.dispute?esc(L(a.dispute.why)):null)}
-   ${row(T_.f.verif,fv('verif'))}${row(T_.f.settle,fv('settle'))}
+   ${row(T_.f.disputed,a.dispute?`<span class="badge q">${esc(T_.yes)}</span>`:esc(T_.no))}${row(T_.f.verif,fv('verif'))}
    ${row(T_.f.churn,fv('churn'))}${row(T_.f.repo,fv('repo'))}
    ${row(T_.f.hardship,fv('hardship'))}${row(T_.f.employer,fv('employer'))}
+   ${row(T_.f.disputeWhy,a.dispute?esc(L(a.dispute.why)):null,false,true)}
+   ${row(T_.f.settle,fv('settle'),false,true)}
   </div>`);
 
  const m=a.meta||{};
@@ -205,9 +208,7 @@ function activityCol(){
  return `<div class="col" id="c-act">
   <div class="colhead">
    <div class="tabs">${tabs.map(([k,l])=>`<button data-t="${k}" class="${S.tab===k?'on':''}" data-gated="${S.tab===k?0:1}">${esc(l)}</button>`).join('')}</div>
-   <span style="display:flex;gap:6px">
-    <button class="mini" id="b-scope">${esc(S.scope==='a'?T_.scopeAcct:T_.scopeAll)}</button>
-    <button class="mini pri" id="b-entry">${esc(T_.logOutcome)}</button></span>
+   <button class="mini" id="b-scope">${esc(S.scope==='a'?T_.scopeAcct:T_.scopeAll)}</button>
   </div>
   <div class="colbody">
    ${body}
@@ -218,7 +219,7 @@ function compareView(){
  const r=rec(),T_=t(),h=T_.tbl,list=accts();
  return `<div class="col">
   <div class="colhead"><span class="eyebrow">${esc(T_.compare)} · ${N(list.length)}</span></div>
-  <div class="colbody" style="padding:0">
+  <div class="colbody flush">
    <table><thead><tr><th>${esc(h.ref)}</th><th>${esc(h.acctRef)}</th><th>${esc(h.product)}</th>
     <th>${esc(h.merchant)}</th><th class="n">${esc(h.bal)}</th><th class="n">${esc(h.total)}</th>
     <th>${esc(h.due)}</th><th class="n">${esc(h.dpd)}</th><th>${esc(h.status)}</th><th></th></tr></thead>
@@ -243,41 +244,44 @@ function queueView(){
  });
  const flagged=keys.filter(k=>(reasons(R[k])[0]?.s||0)>0).length;
  const rows=keys.map(k=>{
-  const r=R[k],top=reasons(r)[0],w=worst(r);
-  const langLabel=r.lang?(r.lang==='ar'?(S.lang==='en'?'Arabic':'العربية'):(S.lang==='en'?'English':'الإنجليزية')):dash();
-  /* top-1 reason only, not the spine's top-2 — verified against these four fixtures
-     to hold the coral count at exactly 3, the existing budget cap (see spec.md). */
+  const r=R[k],rs=reasons(r),top=rs[0],w=worst(r);
+  /* the badge names the reason's type (a triage column the agent scans without reading);
+     the detail line carries the specifics. top-1 reason only: one coral badge per flagged
+     row holds the fixtures at exactly 3, the existing budget cap (see spec.md). */
   const why=top
-    ?`<span class="badge alert" data-alert="1"><i class="dot"></i>${esc(T_.q.flag)}</span><span class="t-sec">${esc(top.x)}</span>`
-    :`<span class="t-sec dim">${esc(T_.q.calm)}</span>`;
+    ?`<div class="top"><span class="badge alert" data-alert="1"><i class="dot"></i>${esc(T_.rk[top.k])}</span>
+      ${rs.length>1?`<span class="t-sec">${esc(T_.more(rs.length-1))}</span>`:''}</div>
+     <span class="t-sec detail" title="${esc(top.x)}">${esc(top.d)}</span>`
+    :`<span class="t-sec">${esc(T_.q.noFlag)}</span>`;
   return `<div class="qrow" data-q="${k}" tabindex="0" role="button">
    <div class="qrow-id">
     <div class="avatar">${esc(r.ini)}</div>
-    <div>
-     <div class="names"><span class="t-title">${esc(L(r.name))}</span>
-      <span class="n2">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
-     <div class="idline"><span>${esc(T_.q.lang)}: <b>${langLabel}</b></span></div>
-    </div>
+    <div class="who"><span class="t-title">${esc(L(r.name))}</span>
+     <span class="t-sec">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
    </div>
    <div class="qrow-why">${why}</div>
-   <div class="qrow-num"><span class="eyebrow">${esc(T_.outstanding)}</span>
-    <div class="t-display sm">${M(sumOut(r))}</div>
-    <span class="sub">${esc(T_.across(r.accts.length))}</span></div>
-   <div class="qrow-num"><span class="eyebrow">${esc(T_.worstDpd)}</span>
-    <div class="t-display sm">${N(dpd(w))}</div>
-    <span class="sub">${esc(T_.on)} ${esc(L(w.lender))}</span></div>
+   <div class="qrow-num"><div class="t-display sm">${M(sumOut(r))}</div>
+    <span class="t-sec">${esc(T_.across(r.accts.length))}</span></div>
+   <div class="qrow-num"><div class="t-display sm">${N(dpd(w))}</div>
+    <span class="t-sec">${esc(T_.on)} ${esc(L(w.lender))}</span></div>
    <div class="qrow-contact">${icon('robot')}<span class="num">${N(r.calls.ai)}</span>
     ${icon('phone')}<span class="num">${N(r.calls.h)}</span></div>
-   <button class="mini pri">${esc(T_.q.openCase)}</button>
+   <span class="mini pri" aria-hidden="true">${esc(T_.q.openCase)}</span>
   </div>`;
  }).join('');
 
+ const c=T_.q.cols;
  return `<div class="queue">
   <div class="qhead">
-   <span class="eyebrow">${esc(T_.q.title)} · ${esc(T_.q.count(keys.length))}</span>
+   <span class="t-title">${esc(T_.q.title)} · ${esc(T_.q.count(keys.length))}</span>
    <span class="t-sec">${esc(T_.q.needsAttention(flagged))}</span>
   </div>
-  <div class="qbody">${rows}</div>
+  <div class="qbody">
+   <div class="qcols" aria-hidden="true"><span>${esc(c.who)}</span><span>${esc(c.why)}</span>
+    <span class="n">${esc(T_.outstanding)}</span><span class="n">${esc(T_.worstDpd)}</span>
+    <span class="n">${esc(c.calls)}</span><span></span></div>
+   ${rows}
+  </div>
  </div>`;
 }
 /* ═══ 12 · SCREEN · wrap-up. replaces the old inline entry form (one canonical home).
@@ -290,25 +294,25 @@ function wrapupView(){
   return `<div class="col"><div class="colhead"><span class="eyebrow">${esc(T_.wrap.title)}</span></div>
    <div class="colbody"><div class="wrap-done">
     ${icon('check')}<div class="t-pri">${esc(T_.wrap.logged)}</div>
-    <button class="mini pri" id="w-return">${esc(T_.wrap.returnToQueue)}</button>
+    <button class="act primary" id="w-return">${esc(T_.wrap.returnToQueue)}</button>
    </div></div></div>`;
  }
  return `<div class="col"><div class="colhead">
    <span class="eyebrow">${esc(T_.wrap.title)} · ${esc(T_.wrap.forAccount)} ${esc(L(a.lender))} · ${ltr(a.ref)}</span>
   </div>
   <div class="colbody"><div class="wrap">
-   <div class="f"><span>${esc(T_.outcome)}</span>
-    <select id="w-out">${['rpc','noans','promise','callback','dispute','hardship','wrong'].map(k=>`<option value="${k}">${esc(E('out',k))}</option>`).join('')}</select></div>
-   <div class="f"><span>${esc(T_.notes)}</span>
-    <input type="text" id="w-note" placeholder="${esc(T_.notes)}"></div>
-   <div class="f"><span>${esc(T_.setPtp)}</span>
-    <span style="display:flex;gap:8px">
-     <input type="text" id="w-amt" style="max-inline-size:120px" placeholder="AED" dir="ltr">
-     <input type="date" id="w-date" dir="ltr"></span></div>
+   <div class="f"><span id="w-out-l">${esc(T_.outcome)}</span>
+    ${selectMenu('w-out',['rpc','noans','promise','callback','dispute','hardship','wrong'].map(k=>[k,E('out',k)]),'w-out-l')}</div>
+   <label class="f"><span>${esc(T_.notes)}</span>
+    <input type="text" id="w-note"></label>
+   <div class="f" role="group" aria-labelledby="w-ptp-l"><span id="w-ptp-l">${esc(T_.setPtp)}</span>
+    <span class="pair">
+     <input type="text" id="w-amt" class="amt" placeholder="AED" dir="ltr" aria-label="${esc(T_.f.ptpAmt)}">
+     ${datePicker('w-date','w-ptp-l')}</span></div>
    <div class="wrap-note">${esc(T_.wrap.note)}</div>
-   <div class="f" style="flex-direction:row;gap:8px">
-    <button class="mini pri" id="w-save">${esc(T_.wrap.save)}</button>
-    <button class="mini" id="w-cancel">${esc(T_.cancel)}</button>
+   <div class="actions">
+    <button class="act primary" id="w-save">${esc(T_.wrap.save)}</button>
+    <button class="act" id="w-cancel">${esc(T_.cancel)}</button>
    </div>
   </div></div></div>`;
 }

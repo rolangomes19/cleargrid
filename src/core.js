@@ -38,15 +38,16 @@ const dpd=a=>days(a.due);
 const sumOut=r=>r.accts.reduce((s,a)=>s+a.out,0);
 const sumTot=r=>r.accts.reduce((s,a)=>s+a.total,0);
 const worst=r=>r.accts.reduce((w,a)=>dpd(a)>dpd(w)?a:w,r.accts[0]);
-/* ═══ 4 · escalation line. computed from existing fields, capped at two shown. ═══ */
+/* ═══ 4 · escalation line. computed from existing fields, capped at two shown.
+   x = the spine's full sentence; k + d = the queue's type label and specifics. ═══ */
 function reasons(r){
  const o=[],T_=t();
  r.accts.forEach(a=>{
-  if(a.status==='disputed'&&a.dispute) o.push({s:5,ref:a.ref,x:T_.r.dispute(L(a.lender),D(a.dispute.date))});
+  if(a.status==='disputed'&&a.dispute) o.push({s:5,k:'dispute',ref:a.ref,x:T_.r.dispute(L(a.lender),D(a.dispute.date)),d:T_.rd.dispute(L(a.lender),D(a.dispute.date))});
  });
- if(r.hardship) o.push({s:4,ref:r.accts[0].ref,x:T_.r.hardship(D(r.hardship))});
- r.accts.forEach(a=>{ if(a.broken>0) o.push({s:3,ref:a.ref,x:T_.r.broken(a.broken,L(a.lender))}); });
- if(r.calls.ai>0&&r.calls.h===0) o.push({s:2,ref:null,x:T_.r.first(r.calls.ai)});
+ if(r.hardship) o.push({s:4,k:'hardship',ref:r.accts[0].ref,x:T_.r.hardship(D(r.hardship)),d:T_.rd.hardship(D(r.hardship))});
+ r.accts.forEach(a=>{ if(a.broken>0) o.push({s:3,k:'broken',ref:a.ref,x:T_.r.broken(a.broken,L(a.lender)),d:T_.rd.broken(a.broken,L(a.lender))}); });
+ if(r.calls.ai>0&&r.calls.h===0) o.push({s:2,k:'first',ref:null,x:T_.r.first(r.calls.ai),d:T_.rd.first(r.calls.ai)});
  return o.sort((a,b)=>b.s-a.s);
 }
 /* only the accounts the line names may carry coral. 1 band + max 2 cards = the budget. */

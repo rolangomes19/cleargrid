@@ -23,7 +23,7 @@ untested output.
 | `src/data.js` | The four test records | Data changes only |
 | `src/components.js` | Badge, field row, block, bars | New atom |
 | `src/regions.js` | Spine, three columns, compare view | Most layout work |
-| `src/app.js` | Nav, render, audit, events | Interaction work |
+| `src/app.js` | Nav, render, events | Interaction work |
 | `src/tokens.css` | All styling | Visual work |
 
 Read only the file you need. Do not read `dist/` — it is generated.
@@ -57,10 +57,16 @@ the row when folded into Emphasis. That toggle has been removed — this is the 
 
 | Style | Spec | Job |
 |---|---|---|
-| `display` | Mono, 500, 23/16 (lg/sm), tabular, -1% tracking | The numbers an agent reads aloud |
-| `title` | Inter, 600, 16.5 | The borrower's own name header — the one deliberately-kept exception |
-| `emphasis` (`.t-pri`) | Inter, 600, 12.5 | Names/headline text inside a row — card lender, log outcome |
-| `label` (`.t-sec`, `.eyebrow`) | Inter, 400, 11.5 | Everything else: field labels, field-row **values**, table cells/headers, nav, log meta, block headings/stat labels, sub-captions |
+| `display` | Mono, 500, 24/28 (`.sm` = 16/24), tabular, -1% tracking | The numbers an agent reads aloud |
+| `title` | Inter, 600, 16/24 | The borrower's name — spine header and queue rows, plus the queue page title |
+| `emphasis` (`.t-pri`) | Inter, 600, 13/20 | Names/headline text inside a row — card lender, log outcome; buttons (md) |
+| `label` (`.t-sec`, `.eyebrow`) | Inter, 400, 12/16 | Everything else: field labels, table headers, nav, log meta, badges, sub-captions |
+
+Body text is 13/20. **Four sizes exist — 12, 13, 16, 24 — as `--fs-*` tokens. Nothing smaller
+than 12 anywhere, no half-pixel sizes.** Spacing is a 4px grid (`--s1..--s6` = 4/8/12/16/24),
+radii `--r-sm:4` / `--r-md:6` / 50% (avatars). Control heights: 32 (`.act`), 28 (`.mini`),
+24 (tab buttons), 20 (badges). Column heads are a fixed 44px so the three share a baseline.
+Arabic swaps the px line-heights for ×1.7 through the same tokens.
 
 `.eyebrow` still exists as a class (many templates already reference it) but its declaration
 is intentionally identical to `.t-sec` now, not a fork — a block heading and a field label
@@ -104,10 +110,16 @@ One glyph, an en dash, in `text/muted`. The label always stays. A null must neve
 
 ## Motion
 
-Near none. Button press `scale(0.97)` 120ms. Entry form open 180ms. Everything else instant.
+Near none. Button press `scale(0.97)` 120ms. Entry form open 180ms. Everything else instant —
+including the nav collapse and a newly logged row (static `tealWash`, no pulse).
 Account selection and tab switches get no animation.
 
-## Harness is not product
+## No harness in the shipped page
 
-The dark top bar, greyscale/squint toggles and the audit panel are test instruments.
-They never appear in a design frame.
+The dev-only top bar (record/direction switcher, squint toggle) and the live layout-audit
+panel were removed from the product entirely — they're not just visually separated anymore,
+the markup, CSS and JS are gone. Record and direction switching now happen through real
+product UI: the queue screen for picking a case, the nav's own English/العربية toggle for
+language. `test/verify.js` drives those same controls (`[data-nav="queue"]`, `[data-q]`,
+`.nav-lang button`) rather than a harness, and asserts the coral budget, reconciliation and
+per-record behavioural checks directly instead of only rendering them for someone to look at.
