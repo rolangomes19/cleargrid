@@ -32,7 +32,7 @@ function spine(){
    <div class="idb">
     <div class="avatar">${esc(r.ini)}</div>
     <div>
-     <div class="names" data-g="name"><span class="n1">${esc(L(r.name))}</span>
+     <div class="names" data-g="name"><span class="t-title">${esc(L(r.name))}</span>
       <span class="n2">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
      <div class="idline">
       <span class="badge teal">${esc(E('stage',r.stage))}</span>
@@ -70,7 +70,7 @@ function borrowerCol(){
      the dot is a fallback, not an addition — it only fires when neither badge on this card
      is already carrying the coral for the same fact, so one alert is never marked twice. */
   const dotDue=flag&&a.status!=='disputed';
-  return `<div class="card${i===S.sel?' on':''}${flag?' hot':''}" data-a="${i}">
+  return `<div class="card${i===S.sel?' on':''}${flag?' hot':''}" data-a="${i}" tabindex="0" role="button">
    ${i<9?`<span class="kbd">${i+1}</span>`:''}
    <div class="t-pri">${dotDue?'<i class="flagdot"></i>':''}${esc(L(a.lender))}</div>
    <div class="t-sec">${esc(E('product',a.product))} · ${ltr(a.ref)}</div>
@@ -95,7 +95,7 @@ function borrowerCol(){
 
  return `<div class="col" id="c-bor">
   <div class="colhead"><span class="eyebrow">${esc(T_.accounts)} · ${N(list.length)}</span>
-   <button class="mini" id="b-compare">${esc(S.compare?T_.back:T_.compare)}</button></div>
+   <button class="mini" id="b-compare">${esc(S.mode==='compare'?T_.back:T_.compare)}</button></div>
   <div class="colbody">
    <div class="totals"><span class="eyebrow">${esc(T_.outstanding)}</span>
     <span class="t-pri num">${M(sumOut(r))}</span></div>
@@ -198,19 +198,10 @@ function activityCol(){
    <span>${esc(L(x.t))}</span></div>`).join(''):`<div class="emptyline">${esc(T_.noTimeline)}</div>`;
  } else body=`<div class="emptyline">${esc(T_.noTickets)}</div>`;
 
- const entry=S.entry?`<div class="entry">
-   <span class="eyebrow">${esc(T_.logOutcome)} · ${ltr(a.ref)}</span>
-   <div class="f">
-    <select id="e-out">${['rpc','noans','promise','callback','dispute','hardship','wrong'].map(k=>`<option value="${k}">${esc(E('out',k))}</option>`).join('')}</select>
-    <input type="text" id="e-note" placeholder="${esc(T_.notes)}">
-   </div>
-   <div class="f"><span class="t-sec">${esc(T_.setPtp)}</span>
-    <input type="text" id="e-amt" style="max-inline-size:96px" placeholder="AED" dir="ltr">
-    <input type="date" id="e-date" dir="ltr">
-    <button class="mini pri" id="e-save">${esc(T_.save)}</button>
-    <button class="mini" id="e-cancel">${esc(T_.cancel)}</button>
-   </div></div>`:'';
-
+ /* the post-call write used to open inline here (S.entry). it's now its own screen
+    (wrapupView, S.mode='wrapup') — same reasoning as before (the record must stay
+    visible while transcribing), just given the room a sustained-attention task needs.
+    "Log outcome" below is the one entry point into it. */
  return `<div class="col" id="c-act">
   <div class="colhead">
    <div class="tabs">${tabs.map(([k,l])=>`<button data-t="${k}" class="${S.tab===k?'on':''}" data-gated="${S.tab===k?0:1}">${esc(l)}</button>`).join('')}</div>
@@ -219,7 +210,7 @@ function activityCol(){
     <button class="mini pri" id="b-entry">${esc(T_.logOutcome)}</button></span>
   </div>
   <div class="colbody">
-   ${entry}${body}
+   ${body}
   </div></div>`;
 }
 /* ═══ 10 · compare view. comparison is a different job from navigation. ═══ */
@@ -237,4 +228,87 @@ function compareView(){
     <td class="n">${N(dpd(a))}</td><td>${statusBadge(a,false)}</td>
     <td><button class="mini" data-a="${i}">${esc(h.open)}</button></td></tr>`).join('')}</tbody></table>
   </div></div>`;
+}
+/* ═══ 11 · SCREEN · queue. the case arrives here before any borrower record is open.
+   Reuses the four existing records — no invented cases, no invented "time waited" field
+   (none of the fixtures carry one, and fabricating it would be exactly the kind of
+   unsourced number the defensibility pass exists to catch). ═══ */
+function queueView(){
+ const T_=t();
+ /* sort: top escalation severity desc, then exposure desc — reuses reasons()'s own
+    severity score, no new scoring logic. See spec.md's queue section for why. */
+ const keys=Object.keys(R).sort((x,y)=>{
+  const sx=reasons(R[x])[0]?.s||0, sy=reasons(R[y])[0]?.s||0;
+  return sy!==sx ? sy-sx : sumOut(R[y])-sumOut(R[x]);
+ });
+ const flagged=keys.filter(k=>(reasons(R[k])[0]?.s||0)>0).length;
+ const rows=keys.map(k=>{
+  const r=R[k],top=reasons(r)[0],w=worst(r);
+  const langLabel=r.lang?(r.lang==='ar'?(S.lang==='en'?'Arabic':'العربية'):(S.lang==='en'?'English':'الإنجليزية')):dash();
+  /* top-1 reason only, not the spine's top-2 — verified against these four fixtures
+     to hold the coral count at exactly 3, the existing budget cap (see spec.md). */
+  const why=top
+    ?`<span class="badge alert" data-alert="1"><i class="dot"></i>${esc(T_.q.flag)}</span><span class="t-sec">${esc(top.x)}</span>`
+    :`<span class="t-sec dim">${esc(T_.q.calm)}</span>`;
+  return `<div class="qrow" data-q="${k}" tabindex="0" role="button">
+   <div class="qrow-id">
+    <div class="avatar">${esc(r.ini)}</div>
+    <div>
+     <div class="names"><span class="t-title">${esc(L(r.name))}</span>
+      <span class="n2">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
+     <div class="idline"><span>${esc(T_.q.lang)}: <b>${langLabel}</b></span></div>
+    </div>
+   </div>
+   <div class="qrow-why">${why}</div>
+   <div class="qrow-num"><span class="eyebrow">${esc(T_.outstanding)}</span>
+    <div class="t-display sm">${M(sumOut(r))}</div>
+    <span class="sub">${esc(T_.across(r.accts.length))}</span></div>
+   <div class="qrow-num"><span class="eyebrow">${esc(T_.worstDpd)}</span>
+    <div class="t-display sm">${N(dpd(w))}</div>
+    <span class="sub">${esc(T_.on)} ${esc(L(w.lender))}</span></div>
+   <div class="qrow-contact">${icon('robot')}<span class="num">${N(r.calls.ai)}</span>
+    ${icon('phone')}<span class="num">${N(r.calls.h)}</span></div>
+   <button class="mini pri">${esc(T_.q.openCase)}</button>
+  </div>`;
+ }).join('');
+
+ return `<div class="queue">
+  <div class="qhead">
+   <span class="eyebrow">${esc(T_.q.title)} · ${esc(T_.q.count(keys.length))}</span>
+   <span class="t-sec">${esc(T_.q.needsAttention(flagged))}</span>
+  </div>
+  <div class="qbody">${rows}</div>
+ </div>`;
+}
+/* ═══ 12 · SCREEN · wrap-up. replaces the old inline entry form (one canonical home).
+   Spine + borrowerCol stay mounted around this (see app.js render()) for the same
+   reason the inline form was never a modal: the record must stay visible while
+   the agent is transcribing from it. ═══ */
+function wrapupView(){
+ const a=acc(),T_=t();
+ if(S.wrapDone){
+  return `<div class="col"><div class="colhead"><span class="eyebrow">${esc(T_.wrap.title)}</span></div>
+   <div class="colbody"><div class="wrap-done">
+    ${icon('check')}<div class="t-pri">${esc(T_.wrap.logged)}</div>
+    <button class="mini pri" id="w-return">${esc(T_.wrap.returnToQueue)}</button>
+   </div></div></div>`;
+ }
+ return `<div class="col"><div class="colhead">
+   <span class="eyebrow">${esc(T_.wrap.title)} · ${esc(T_.wrap.forAccount)} ${esc(L(a.lender))} · ${ltr(a.ref)}</span>
+  </div>
+  <div class="colbody"><div class="wrap">
+   <div class="f"><span>${esc(T_.outcome)}</span>
+    <select id="w-out">${['rpc','noans','promise','callback','dispute','hardship','wrong'].map(k=>`<option value="${k}">${esc(E('out',k))}</option>`).join('')}</select></div>
+   <div class="f"><span>${esc(T_.notes)}</span>
+    <input type="text" id="w-note" placeholder="${esc(T_.notes)}"></div>
+   <div class="f"><span>${esc(T_.setPtp)}</span>
+    <span style="display:flex;gap:8px">
+     <input type="text" id="w-amt" style="max-inline-size:120px" placeholder="AED" dir="ltr">
+     <input type="date" id="w-date" dir="ltr"></span></div>
+   <div class="wrap-note">${esc(T_.wrap.note)}</div>
+   <div class="f" style="flex-direction:row;gap:8px">
+    <button class="mini pri" id="w-save">${esc(T_.wrap.save)}</button>
+    <button class="mini" id="w-cancel">${esc(T_.cancel)}</button>
+   </div>
+  </div></div></div>`;
 }

@@ -39,8 +39,11 @@ const ICONS={
  mic:'<rect x="88" y="24" width="80" height="128" rx="40"/><path d="M56,112v8a72,72,0,0,0,144,0v-8"/><line x1="128" y1="192" x2="128" y2="232"/>',
  caret:'<polyline points="88,96 128,136 168,96"/><polyline points="88,160 128,120 168,160" transform="translate(0,0)"/>',
  dcaret:'<polyline points="160,64 96,128 160,192"/>',
+ check:'<polyline points="44,132 100,188 212,72"/>',
 };
-function icon(name,cls){ return `<svg class="icon${cls?' '+cls:''}" viewBox="0 0 256 256">${ICONS[name]||''}</svg>`; }
+/* every icon here is decorative — the adjacent text/label always carries the meaning,
+   so aria-hidden belongs on the shared atom, not repeated at each call site. */
+function icon(name,cls){ return `<svg class="icon${cls?' '+cls:''}" viewBox="0 0 256 256" aria-hidden="true">${ICONS[name]||''}</svg>`; }
 
 /* ═══ 5.2 · contact-history sparkline. buckets last 10 weeks of logs. ═══ */
 const ANSWERED=new Set(['rpc','promise','plan','kept']);

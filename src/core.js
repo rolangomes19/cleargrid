@@ -14,7 +14,8 @@ const F={
      dt:new Intl.DateTimeFormat('ar-AE-u-ca-gregory-nu-latn',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false}),
      n:new Intl.NumberFormat('ar-AE-u-nu-latn')}};
 
-let S={rec:'omar',lang:'en',sel:0,tab:'i',scope:'a',compare:false,entry:false,justLogged:null,navCollapsed:false};
+/* mode: 'queue' (case list, screen zero) | 'profile' | 'compare' | 'wrapup' (post-call write) */
+let S={rec:'omar',lang:'en',sel:0,tab:'i',scope:'a',mode:'queue',wrapDone:false,justLogged:null,navCollapsed:false};
 
 const t=()=>T[S.lang];
 const L=o=>o==null?null:(typeof o==='string'?o:(o[S.lang]??o.en));
@@ -28,8 +29,10 @@ const N=v=>v==null?dash():F[S.lang].n.format(v);
 const ltr=(s,plain)=>s?`<span class="ltr${plain?'':' num'}" title="${esc(s)}">${esc(s)}</span>`:dash();   // inline island only; plain=phone/email text, not an ID
 const E=(g,k)=>(t().e[g]&&t().e[g][k])||k;
 
-/* accounts always sorted by outstanding desc. deterministic, never by flag. */
-const accts=()=>[...rec().accts].sort((a,b)=>b.out-a.out);
+/* accounts always sorted by outstanding desc. deterministic, never by flag.
+   takes an optional record so the queue screen can sort accounts of a borrower
+   that isn't the currently-loaded one, without duplicating this logic. */
+const accts=(r=rec())=>[...r.accts].sort((a,b)=>b.out-a.out);
 const acc=()=>accts()[Math.min(S.sel,accts().length-1)];
 const dpd=a=>days(a.due);
 const sumOut=r=>r.accts.reduce((s,a)=>s+a.out,0);

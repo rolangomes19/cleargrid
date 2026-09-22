@@ -429,6 +429,62 @@ Estimated: one session for steps 1 to 8, verification included.
 
 ---
 
+## Part 11 — The agent journey: queue and wrap-up
+
+Added in the v4 pass, per `cleargrid-agent-journey-expansion.md`'s recommendation to show the
+case arriving and the outcome closing the loop, not just the profile in isolation. Same rigor
+as Part 3: **Does / Scope / Position / Tier / Why here / Breaks if moved.**
+
+### 11.1 Screen swap mechanism
+
+One state field, `S.mode` (`'queue' | 'profile' | 'compare' | 'wrapup'`), replaces the old
+`S.compare`/`S.entry` pair. `render()` branches on it once. `'wrapup'` reuses the exact
+`.cols.compare` two-column grid `'compare'` already uses — the spine and the account-card
+rail stay mounted, only the right-hand pane changes. No second layout was invented.
+
+### 11.2 Queue
+
+- **Does:** shows every case with its escalation reason before any one case is opened.
+- **Scope:** all four fixtures (`Object.keys(R)`) — no invented cases, no invented data.
+- **Position:** replaces spine+columns entirely; nav sidebar stays (it's product chrome).
+- **Tier:** 1 — a row's reason cue is a glance fact, same rule as the spine's "why" band.
+- **Why here:** the only screen that shows the routing decision across cases, not one case
+  at a time. Answers the case-study research's "screen zero" gap.
+- **Breaks if moved:** folding this into the harness's record switcher would blur the
+  harness/product line `CLAUDE.md` protects — the switcher stays a QA instrument.
+
+**Sort — stated as a designer heuristic, not a literature number.** Primary key: top
+escalation severity (`reasons(r)[0]?.s || 0`), descending — reuses `core.js`'s own severity
+score, no new scoring logic. Secondary key: `sumOut(r)`, descending. *Alternative rejected:*
+FIFO by time-in-queue — none of the four fixtures carry a real "entered queue at" timestamp,
+and inventing one would be exactly the kind of unsourced number this pass exists to remove.
+*Confidence:* Medium — sound for a 4-case demo; a real paginated queue would need a cap
+mechanism independent of total case count.
+
+**Coral budget, verified against the fixtures, not assumed.** Each row shows only its
+*top-1* reason (not the spine's top-2). Against `omar`/`aisha`/`stress`/`sparse`: 1 + 1 + 1 + 0
+= 3 simultaneous coral elements — exactly at the existing cap. Showing top-2 per row would
+risk exceeding it the moment more than 3 of 4 rows are escalated.
+
+### 11.3 Wrap-up
+
+- **Does:** the post-call write, as its own beat instead of squeezed atop the activity list.
+- **Scope:** the account selected when "Log outcome" is pressed — unchanged from before.
+- **Position:** replaces `accountCol()+activityCol()` inside the `compare` grid shape; spine
+  and `borrowerCol()` stay visible.
+- **Tier:** 1 while open.
+- **Why here:** §3.5.1 already defended keeping this form inline instead of a modal
+  specifically so the record stays visible while transcribing. Reusing the compare-view's
+  swap keeps that context on screen while giving the write task its own full pane — the
+  form isn't a modal here either, for the same original reason.
+- **Breaks if moved:** a context-free full-screen wrap-up (no spine, no account cards)
+  would silently undo the §3.5.1 decision.
+
+Saving keeps the exact mutation the old inline form used (`r.logs.unshift`, `a.ptp = {...}`)
+and shows a persistent "Outcome logged" state in the same pane — never a fading toast, per
+the change-blindness rule in `dense-ui-design-guide.md` §2.5 — with one action, **Return to
+queue**, physically closing the Queue → Profile → Outcome loop the case study wants to show.
+
 ## Decisions recorded
 
 | # | Question | Decision | Date |

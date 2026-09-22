@@ -1,5 +1,10 @@
 // EN/AR dictionary. the Arabic view is generated from this, not mirrored.
 
+/* ═══ 0.1 · Arabic counted-noun agreement: dual for 2, plural for 3–10, singular
+   (accusative) for 11+. one helper instead of five duplicated ternary chains —
+   English doesn't need this (singular/plural only), so it's Arabic-only. ═══ */
+const pluralAr=(n,f)=>n===1?f.one:n===2?f.two:n<=10?f.few:f.many;
+
 /* ═══ 1 · dictionary. written before markup. the AR view is generated, not mirrored. ═══ */
 const T={
 en:{
@@ -28,8 +33,15 @@ en:{
       fields:'Portfolio fields',meta:'Record metadata',calls:'Contact history'},
  tab:{i:'Interactions',m:'Messages',t:'Timeline',k:'Tickets'},
  scopeAcct:'This account', scopeAll:'All accounts', logOutcome:'Log outcome',
- save:'Save to record', cancel:'Cancel', outcome:'Outcome', notes:'Note (optional)', setPtp:'Promise',
+ cancel:'Cancel', outcome:'Outcome', notes:'Note (optional)', setPtp:'Promise',
  noLogs:'Nothing logged on this account yet.', noTickets:'No open tickets.', noTimeline:'No timeline entries.',
+ q:{title:'Queue', flag:'Escalated', openCase:'Open case', lang:'Prefers',
+    calm:'No escalation flag. Routine review.',
+    count:n=>n===1?'1 case':`${n} cases`,
+    needsAttention:n=>n===1?'1 needs attention':`${n} need attention`},
+ wrap:{title:'Wrap up', forAccount:'Outcome for', save:'Save outcome',
+    logged:'Outcome logged', returnToQueue:'Return to queue',
+    note:'This outcome is scored on the same rubric as AI-handled calls, and feeds back into the models that route the next case.'},
  f:{dob:'Date of birth',gender:'Gender',nat:'Nationality',eid:'Emirates ID',visa:'Visa status',
     lang:'Language',owner:'Owner',stage:'Stage',submit:'Submitted',phone:'Phone',mail:'Email',
     total:'Original amount',out:'Outstanding',over:'Overdue',due:'Last due date',dpd:'Days past due',
@@ -62,20 +74,24 @@ ar:{
       voiceTitle:'كلير فويس',voiceSub:'دع الذكاء الاصطناعي يبدأ الاتصال الأول',voiceBtn:'جرّبها',
       agent:'الموظف',collapse:'طي',expand:'توسيع'},
  outstanding:'إجمالي الرصيد المستحق',
- across:n=>n===1?'على حساب واحد':n===2?'على حسابين':n<=10?`على ${n} حسابات`:`على ${n} حساباً`,
+ across:n=>`على ${pluralAr(n,{one:'حساب واحد',two:'حسابين',few:`${n} حسابات`,many:`${n} حساباً`})}`,
  original:'من', worstDpd:'أطول تأخر', on:'على', asOf:'حتى', promise:'حالة الوعد',
- noPromise:'لا يوجد وعد مسجل', promised:'موعود', brokenN:n=>n===1?'وعد واحد لم يُنفَّذ':n===2?'وعدان لم يُنفَّذا':n<=10?`${n} وعود لم تُنفَّذ`:`${n} وعداً لم يُنفَّذ`,
- promiseAcross:(o,n)=>{const acc=n===1?'حساب واحد':n===2?'حسابين':n<=10?`${n} حسابات`:`${n} حساباً`;
-   return o===1?`وعد قائم واحد على ${acc}`:o===2?`وعدان قائمان على ${acc}`:`${o} وعود قائمة على ${acc}`;},
+ noPromise:'لا يوجد وعد مسجل', promised:'موعود',
+ brokenN:n=>pluralAr(n,{one:'وعد واحد لم يُنفَّذ',two:'وعدان لم يُنفَّذا',few:`${n} وعود لم تُنفَّذ`,many:`${n} وعداً لم يُنفَّذ`}),
+ promiseAcross:(o,n)=>{
+   const acc=pluralAr(n,{one:'حساب واحد',two:'حسابين',few:`${n} حسابات`,many:`${n} حساباً`});
+   const open=pluralAr(o,{one:'وعد قائم واحد',two:'وعدان قائمان',few:`${o} وعود قائمة`,many:`${o} وعداً قائماً`});
+   return `${open} على ${acc}`;},
  why:'سبب وصول الملف إليك', lastAi:'آخر تواصل آلي', noAi:'لا يوجد ملخص تسليم من الوكيل الآلي حالياً.',
- more:n=>n===1?'وحالة أخرى':n===2?'وحالتان أخريان':`و${n} حالات أخرى`,
+ /* was missing the 11+ singular split every sibling function here has — fixed to match. */
+ more:n=>pluralAr(n,{one:'وحالة أخرى',two:'وحالتان أخريان',few:`و${n} حالات أخرى`,many:`و${n} حالة أخرى`}),
  calm:'لا توجد حالة تصعيد مسجلة. مراجعة اعتيادية.',
  reasonCue:'سبب الإسناد ↑',
  noContact:'لا يوجد سجل تواصل.', emailInbox:'صندوق البريد',
  r:{dispute:(a,d)=>`المدين يعترض على حساب ${a}، سُجل في ${d}.`,
     hardship:d=>`أبلغ المدين الوكيل الآلي بتعثر مالي في ${d}.`,
-    broken:(n,a)=>`${n===1?'وعد واحد لم يُنفَّذ':n===2?'وعدان لم يُنفَّذا':n<=10?n+' وعود لم تُنفَّذ':n+' وعداً لم يُنفَّذ'} على ${a}.`,
-    first:n=>`أول تواصل بشري. تواصل معه النظام الآلي ${n<=10?n+' مرات':n+' مرة'}.`},
+    broken:(n,a)=>`${pluralAr(n,{one:'وعد واحد لم يُنفَّذ',two:'وعدان لم يُنفَّذا',few:`${n} وعود لم تُنفَّذ`,many:`${n} وعداً لم يُنفَّذ`})} على ${a}.`,
+    first:n=>`أول تواصل بشري. تواصل معه النظام الآلي ${pluralAr(n,{one:'مرة واحدة',two:'مرتين',few:`${n} مرات`,many:`${n} مرة`})}.`},
  call:'اتصال',sms:'رسالة نصية',wa:'واتساب',email:'بريد',
  ch:{cap:'2 من 3 اليوم',review:'موقوف، الاعتراض قائم',dnc:'أوقف الاستقبال في 14 يونيو',window:'حتى 20:00'},
  accounts:'الحسابات', compare:'مقارنة الكل', back:'العودة للحساب', selected:'حساب العمل',
@@ -84,8 +100,15 @@ ar:{
       fields:'حقول المحفظة',meta:'بيانات السجل',calls:'سجل التواصل'},
  tab:{i:'التفاعلات',m:'الرسائل',t:'المسار الزمني',k:'التذاكر'},
  scopeAcct:'هذا الحساب', scopeAll:'كل الحسابات', logOutcome:'تسجيل النتيجة',
- save:'حفظ في السجل', cancel:'إلغاء', outcome:'النتيجة', notes:'ملاحظة (اختياري)', setPtp:'وعد بالسداد',
+ cancel:'إلغاء', outcome:'النتيجة', notes:'ملاحظة (اختياري)', setPtp:'وعد بالسداد',
  noLogs:'لا توجد سجلات على هذا الحساب.', noTickets:'لا توجد تذاكر مفتوحة.', noTimeline:'لا توجد إدخالات زمنية.',
+ q:{title:'قائمة الانتظار', flag:'حالة مُصعّدة', openCase:'فتح الحالة', lang:'يفضل',
+    calm:'لا توجد حالة تصعيد. مراجعة اعتيادية.',
+    count:n=>pluralAr(n,{one:'حالة واحدة',two:'حالتان',few:`${n} حالات`,many:`${n} حالة`}),
+    needsAttention:n=>pluralAr(n,{one:'حالة واحدة تحتاج انتباهاً',two:'حالتان تحتاجان انتباهاً',few:`${n} حالات تحتاج انتباهاً`,many:`${n} حالة تحتاج انتباهاً`})},
+ wrap:{title:'إنهاء المكالمة', forAccount:'النتيجة لحساب', save:'حفظ النتيجة',
+    logged:'تم تسجيل النتيجة', returnToQueue:'العودة إلى القائمة',
+    note:'تُقيَّم هذه النتيجة على نفس معايير المكالمات الآلية، وتُغذّي النماذج التي توجّه الحالة التالية.'},
  f:{dob:'تاريخ الميلاد',gender:'الجنس',nat:'الجنسية',eid:'رقم الهوية',visa:'حالة الإقامة',
     lang:'اللغة',owner:'المسؤول',stage:'المرحلة',submit:'تاريخ الإحالة',phone:'الهاتف',mail:'البريد',
     total:'المبلغ الأصلي',out:'الرصيد المستحق',over:'المبلغ المتأخر',due:'آخر استحقاق',dpd:'أيام التأخر',

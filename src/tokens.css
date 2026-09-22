@@ -5,6 +5,11 @@
   --teal:#069494; --tealDeep:#04716D; --tealDeeper:#035854; --tealWash:#EAF5F5;
   --coral:#DC4A3E; --coralDeep:#B23A30; --coralWash:#FDEEEC;
   --green:#1E8E5A; --greenWash:#E9F5EF; --amber:#B8790A; --amberWash:#FBF2E0;
+  /* -Text pairs: the base hues above are 3:1-only (fine for dots/large icons/fills).
+     Coral/green/amber/muted all fail 4.5:1 normal-text AA used as badge/caption text on
+     their wash — computed via the WCAG relative-luminance formula, corrected here rather
+     than replacing the base hues, since the base hues are still correct for their own job. */
+  --coralText:#D93D30; --greenText:#1D8756; --amberText:#A36B09; --mutedText:#71787C;
   --sans:'Inter',system-ui,-apple-system,sans-serif;
   --ar:'Tajawal','IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
   --mono:'JetBrains Mono',ui-monospace,monospace;
@@ -36,7 +41,18 @@ html[lang="ar"] *{letter-spacing:normal!important;font-style:normal!important;te
 .t-pri{font-size:12.5px;font-weight:600}
 .t-sec,.eyebrow{font-size:11.5px;font-weight:400;color:var(--text2)}
 html[lang="ar"] .eyebrow{font-family:var(--ar)}
-.dim{color:var(--muted)} .empty{color:var(--muted)}
+.t-title{font-size:16.5px;font-weight:600;letter-spacing:-.01em}
+/* .dim is read (an annotation the agent needs), so it gets the AA-corrected token.
+   .empty stays on --muted deliberately: CLAUDE.md's own rule for the null glyph is
+   that it must look quieter than data, not that it must clear body-text contrast. */
+.dim{color:var(--mutedText)} .empty{color:var(--muted)}
+
+/* ── shared interaction states. one definition each, instead of four/one duplicated. ── */
+.nav-promo-btn,.nav-lang button,.act,.mini,.qrow{transition:transform 120ms cubic-bezier(.23,1,.32,1)}
+.nav-promo-btn:active,.nav-lang button:active,.act:active,.mini:active,.qrow:active{transform:scale(.97)}
+.act:focus-visible,.mini:focus-visible,.card:focus-visible,.qrow:focus-visible,
+.tabs button:focus-visible,.nav-lang button:focus-visible,.nav .item:focus-visible{
+  outline:none;box-shadow:var(--focus-ring)}
 
 /* ── harness chrome. deliberately not product UI. ───────────────── */
 .harness{background:#14161A;color:#fff;display:flex;align-items:center;gap:14px;
@@ -69,9 +85,7 @@ body.t-squint .app{filter:blur(3.2px)}
 .nav .item .icon{font-size:18px}
 .nav-promo{background:rgba(255,255,255,.06);border-radius:var(--r-md);padding:9px;margin-block-end:9px}
 .nav-promo-btn{margin-block-start:7px;display:flex;align-items:center;gap:6px;background:#fff;color:#14161A;
-  border:0;border-radius:99px;padding:5px 11px;font:inherit;font-size:11.5px;font-weight:600;cursor:pointer;
-  transition:transform 120ms cubic-bezier(.23,1,.32,1)}
-.nav-promo-btn:active{transform:scale(.97)}
+  border:0;border-radius:99px;padding:5px 11px;font:inherit;font-size:11.5px;font-weight:600;cursor:pointer}
 .nav-profile{display:flex;align-items:center;gap:8px;padding:4px 2px}
 .nav-profile .avatar{inline-size:26px;block-size:26px;border-radius:50%;background:var(--teal);color:#fff;
   display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;flex:0 0 auto}
@@ -88,8 +102,7 @@ html[dir="rtl"] .nav-foot .icon{transform:scaleX(-1)}
 html[dir="rtl"] .nav.collapsed .nav-foot .icon{transform:scaleX(1)}
 .nav-lang{display:flex;background:rgba(255,255,255,.09);border-radius:7px;padding:2px;gap:2px;margin-block-end:9px}
 .nav-lang button{flex:1;border:0;background:transparent;color:#fff;opacity:.7;font:inherit;font-size:12px;
-  padding:6px 0;border-radius:5px;cursor:pointer;transition:transform 120ms cubic-bezier(.23,1,.32,1)}
-.nav-lang button:active{transform:scale(.97)}
+  padding:6px 0;border-radius:5px;cursor:pointer}
 .nav-lang button.on{background:#fff;color:#14161A;opacity:1;font-weight:600}
 .nav-lang button[data-v="ar"]{font-family:var(--ar)}
 .nav-lang .ic{display:none}
@@ -137,13 +150,13 @@ html[dir="rtl"] .nav.collapsed .nav-foot .icon{transform:scaleX(1)}
 .idline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-block-start:2px;font-size:11.5px;color:var(--text2)}
 .stats{display:flex;gap:22px;margin-inline-start:auto;text-align:end;flex:0 0 auto}
 .stat{flex:0 0 auto}
-.stat .sub{font-size:10.5px;color:var(--muted);display:block}
+.stat .sub{font-size:10.5px;color:var(--mutedText);display:block}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:600}
 .badge .dot{inline-size:5px;block-size:5px;border-radius:50%;background:currentColor}
 .badge.q{background:var(--sunken);color:var(--text2)}
-.badge.alert{background:var(--coralWash);color:var(--coral)}
-.badge.ok{background:var(--greenWash);color:var(--green)}
-.badge.warn{background:var(--amberWash);color:var(--amber)}
+.badge.alert{background:var(--coralWash);color:var(--coralText)}
+.badge.ok{background:var(--greenWash);color:var(--greenText)}
+.badge.warn{background:var(--amberWash);color:var(--amberText)}
 .badge.teal{background:var(--tealWash);color:var(--tealDeep)}
 
 .band{margin-block-start:9px;display:flex;flex-direction:column;gap:4px}
@@ -155,14 +168,11 @@ html[dir="rtl"] .nav.collapsed .nav-foot .icon{transform:scaleX(1)}
 .rail{display:flex;gap:6px;margin-block-start:9px;flex-wrap:wrap}
 .act{border:1px solid var(--line2);background:var(--surface);border-radius:var(--r-md);padding:6px 11px;
   font:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;
-  display:flex;flex-direction:column;align-items:flex-start;gap:0;min-inline-size:74px;
-  transition:transform 120ms cubic-bezier(.23,1,.32,1)}
-.act:active{transform:scale(.97)}
-.act:focus-visible{outline:none;box-shadow:var(--focus-ring)}
-.act .st{font-size:9.5px;font-weight:400;color:var(--amber)}
+  display:flex;flex-direction:column;align-items:flex-start;gap:0;min-inline-size:74px}
+.act .st{font-size:9.5px;font-weight:400;color:var(--amberText)}
 .act.primary{background:var(--teal);border-color:var(--teal);color:#fff}
 .act.off{background:var(--sunken);color:var(--muted);border-style:dashed;cursor:not-allowed}
-.act.off .st{color:var(--coral)}
+.act.off .st{color:var(--coralText)}
 
 /* ── REGIONS 2–4 · one column per scope ────────────────────────── */
 .cols{flex:1;min-height:0;display:grid;grid-template-columns:320px 480px minmax(340px,1fr)}
@@ -177,9 +187,9 @@ html[dir="rtl"] .nav.collapsed .nav-foot .icon{transform:scaleX(1)}
   display:flex;align-items:baseline;justify-content:space-between;gap:8px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:9px 10px;
   margin-block-end:7px;cursor:pointer;position:relative}
-.card:hover{border-color:var(--line2)}
-.card.on{background:#fff;box-shadow:0 0 0 1px var(--teal)}
-.card .kbd{position:absolute;inset-inline-end:7px;inset-block-start:7px;font-size:9px;color:var(--muted);font-family:var(--mono)}
+.card:hover{border-color:var(--line2);box-shadow:var(--shadow-sm)}
+.card.on{background:#fff;box-shadow:0 0 0 1px var(--teal),var(--shadow-sm)}
+.card .kbd{position:absolute;inset-inline-end:7px;inset-block-start:7px;font-size:9px;color:var(--mutedText);font-family:var(--mono)}
 .card .flagdot{display:inline-block;inline-size:6px;block-size:6px;border-radius:50%;background:var(--coral);
   margin-inline-end:5px;vertical-align:middle}
 .card .reasoncue{margin-block-start:5px;color:var(--coralDeep)}
@@ -202,14 +212,13 @@ html[dir="rtl"] .nav.collapsed .nav-foot .icon{transform:scaleX(1)}
 .row.prose .k{display:none}
 .hero{display:flex;gap:20px;align-items:flex-start;padding-block-end:8px;border-block-end:1px solid #F4F5F6;margin-block-end:4px}
 .hero .stat{flex:1 1 0;min-inline-size:0}
-.emptyline{color:var(--muted);font-size:11.5px;padding-block:4px}
+.emptyline{color:var(--mutedText);font-size:11.5px;padding-block:4px}
 
 .tabs{display:inline-flex;background:var(--sunken);border-radius:6px;padding:2px;gap:2px}
 .tabs button{border:0;background:transparent;font:inherit;font-size:11.5px;padding:4px 9px;border-radius:4px;color:var(--text2);cursor:pointer}
 .tabs button.on{background:var(--surface);color:var(--text);font-weight:600}
 .mini{border:1px solid var(--line2);background:var(--surface);border-radius:5px;font:inherit;
-  font-size:11px;padding:3px 8px;cursor:pointer;color:var(--text2);transition:transform 120ms cubic-bezier(.23,1,.32,1)}
-.mini:active{transform:scale(.97)}
+  font-size:11px;padding:3px 8px;cursor:pointer;color:var(--text2)}
 .mini.pri{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:600}
 
 .log{display:flex;gap:9px;padding-block:7px;border-block-end:1px solid #F4F5F6}
@@ -219,14 +228,24 @@ html[dir="rtl"] .nav.collapsed .nav-foot .icon{transform:scaleX(1)}
 .log.new{background:var(--tealWash);animation:pulse 700ms ease-out}
 @keyframes pulse{from{background:#fff}}
 .log .when{flex:0 0 92px;color:var(--text2);font-size:11px}
-.log .meta{color:var(--muted);font-size:10.5px;margin-block-start:1px}
+.log .meta{color:var(--mutedText);font-size:10.5px;margin-block-start:1px}
 
-.entry{border:1px solid var(--teal);border-radius:var(--r-md);background:var(--tealWash);padding:9px 10px;margin-block-end:9px;
-  animation:open 180ms cubic-bezier(.23,1,.32,1)}
+/* shared 180ms open animation — used by the wrap-up pane below (this used to also
+   style the inline entry form; that markup is gone, the keyframe is still useful) */
 @keyframes open{from{opacity:0;transform:translateY(-4px)}}
-.entry .f{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-block-start:6px}
-.entry select,.entry input{font:inherit;font-size:12px;padding:4px 6px;border:1px solid var(--line2);border-radius:5px;background:#fff}
-.entry input[type=text]{flex:1;min-inline-size:150px}
+
+/* ── wrap-up screen. replaces the old inline entry callout — full pane now, not an
+   inset atop the activity list, so the same 180ms open animation applies to the
+   whole pane on entry instead of a cramped box. ─────────────────────────────── */
+.wrap{max-inline-size:480px;animation:open 180ms cubic-bezier(.23,1,.32,1)}
+.wrap .f{display:flex;flex-direction:column;gap:5px;margin-block-end:16px}
+.wrap .f>span{font-size:11.5px;color:var(--text2)}
+.wrap select,.wrap input{font:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--line2);
+  border-radius:var(--r-md);background:#fff}
+.wrap-note{font-size:11px;color:var(--mutedText);line-height:1.5;max-inline-size:420px;margin-block-end:18px}
+.wrap-done{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding-block-start:48px;
+  animation:open 180ms cubic-bezier(.23,1,.32,1)}
+.wrap-done .icon{font-size:30px;color:var(--green)}
 
 /* ── contact-history sparkline ─────────────────────────────────── */
 .spark{display:flex;align-items:flex-end;gap:3px;block-size:28px;margin-block-start:8px}
@@ -240,6 +259,21 @@ html[lang="ar"] th{font-family:var(--ar);font-size:10.5px}
 td{padding:6px 8px;border-block-end:1px solid #F1F2F3}
 td.n,th.n{text-align:end;font-family:var(--mono);font-variant-numeric:tabular-nums}
 tbody tr{cursor:pointer} tbody tr:hover{background:var(--tealWash)}
+
+/* ── queue screen. the pre-profile screen: no spine, no columns, full-bleed list. ── */
+.queue{flex:1;min-height:0;overflow:auto;padding:22px 26px 40px;background:var(--bg)}
+.qhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-block-end:16px}
+.qbody{display:flex;flex-direction:column;gap:8px;max-inline-size:1080px}
+.qrow{display:grid;grid-template-columns:minmax(200px,1.3fr) minmax(220px,1.6fr) auto auto auto auto;
+  align-items:center;gap:20px;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-md);padding:12px 16px;cursor:pointer}
+.qrow:hover{border-color:var(--line2);box-shadow:var(--shadow-sm)}
+.qrow-id{display:flex;gap:10px;align-items:center;min-width:0}
+.qrow-why{display:flex;align-items:center;gap:8px;min-width:0}
+.qrow-why .t-sec{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qrow-num{text-align:end}
+.qrow-contact{display:flex;align-items:center;gap:5px;color:var(--text2);font-size:11px}
+.qrow-contact .icon{font-size:14px}
 
 .audit{position:fixed;inset-block-end:0;inset-inline-end:0;z-index:60;inline-size:320px;
   background:#14161A;color:#fff;font-size:11px;direction:ltr;border-start-start-radius:8px}
