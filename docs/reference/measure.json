@@ -1,0 +1,4062 @@
+[
+ {
+  "vp": "1440x900",
+  "rec": "omar",
+  "dir": "en",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 2,
+   "paintedElements": 5,
+   "paintedRegions": 2,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "Why this reached you Borrower disputes t"
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "Disputed"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 104,
+    "13": 60,
+    "16": 3,
+    "24": 5
+   },
+   "weights": {
+    "400": 98,
+    "500": 7,
+    "600": 67
+   },
+   "fams": {
+    "Inter": 152,
+    "Tajawal": 1,
+    "JetBrains Mono": 19
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 6,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 0,
+   "arEls": 0,
+   "lhMin": null,
+   "lhMax": null
+  },
+  "spine": {
+   "rect": [
+    184,
+    0,
+    1256,
+    173
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     244,
+     20,
+     298,
+     24
+    ],
+    "out": [
+     715,
+     12,
+     194,
+     64
+    ],
+    "dpd": [
+     933,
+     12,
+     235,
+     64
+    ],
+    "ptp": [
+     1193,
+     12,
+     231,
+     64
+    ],
+    "why": [
+     200,
+     88,
+     1224,
+     28
+    ],
+    "rail": [
+     200,
+     128,
+     1224,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1440,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1440,
+   "bodyOverflow": "hidden",
+   "navW": 184,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      184,
+      173,
+      320,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      504,
+      173,
+      480,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      984,
+      173,
+      456,
+      727
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 2,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 9
+  },
+  "why": "Why this reached you Borrower disputes the Gulf Meridian Bank account, raised 26 Aug 2026."
+ },
+ {
+  "vp": "1440x900",
+  "rec": "omar",
+  "dir": "ar",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 2,
+   "paintedElements": 5,
+   "paintedRegions": 2,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "سبب وصول الملف إليك المدين يعترض على حسا"
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "محل اعتراض"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 104,
+    "13": 60,
+    "16": 3,
+    "24": 5
+   },
+   "weights": {
+    "400": 98,
+    "500": 7,
+    "600": 67
+   },
+   "fams": {
+    "Tajawal": 153,
+    "JetBrains Mono": 19
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 6,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 8,
+   "arEls": 139,
+   "lhMin": 1.17,
+   "lhMax": 1.7
+  },
+  "spine": {
+   "rect": [
+    0,
+    0,
+    1256,
+    182
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     924,
+     21,
+     272,
+     27
+    ],
+    "out": [
+     514,
+     12,
+     159,
+     70
+    ],
+    "dpd": [
+     254,
+     12,
+     236,
+     70
+    ],
+    "ptp": [
+     16,
+     12,
+     214,
+     70
+    ],
+    "why": [
+     16,
+     94,
+     1224,
+     30
+    ],
+    "rail": [
+     16,
+     137,
+     1224,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1440,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1440,
+   "bodyOverflow": "hidden",
+   "navW": 184,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      936,
+      182,
+      320,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      456,
+      182,
+      480,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      0,
+      182,
+      456,
+      718
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 2,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 9
+  },
+  "why": "سبب وصول الملف إليك المدين يعترض على حساب بنك الخليج ميريديان، سُجل في 26 أغسطس 2026."
+ },
+ {
+  "vp": "1440x900",
+  "rec": "aisha",
+  "dir": "en",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 1,
+   "paintedElements": 5,
+   "paintedRegions": 3,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "Why this reached you Hardship reported t"
+    },
+    {
+     "label": "i.flagdot",
+     "hits": [
+      "bg:coral"
+     ],
+     "text": ""
+    },
+    {
+     "label": "div.t-sec.reasoncue",
+     "hits": [
+      "text:coralDeep"
+     ],
+     "text": "Reason for assignment ↑"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 104,
+    "13": 66,
+    "16": 2,
+    "24": 5
+   },
+   "weights": {
+    "400": 101,
+    "500": 6,
+    "600": 70
+   },
+   "fams": {
+    "Inter": 160,
+    "Tajawal": 1,
+    "JetBrains Mono": 16
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 6,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 0,
+   "arEls": 0,
+   "lhMin": null,
+   "lhMax": null
+  },
+  "spine": {
+   "rect": [
+    184,
+    0,
+    1256,
+    173
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     244,
+     20,
+     362,
+     24
+    ],
+    "out": [
+     804,
+     12,
+     162,
+     64
+    ],
+    "dpd": [
+     990,
+     12,
+     225,
+     64
+    ],
+    "ptp": [
+     1239,
+     12,
+     185,
+     64
+    ],
+    "why": [
+     200,
+     88,
+     1224,
+     28
+    ],
+    "rail": [
+     200,
+     128,
+     1224,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1440,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1440,
+   "bodyOverflow": "hidden",
+   "navW": 184,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      184,
+      173,
+      320,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      504,
+      173,
+      480,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      984,
+      173,
+      456,
+      727
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 1,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 8
+  },
+  "why": "Why this reached you Hardship reported to the AI agent on 8 Sep 2026. 1 broken promise on Emirates Finance."
+ },
+ {
+  "vp": "1440x900",
+  "rec": "aisha",
+  "dir": "ar",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 1,
+   "paintedElements": 5,
+   "paintedRegions": 3,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "سبب وصول الملف إليك أبلغ المدين الوكيل ا"
+    },
+    {
+     "label": "i.flagdot",
+     "hits": [
+      "bg:coral"
+     ],
+     "text": ""
+    },
+    {
+     "label": "div.t-sec.reasoncue",
+     "hits": [
+      "text:coralDeep"
+     ],
+     "text": "سبب الإسناد ↑"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 104,
+    "13": 66,
+    "16": 2,
+    "24": 5
+   },
+   "weights": {
+    "400": 101,
+    "500": 6,
+    "600": 70
+   },
+   "fams": {
+    "Tajawal": 161,
+    "JetBrains Mono": 16
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 6,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 7,
+   "arEls": 145,
+   "lhMin": 1.17,
+   "lhMax": 1.7
+  },
+  "spine": {
+   "rect": [
+    0,
+    0,
+    1256,
+    182
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     842,
+     21,
+     354,
+     27
+    ],
+    "out": [
+     487,
+     12,
+     169,
+     70
+    ],
+    "dpd": [
+     250,
+     12,
+     214,
+     70
+    ],
+    "ptp": [
+     16,
+     12,
+     210,
+     70
+    ],
+    "why": [
+     16,
+     94,
+     1224,
+     30
+    ],
+    "rail": [
+     16,
+     137,
+     1224,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1440,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1440,
+   "bodyOverflow": "hidden",
+   "navW": 184,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      936,
+      182,
+      320,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      456,
+      182,
+      480,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      0,
+      182,
+      456,
+      718
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 1,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 8
+  },
+  "why": "سبب وصول الملف إليك أبلغ المدين الوكيل الآلي بتعثر مالي في 8 سبتمبر 2026. وعد واحد لم يُنفَّذ على إمارات للتمويل."
+ },
+ {
+  "vp": "1440x900",
+  "rec": "stress",
+  "dir": "en",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 3,
+   "paintedElements": 8,
+   "paintedRegions": 5,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "Why this reached you Borrower disputes t"
+    },
+    {
+     "label": "i.flagdot",
+     "hits": [
+      "bg:coral"
+     ],
+     "text": ""
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "678 d"
+    },
+    {
+     "label": "div.t-sec.reasoncue",
+     "hits": [
+      "text:coralDeep"
+     ],
+     "text": "Reason for assignment ↑"
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "Disputed"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 150,
+    "13": 72,
+    "16": 8,
+    "24": 5
+   },
+   "weights": {
+    "400": 129,
+    "500": 12,
+    "600": 94
+   },
+   "fams": {
+    "Inter": 198,
+    "Tajawal": 1,
+    "JetBrains Mono": 36
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 9,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 0,
+   "arEls": 0,
+   "lhMin": null,
+   "lhMax": null
+  },
+  "spine": {
+   "rect": [
+    184,
+    0,
+    1256,
+    173
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     244,
+     20,
+     364,
+     24
+    ],
+    "out": [
+     727,
+     12,
+     204,
+     64
+    ],
+    "dpd": [
+     955,
+     12,
+     246,
+     64
+    ],
+    "ptp": [
+     1225,
+     12,
+     199,
+     64
+    ],
+    "why": [
+     200,
+     88,
+     1224,
+     28
+    ],
+    "rail": [
+     200,
+     128,
+     1224,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1440,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1440,
+   "bodyOverflow": "hidden",
+   "navW": 184,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      184,
+      173,
+      320,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      504,
+      173,
+      480,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      984,
+      173,
+      456,
+      727
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 7,
+   "sortedDesc": true
+  },
+  "empties": [
+   "None on record",
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 14
+  },
+  "why": "Why this reached you Borrower disputes the Tamara account, raised 1 Jun 2026. 3 broken promises on First Abu Dhabi Bank. +3 more conditions"
+ },
+ {
+  "vp": "1440x900",
+  "rec": "stress",
+  "dir": "ar",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 3,
+   "paintedElements": 8,
+   "paintedRegions": 5,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "سبب وصول الملف إليك المدين يعترض على حسا"
+    },
+    {
+     "label": "i.flagdot",
+     "hits": [
+      "bg:coral"
+     ],
+     "text": ""
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "678 يوم"
+    },
+    {
+     "label": "div.t-sec.reasoncue",
+     "hits": [
+      "text:coralDeep"
+     ],
+     "text": "سبب الإسناد ↑"
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "محل اعتراض"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 150,
+    "13": 72,
+    "16": 8,
+    "24": 5
+   },
+   "weights": {
+    "400": 129,
+    "500": 12,
+    "600": 94
+   },
+   "fams": {
+    "Tajawal": 199,
+    "JetBrains Mono": 36
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 9,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 15,
+   "arEls": 187,
+   "lhMin": 1.17,
+   "lhMax": 1.7
+  },
+  "spine": {
+   "rect": [
+    0,
+    0,
+    1256,
+    182
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     849,
+     21,
+     347,
+     27
+    ],
+    "out": [
+     505,
+     12,
+     173,
+     70
+    ],
+    "dpd": [
+     257,
+     12,
+     224,
+     70
+    ],
+    "ptp": [
+     16,
+     12,
+     217,
+     70
+    ],
+    "why": [
+     16,
+     94,
+     1224,
+     30
+    ],
+    "rail": [
+     16,
+     137,
+     1224,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1440,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1440,
+   "bodyOverflow": "hidden",
+   "navW": 184,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      936,
+      182,
+      320,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      456,
+      182,
+      480,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      0,
+      182,
+      456,
+      718
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 7,
+   "sortedDesc": true
+  },
+  "empties": [
+   "لا يوجد وعد مسجل",
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 14
+  },
+  "why": "سبب وصول الملف إليك المدين يعترض على حساب تمارا، سُجل في 1 يونيو 2026. 3 وعود لم تُنفَّذ على بنك أبوظبي الأول. و3 حالات أخرى"
+ },
+ {
+  "vp": "1440x900",
+  "rec": "sparse",
+  "dir": "en",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 0,
+   "paintedElements": 0,
+   "paintedRegions": 0,
+   "regions": []
+  },
+  "type": {
+   "sizes": {
+    "12": 84,
+    "13": 49,
+    "16": 2,
+    "24": 5
+   },
+   "weights": {
+    "400": 80,
+    "500": 6,
+    "600": 54
+   },
+   "fams": {
+    "Inter": 127,
+    "Tajawal": 1,
+    "JetBrains Mono": 12
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 15,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 12,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 12,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 0,
+   "arEls": 0,
+   "lhMin": null,
+   "lhMax": null
+  },
+  "spine": {
+   "rect": [
+    184,
+    0,
+    1256,
+    173
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     244,
+     20,
+     244,
+     24
+    ],
+    "out": [
+     888,
+     12,
+     147,
+     64
+    ],
+    "dpd": [
+     1059,
+     12,
+     142,
+     64
+    ],
+    "ptp": [
+     1225,
+     12,
+     199,
+     64
+    ],
+    "why": [
+     200,
+     88,
+     1224,
+     28
+    ],
+    "rail": [
+     200,
+     128,
+     1224,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1440,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1440,
+   "bodyOverflow": "hidden",
+   "navW": 184,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      184,
+      173,
+      320,
+      727
+     ],
+     "scrolls": false
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      504,
+      173,
+      480,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      984,
+      173,
+      456,
+      727
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 1,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–",
+   "None on record"
+  ],
+  "ltrDisp": {
+   "inline-block": 6
+  },
+  "why": "No escalation flag on record. Routine review."
+ },
+ {
+  "vp": "1440x900",
+  "rec": "sparse",
+  "dir": "ar",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 0,
+   "paintedElements": 0,
+   "paintedRegions": 0,
+   "regions": []
+  },
+  "type": {
+   "sizes": {
+    "12": 84,
+    "13": 49,
+    "16": 2,
+    "24": 5
+   },
+   "weights": {
+    "400": 80,
+    "500": 6,
+    "600": 54
+   },
+   "fams": {
+    "Tajawal": 128,
+    "JetBrains Mono": 12
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 15,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 12,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 12,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 4,
+   "arEls": 108,
+   "lhMin": 1.17,
+   "lhMax": 1.7
+  },
+  "spine": {
+   "rect": [
+    0,
+    0,
+    1256,
+    182
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     1005,
+     21,
+     191,
+     27
+    ],
+    "out": [
+     432,
+     12,
+     152,
+     70
+    ],
+    "dpd": [
+     257,
+     12,
+     151,
+     70
+    ],
+    "ptp": [
+     16,
+     12,
+     217,
+     70
+    ],
+    "why": [
+     16,
+     94,
+     1224,
+     30
+    ],
+    "rail": [
+     16,
+     137,
+     1224,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1440,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1440,
+   "bodyOverflow": "hidden",
+   "navW": 184,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      936,
+      182,
+      320,
+      718
+     ],
+     "scrolls": false
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      456,
+      182,
+      480,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      0,
+      182,
+      456,
+      718
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 1,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–",
+   "لا يوجد وعد مسجل"
+  ],
+  "ltrDisp": {
+   "inline-block": 6
+  },
+  "why": "لا توجد حالة تصعيد مسجلة. مراجعة اعتيادية."
+ },
+ {
+  "vp": "1280x900",
+  "rec": "omar",
+  "dir": "en",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 2,
+   "paintedElements": 5,
+   "paintedRegions": 2,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "Why this reached you Borrower disputes t"
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "Disputed"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 97,
+    "13": 49,
+    "16": 3,
+    "24": 5
+   },
+   "weights": {
+    "400": 84,
+    "500": 7,
+    "600": 63
+   },
+   "fams": {
+    "Inter": 135,
+    "JetBrains Mono": 19
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 6,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 0,
+   "arEls": 0,
+   "lhMin": null,
+   "lhMax": null
+  },
+  "spine": {
+   "rect": [
+    64,
+    0,
+    1216,
+    173
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     124,
+     20,
+     298,
+     24
+    ],
+    "out": [
+     555,
+     12,
+     194,
+     64
+    ],
+    "dpd": [
+     773,
+     12,
+     235,
+     64
+    ],
+    "ptp": [
+     1033,
+     12,
+     231,
+     64
+    ],
+    "why": [
+     80,
+     88,
+     1184,
+     28
+    ],
+    "rail": [
+     80,
+     128,
+     1184,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1280,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1280,
+   "bodyOverflow": "hidden",
+   "navW": 64,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      64,
+      173,
+      320,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      384,
+      173,
+      480,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      864,
+      173,
+      416,
+      727
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 2,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 9
+  },
+  "why": "Why this reached you Borrower disputes the Gulf Meridian Bank account, raised 26 Aug 2026."
+ },
+ {
+  "vp": "1280x900",
+  "rec": "omar",
+  "dir": "ar",
+  "langNote": "real user click on visible lang button did NOT switch language; forced via hidden button",
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 2,
+   "paintedElements": 5,
+   "paintedRegions": 2,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "سبب وصول الملف إليك المدين يعترض على حسا"
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "محل اعتراض"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 97,
+    "13": 49,
+    "16": 3,
+    "24": 5
+   },
+   "weights": {
+    "400": 84,
+    "500": 7,
+    "600": 63
+   },
+   "fams": {
+    "Tajawal": 135,
+    "JetBrains Mono": 19
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 6,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 8,
+   "arEls": 124,
+   "lhMin": 1.17,
+   "lhMax": 1.7
+  },
+  "spine": {
+   "rect": [
+    0,
+    0,
+    1216,
+    182
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     884,
+     21,
+     272,
+     27
+    ],
+    "out": [
+     514,
+     12,
+     159,
+     70
+    ],
+    "dpd": [
+     254,
+     12,
+     236,
+     70
+    ],
+    "ptp": [
+     16,
+     12,
+     214,
+     70
+    ],
+    "why": [
+     16,
+     94,
+     1184,
+     30
+    ],
+    "rail": [
+     16,
+     137,
+     1184,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1280,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1280,
+   "bodyOverflow": "hidden",
+   "navW": 64,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      896,
+      182,
+      320,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      416,
+      182,
+      480,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      0,
+      182,
+      416,
+      718
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 2,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 9
+  },
+  "why": "سبب وصول الملف إليك المدين يعترض على حساب بنك الخليج ميريديان، سُجل في 26 أغسطس 2026."
+ },
+ {
+  "vp": "1280x900",
+  "rec": "aisha",
+  "dir": "en",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 1,
+   "paintedElements": 5,
+   "paintedRegions": 3,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "Why this reached you Hardship reported t"
+    },
+    {
+     "label": "i.flagdot",
+     "hits": [
+      "bg:coral"
+     ],
+     "text": ""
+    },
+    {
+     "label": "div.t-sec.reasoncue",
+     "hits": [
+      "text:coralDeep"
+     ],
+     "text": "Reason for assignment ↑"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 97,
+    "13": 55,
+    "16": 2,
+    "24": 5
+   },
+   "weights": {
+    "400": 87,
+    "500": 6,
+    "600": 66
+   },
+   "fams": {
+    "Inter": 143,
+    "JetBrains Mono": 16
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 6,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 0,
+   "arEls": 0,
+   "lhMin": null,
+   "lhMax": null
+  },
+  "spine": {
+   "rect": [
+    64,
+    0,
+    1216,
+    173
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     124,
+     20,
+     362,
+     24
+    ],
+    "out": [
+     644,
+     12,
+     162,
+     64
+    ],
+    "dpd": [
+     830,
+     12,
+     225,
+     64
+    ],
+    "ptp": [
+     1079,
+     12,
+     185,
+     64
+    ],
+    "why": [
+     80,
+     88,
+     1184,
+     28
+    ],
+    "rail": [
+     80,
+     128,
+     1184,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1280,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1280,
+   "bodyOverflow": "hidden",
+   "navW": 64,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      64,
+      173,
+      320,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      384,
+      173,
+      480,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      864,
+      173,
+      416,
+      727
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 1,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 8
+  },
+  "why": "Why this reached you Hardship reported to the AI agent on 8 Sep 2026. 1 broken promise on Emirates Finance."
+ },
+ {
+  "vp": "1280x900",
+  "rec": "aisha",
+  "dir": "ar",
+  "langNote": "real user click on visible lang button did NOT switch language; forced via hidden button",
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 1,
+   "paintedElements": 5,
+   "paintedRegions": 3,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "سبب وصول الملف إليك أبلغ المدين الوكيل ا"
+    },
+    {
+     "label": "i.flagdot",
+     "hits": [
+      "bg:coral"
+     ],
+     "text": ""
+    },
+    {
+     "label": "div.t-sec.reasoncue",
+     "hits": [
+      "text:coralDeep"
+     ],
+     "text": "سبب الإسناد ↑"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 97,
+    "13": 55,
+    "16": 2,
+    "24": 5
+   },
+   "weights": {
+    "400": 87,
+    "500": 6,
+    "600": 66
+   },
+   "fams": {
+    "Tajawal": 143,
+    "JetBrains Mono": 16
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 6,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 7,
+   "arEls": 130,
+   "lhMin": 1.17,
+   "lhMax": 1.7
+  },
+  "spine": {
+   "rect": [
+    0,
+    0,
+    1216,
+    182
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     802,
+     21,
+     354,
+     27
+    ],
+    "out": [
+     487,
+     12,
+     169,
+     70
+    ],
+    "dpd": [
+     250,
+     12,
+     214,
+     70
+    ],
+    "ptp": [
+     16,
+     12,
+     210,
+     70
+    ],
+    "why": [
+     16,
+     94,
+     1184,
+     30
+    ],
+    "rail": [
+     16,
+     137,
+     1184,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1280,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1280,
+   "bodyOverflow": "hidden",
+   "navW": 64,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      896,
+      182,
+      320,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      416,
+      182,
+      480,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      0,
+      182,
+      416,
+      718
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 1,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 8
+  },
+  "why": "سبب وصول الملف إليك أبلغ المدين الوكيل الآلي بتعثر مالي في 8 سبتمبر 2026. وعد واحد لم يُنفَّذ على إمارات للتمويل."
+ },
+ {
+  "vp": "1280x900",
+  "rec": "stress",
+  "dir": "en",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 3,
+   "paintedElements": 8,
+   "paintedRegions": 5,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "Why this reached you Borrower disputes t"
+    },
+    {
+     "label": "i.flagdot",
+     "hits": [
+      "bg:coral"
+     ],
+     "text": ""
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "678 d"
+    },
+    {
+     "label": "div.t-sec.reasoncue",
+     "hits": [
+      "text:coralDeep"
+     ],
+     "text": "Reason for assignment ↑"
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "Disputed"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 143,
+    "13": 61,
+    "16": 8,
+    "24": 5
+   },
+   "weights": {
+    "400": 115,
+    "500": 12,
+    "600": 90
+   },
+   "fams": {
+    "Inter": 181,
+    "JetBrains Mono": 36
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 9,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 0,
+   "arEls": 0,
+   "lhMin": null,
+   "lhMax": null
+  },
+  "spine": {
+   "rect": [
+    64,
+    0,
+    1216,
+    173
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     124,
+     20,
+     364,
+     24
+    ],
+    "out": [
+     567,
+     12,
+     204,
+     64
+    ],
+    "dpd": [
+     795,
+     12,
+     246,
+     64
+    ],
+    "ptp": [
+     1065,
+     12,
+     199,
+     64
+    ],
+    "why": [
+     80,
+     88,
+     1184,
+     28
+    ],
+    "rail": [
+     80,
+     128,
+     1184,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1280,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1280,
+   "bodyOverflow": "hidden",
+   "navW": 64,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      64,
+      173,
+      320,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      384,
+      173,
+      480,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      864,
+      173,
+      416,
+      727
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 7,
+   "sortedDesc": true
+  },
+  "empties": [
+   "None on record",
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 14
+  },
+  "why": "Why this reached you Borrower disputes the Tamara account, raised 1 Jun 2026. 3 broken promises on First Abu Dhabi Bank. +3 more conditions"
+ },
+ {
+  "vp": "1280x900",
+  "rec": "stress",
+  "dir": "ar",
+  "langNote": "real user click on visible lang button did NOT switch language; forced via hidden button",
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 3,
+   "paintedElements": 8,
+   "paintedRegions": 5,
+   "regions": [
+    {
+     "label": "div.why",
+     "hits": [
+      "bg:coralWash"
+     ],
+     "text": "سبب وصول الملف إليك المدين يعترض على حسا"
+    },
+    {
+     "label": "i.flagdot",
+     "hits": [
+      "bg:coral"
+     ],
+     "text": ""
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "678 يوم"
+    },
+    {
+     "label": "div.t-sec.reasoncue",
+     "hits": [
+      "text:coralDeep"
+     ],
+     "text": "سبب الإسناد ↑"
+    },
+    {
+     "label": "span.badge.alert",
+     "hits": [
+      "bg:coralWash",
+      "text:coralText"
+     ],
+     "text": "محل اعتراض"
+    }
+   ]
+  },
+  "type": {
+   "sizes": {
+    "12": 143,
+    "13": 61,
+    "16": 8,
+    "24": 5
+   },
+   "weights": {
+    "400": 115,
+    "500": 12,
+    "600": 90
+   },
+   "fams": {
+    "Tajawal": 181,
+    "JetBrains Mono": 36
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 9,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 15,
+   "arEls": 172,
+   "lhMin": 1.17,
+   "lhMax": 1.7
+  },
+  "spine": {
+   "rect": [
+    0,
+    0,
+    1216,
+    182
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     809,
+     21,
+     347,
+     27
+    ],
+    "out": [
+     505,
+     12,
+     173,
+     70
+    ],
+    "dpd": [
+     257,
+     12,
+     224,
+     70
+    ],
+    "ptp": [
+     16,
+     12,
+     217,
+     70
+    ],
+    "why": [
+     16,
+     94,
+     1184,
+     30
+    ],
+    "rail": [
+     16,
+     137,
+     1184,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1280,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1280,
+   "bodyOverflow": "hidden",
+   "navW": 64,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      896,
+      182,
+      320,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      416,
+      182,
+      480,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      0,
+      182,
+      416,
+      718
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 7,
+   "sortedDesc": true
+  },
+  "empties": [
+   "لا يوجد وعد مسجل",
+   "–"
+  ],
+  "ltrDisp": {
+   "inline-block": 14
+  },
+  "why": "سبب وصول الملف إليك المدين يعترض على حساب تمارا، سُجل في 1 يونيو 2026. 3 وعود لم تُنفَّذ على بنك أبوظبي الأول. و3 حالات أخرى"
+ },
+ {
+  "vp": "1280x900",
+  "rec": "sparse",
+  "dir": "en",
+  "langNote": null,
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 0,
+   "paintedElements": 0,
+   "paintedRegions": 0,
+   "regions": []
+  },
+  "type": {
+   "sizes": {
+    "12": 77,
+    "13": 38,
+    "16": 2,
+    "24": 5
+   },
+   "weights": {
+    "400": 66,
+    "500": 6,
+    "600": 50
+   },
+   "fams": {
+    "Inter": 110,
+    "JetBrains Mono": 12
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 15,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 12,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 12,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 0,
+   "arEls": 0,
+   "lhMin": null,
+   "lhMax": null
+  },
+  "spine": {
+   "rect": [
+    64,
+    0,
+    1216,
+    173
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     124,
+     20,
+     244,
+     24
+    ],
+    "out": [
+     728,
+     12,
+     147,
+     64
+    ],
+    "dpd": [
+     899,
+     12,
+     142,
+     64
+    ],
+    "ptp": [
+     1065,
+     12,
+     199,
+     64
+    ],
+    "why": [
+     80,
+     88,
+     1184,
+     28
+    ],
+    "rail": [
+     80,
+     128,
+     1184,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1280,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1280,
+   "bodyOverflow": "hidden",
+   "navW": 64,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      64,
+      173,
+      320,
+      727
+     ],
+     "scrolls": false
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      384,
+      173,
+      480,
+      727
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      864,
+      173,
+      416,
+      727
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 1,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–",
+   "None on record"
+  ],
+  "ltrDisp": {
+   "inline-block": 6
+  },
+  "why": "No escalation flag on record. Routine review."
+ },
+ {
+  "vp": "1280x900",
+  "rec": "sparse",
+  "dir": "ar",
+  "langNote": "real user click on visible lang button did NOT switch language; forced via hidden button",
+  "queueCoral": 3,
+  "pageErrors": [],
+  "coral": {
+   "dataAlert": 0,
+   "paintedElements": 0,
+   "paintedRegions": 0,
+   "regions": []
+  },
+  "type": {
+   "sizes": {
+    "12": 77,
+    "13": 38,
+    "16": 2,
+    "24": 5
+   },
+   "weights": {
+    "400": 66,
+    "500": 6,
+    "600": 50
+   },
+   "fams": {
+    "Tajawal": 110,
+    "JetBrains Mono": 12
+   },
+   "bad": [],
+   "badCount": 0
+  },
+  "contrast": {
+   "failCount": 15,
+   "worst": [
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 12,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 12,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.23,
+     "need": 4.5,
+     "fs": 13,
+     "label": "span.empty",
+     "text": "–",
+     "fg": "rgb(138, 144, 148)",
+     "bg": "rgb(255,255,255)"
+    },
+    {
+     "ratio": 3.7,
+     "need": 4.5,
+     "fs": 12,
+     "label": "div.avatar",
+     "text": "R",
+     "fg": "rgb(255, 255, 255)",
+     "bg": "rgb(6,148,148)"
+    }
+   ]
+  },
+  "arChecks": {
+   "ls": [],
+   "italic": 0,
+   "lowWeight": 0,
+   "notTajawal": 4,
+   "arEls": 93,
+   "lhMin": 1.17,
+   "lhMax": 1.7
+  },
+  "spine": {
+   "rect": [
+    0,
+    0,
+    1216,
+    182
+   ],
+   "gRegions": 6,
+   "g": {
+    "name": [
+     965,
+     21,
+     191,
+     27
+    ],
+    "out": [
+     432,
+     12,
+     152,
+     70
+    ],
+    "dpd": [
+     257,
+     12,
+     151,
+     70
+    ],
+    "ptp": [
+     16,
+     12,
+     217,
+     70
+    ],
+    "why": [
+     16,
+     94,
+     1184,
+     30
+    ],
+    "rail": [
+     16,
+     137,
+     1184,
+     32
+    ]
+   },
+   "factNodes": {
+    "idline": 3,
+    "stats": 3,
+    "why": 1,
+    "rail": 6
+   },
+   "movedOnPaneScroll": false
+  },
+  "page": {
+   "innerW": 1280,
+   "innerH": 900,
+   "docScrollH": 900,
+   "docScrollW": 1280,
+   "bodyOverflow": "hidden",
+   "navW": 64,
+   "cols": [
+    {
+     "id": "c-bor",
+     "rect": [
+      896,
+      182,
+      320,
+      718
+     ],
+     "scrolls": false
+    },
+    {
+     "id": "c-acc",
+     "rect": [
+      416,
+      182,
+      480,
+      718
+     ],
+     "scrolls": true
+    },
+    {
+     "id": "c-act",
+     "rect": [
+      0,
+      182,
+      416,
+      718
+     ],
+     "scrolls": false
+    }
+   ]
+  },
+  "accordions": [],
+  "cards": {
+   "n": 1,
+   "sortedDesc": true
+  },
+  "empties": [
+   "–",
+   "لا يوجد وعد مسجل"
+  ],
+  "ltrDisp": {
+   "inline-block": 6
+  },
+  "why": "لا توجد حالة تصعيد مسجلة. مراجعة اعتيادية."
+ }
+]
