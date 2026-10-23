@@ -63,7 +63,7 @@
   --ease-out:cubic-bezier(.23,1,.32,1);
 }
 /* A8: DualKit Arabic floor, same four roles. AR 14/16/16/24, leading x1.7 (A3) */
-html[lang="ar"]{--fs-meta:14px; --fs-body:16px; --fs-title:16px; --lh-meta:1.7; --lh-body:1.7; --lh-title:1.7}
+html[lang="ar"]{--fs-meta:14px; --fs-body:16px; --fs-title:16px; --lh-meta:1.7; --lh-body:1.7; --lh-title:1.7; --chrome-fs:14px; --chrome-lh:1.7}
 
 /* ═══ layer 3 · components ═══ */
 *{box-sizing:border-box}
@@ -425,7 +425,7 @@ tbody tr:hover .mini{border-color:var(--border-control)}
   .act:active,.mini:active,.card:active,.nav-lang button:active{transform:none!important}
 }
 
-/* ── reviewer bar (H0). chrome, not product: black, 36px, labelled, fixed 12px in both languages ── */
+/* ── reviewer bar (H0). chrome, not product: black, 36px, labelled, 12px in English, 14px in Arabic (DualKit floor) ── */
 .rbar{flex:0 0 var(--rbar-h);display:flex;align-items:center;gap:var(--space-150);padding:0 var(--space-200);background:var(--chrome-bar);color:var(--chrome-text);
   font-size:var(--chrome-fs);line-height:var(--chrome-lh);white-space:nowrap;overflow:hidden}
 .rbar .rb-label,.rb-note{color:var(--chrome-text-muted)}

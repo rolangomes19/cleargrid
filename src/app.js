@@ -135,6 +135,7 @@ function render(){
   stack.innerHTML=spine()+
    `<div class="cols${S.mode==='compare'?' compare':''}${rec().logs.length<8?' act-sparse':''}">${borrowerCol()}${S.mode==='compare'?compareView():accountCol()+activityCol()}</div>`;
  }
+ document.getElementById('rbar').setAttribute('aria-label',t().bar.region);
  document.getElementById('rbar').innerHTML=rbar();
  writeUrl();
  wire();
