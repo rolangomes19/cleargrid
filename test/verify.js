@@ -1,5 +1,8 @@
 const fs=require('fs'),{JSDOM}=require('jsdom');
 const errs=[];
+// council R-E: verify reads dist/, so a stale build would test old HTML. fail loudly instead.
+{const newest=fs.readdirSync('src').map(f=>fs.statSync('src/'+f).mtimeMs).reduce((a,b)=>Math.max(a,b),0);
+ if(fs.statSync('dist/cleargrid-borrower-profile.html').mtimeMs<newest-1000) errs.push('STALE: dist/ is older than src/. run ./build.sh first');}
 const dom=new JSDOM(fs.readFileSync('dist/cleargrid-borrower-profile.html','utf8'),
  {url:'http://localhost/',runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.addEventListener('error',e=>errs.push(e.message))}});
 const {window}=dom,doc=window.document;
@@ -77,14 +80,15 @@ for(const r of ['omar','aisha','stress','sparse','blocked','ksa']){
   const sorted=outs.every((v,i)=>i===0||outs[i-1]>=v);
   behav.push(['cards sorted outstanding-descending', sorted]);
   click(doc.getElementById('b-compare'));
+  const inCompare=!!doc.querySelector('.cols.compare');
   const compareRows=doc.querySelectorAll('tbody tr').length;
   click(doc.getElementById('b-compare'));
   behav.push(['every account reachable (cards match compare rows)', doc.querySelectorAll('.card[data-a]').length===compareRows]);
-  behav.push(['compare reachable in one click', !!doc.getElementById('b-compare')]);
+  behav.push(['compare reachable in one click', inCompare]);
  } else if(r==='sparse'){
-  behav.push(['nulls render as dash, not blank', !!doc.querySelector('.empty')]);
+  behav.push(['nulls render as dash, not blank', !!doc.querySelector('.row.is-empty')&&[...doc.querySelectorAll('.row.is-empty .v')].every(v=>v.textContent.trim()==='–')]);
   behav.push(['labels persist beside empty values', !!doc.querySelector('.row.is-empty .k')]);
-  behav.push(['three-column layout holds', doc.querySelectorAll('.cols>.col').length>=2]);
+  behav.push(['three-column layout holds', doc.querySelectorAll('.cols>.col').length===3]);
  } else if(r==='blocked'){
   behav.push(['all four channels restricted with reasons', doc.querySelectorAll('.cnote').length===4]);
   behav.push(['UAE hours cite CBUAE', /CBUAE/.test(doc.querySelector('#cr-call')?.textContent||'')]);
@@ -92,6 +96,11 @@ for(const r of ['omar','aisha','stress','sparse','blocked','ksa']){
   behav.push(['KSA call cap cites SAMA', /SAMA/.test(doc.querySelector('#cr-call')?.textContent||'')]);
   behav.push(['10 call attempts logged to back the cap', R10()]);
   behav.push(['amounts in SAR', /SAR/.test(doc.querySelector('.stats').textContent)]);
+  behav.push(['KSA cites the current SAMA articles, not the 2018 text', !/2018/.test(doc.getElementById('stack').innerHTML)&&/Art\. 4\(3\)/.test(doc.querySelector('#cr-call')?.textContent||'')]);
+  // SAMA 6(4): an open complaint stops reminders on every channel, not one
+  window.eval("R.ksa.accts[0].dispute={date:'2026-07-01',why:{en:'t',ar:'t'}};render()");
+  behav.push(['KSA open complaint blocks all four channels', doc.querySelectorAll('.rail .act.off').length===4&&[...doc.querySelectorAll('.cnote')].every(n=>/6\(4\)/.test(n.textContent))]);
+  window.eval("R.ksa.accts[0].dispute=null;render()");
  }
  behav.forEach(([label,ok])=>{ if(!ok) errs.push(`BEHAV ${r}: ${label}`); });
  console.log(' behav:',behav.map(([l,ok])=>`${ok?'pass':'FAIL'} ${l}`).join(' | '));
@@ -138,8 +147,8 @@ click(doc.getElementById('w-save'));
 if(!doc.querySelector('.wrap-done')) errs.push('WRAPUP: save did not show the confirmation state');
 console.log('wrapup save: confirmation shown =',!!doc.querySelector('.wrap-done'));
 click(doc.getElementById('w-return'));
-if(!doc.querySelector('.queue')) errs.push('WRAPUP: "Return to queue" did not land back on the queue');
-console.log('return to queue ->',!!doc.querySelector('.queue'));
+if(!doc.querySelector('#queue')) errs.push('WRAPUP: "Return to queue" did not land back on the queue');
+console.log('return to queue ->',!!doc.querySelector('#queue'));
 // reopen the same case the normal way to confirm the mutation actually reached the log
 openCase('omar');
 if(!doc.querySelector('.log.new')) errs.push('WRAPUP: saved outcome did not appear as a new log row on reopen');
@@ -196,6 +205,79 @@ if(errs.length) process.exitCode=1;
  if(errs.length&&!process.exitCode){console.log('ERRORS:',errs.join(' | '));process.exitCode=1;}
 }
 
+// P4: system proof
+{
+ const W=window.eval.bind(window), R_=W('R'), today=W('TODAY'), when=W('when'), days=W('days');
+ // 1.4 integrity, every fixture
+ for(const [k,r] of Object.entries(R_)){
+  r.accts.forEach(a=>{
+   if(!(a.over<=a.out&&a.out<=a.total)) errs.push(`1.4 ${k}/${a.ref}: overdue ≤ outstanding ≤ original fails`);
+   if(a.principal>a.total) errs.push(`1.4 ${k}/${a.ref}: principal above original`);
+   if(a.ptp&&a.ptp.state==='broken'&&!(when(a.ptp.date)<today)) errs.push(`1.4 ${k}/${a.ref}: broken promise not in the past`);
+   if(a.ptp&&a.ptp.state==='open'&&days(a.ptp.date)>0) errs.push(`1.4 ${k}/${a.ref}: open promise dated in the past`);
+   if(a.broken&&!a.brokenLast&&a.ptp?.state!=='broken'&&k!=='omar') errs.push(`1.4 ${k}/${a.ref}: broken count without a date`);
+   if(a.plan&&a.plan.paid>a.plan.of) errs.push(`1.4 ${k}/${a.ref}: plan paid > instalments`);
+  });
+  const ph=r.logs.filter(l=>l.src==='phone'), ai=r.logs.filter(l=>l.src==='ai');
+  if(r.calls.h<ph.length) errs.push(`1.4 ${k}: total human calls ${r.calls.h} < ${ph.length} logged`);
+  if(r.calls.ai<ai.length) errs.push(`1.4 ${k}: total AI calls ${r.calls.ai} < ${ai.length} logged`);
+  const lastAns=ph.filter(l=>l.out!=='noans').map(l=>when(l.at)).sort((x,y)=>y-x)[0];
+  if((lastAns?+lastAns:null)!==(r.calls.lastH?+when(r.calls.lastH):null)) errs.push(`1.4 ${k}: latest human call answered ≠ latest answered phone log`);
+  if(r.market==='SA'){ const n=ph.filter(l=>days(l.at)<=30).length; if(n>10) errs.push(`1.4 ${k}: ${n} attempts in 30 days > SAMA 10`);
+   if(r.ch.call==='cap'&&n!==10) errs.push(`1.4 ${k}: cap shown but ${n} attempts logged`); }
+ }
+ // 3.7: the queue owns no CSS
+ const css=fs.readFileSync('src/tokens.css','utf8').replace(/\/\*[\s\S]*?\*\//g,'');
+ if(/(^|[\s,}])(\.q[\w-]*|#q-?[\w-]*|[^{}]*\[data-q\]|[^{}]*queue)[^{}]*\{/m.test(css)) errs.push('3.7: queue-specific CSS rules found');
+ // council R-E: the state matrix is a contract. every control it lists needs the hover/active rules it claims,
+ // and one shared focus-visible ring.
+ {const cssAll=fs.readFileSync('src/tokens.css','utf8').replace(/\/\*[\s\S]*?\*\//g,'');
+  const ctrl={'.act':'hover','.mini':'hover','.card':'hover','.tabs button':'hover','.dd-trigger':'hover','.dd-opt':'hover','.linkbtn':'hover'};
+  for(const [sel,st] of Object.entries(ctrl)){
+   const re=new RegExp(sel.replace(/[.]/g,'\\.')+'[^{}]*:'+st+'\\b[^{}]*\\{');
+   if(!re.test(cssAll)) errs.push('3.8: state matrix lists '+sel+' but the stylesheet has no :'+st+' rule for it');}
+  if(!/:focus-visible\{outline:none;box-shadow:var\(--focus-ring\)\}/.test(cssAll.replace(/\s+/g,''))) errs.push('3.8: shared focus-visible ring missing');
+  if(/\.mini:disabled\{/.test(cssAll)&&!/\.act:disabled,\.mini:disabled/.test(cssAll)) errs.push('3.8: two disabled idioms (.mini:disabled vs .off)');}
+ // 1.5 system states
+ toQueue();openCase('omar');setLang('en');
+ W("S.state='loading';render()"); if(!doc.querySelector('[aria-busy="true"]')) errs.push('1.5: loading state not rendered');
+ W("S.state='stale';render()"); if(!doc.querySelector('.why.stale')) errs.push('1.5: stale band missing');
+ click(doc.getElementById('b-refresh')); if(doc.querySelector('.why.stale')) errs.push('1.5: Refresh did not clear stale');
+ W("S.state='blocked';render()"); click(doc.querySelector('.rail [data-ch="call"]'));
+ if(!doc.querySelector('.dispatch')) errs.push('1.5: blocked-at-dispatch notice missing');
+ W("S.state='savefail';S.dispatch=null;render()"); click(doc.getElementById('b-entry'));
+ doc.getElementById('w-note').value='kept'; const before=W('rec().logs.length');
+ click(doc.getElementById('w-save'));
+ if(!doc.querySelector('.save-fail')||doc.getElementById('w-note').value!=='kept'||W('rec().logs.length')!==before) errs.push('1.5: save failed did not keep the entry');
+ W("S.state=null;S.mode='profile';render()");
+ // 3.5: an editable field is a control and writes back
+ click(doc.querySelectorAll('.card')[1]);
+ const ed=doc.querySelector('.row.edit .dd-trigger');
+ if(!ed) errs.push('3.5: editable field is not a control');
+ else { click(ed); click(doc.querySelector('.row.edit .dd-opt[data-v="yes"]'));
+  if(W('acc().fields.verif')!=='yes') errs.push('3.5: editable field did not write back'); }
+ // 3.8 component sheet + dictionary
+ click(doc.getElementById('rb-sheet'));
+ const specs=doc.querySelectorAll('.sheet-grid>.blk').length, dict=doc.querySelectorAll('#dict tbody tr').length;
+ if(specs<12) errs.push(`3.8: sheet shows ${specs} components`);
+ if(dict!==W('DICT').length) errs.push('1.4: dictionary rows missing');
+ click(doc.getElementById('b-logback'));
+ console.log(`P4: ${specs} components on the sheet, ${dict} dictionary entries, 4 states checked`);
+ if(errs.length&&!process.exitCode){console.log('ERRORS:',errs.join(' | '));process.exitCode=1;}
+}
+
+// P5: the test page renders its harness and the pre-registered plan
+{
+ click(doc.getElementById('rb-test'));
+ const ids=['harness','klm','hyp','methods','rubric','decide','drop'].filter(id=>!doc.getElementById(id));
+ if(ids.length) errs.push('P5: test page sections missing: '+ids.join(', '));
+ if(!doc.getElementById('b-harness')) errs.push('P5: harness run button missing');
+ if(doc.querySelectorAll('#hyp tbody tr').length!==8) errs.push('P5: expected 8 hypotheses');
+ click(doc.getElementById('b-logback'));
+ console.log('P5: test page sections present; harness runs in a real browser (layout, fonts, axe)');
+ if(errs.length&&!process.exitCode){console.log('ERRORS:',errs.join(' | '));process.exitCode=1;}
+}
+
 // 3.2: values come from tokens. every colour, space, size, radius and type declaration in the
 // component layer counts; a literal px or colour fails it. target >= 90%.
 {
@@ -209,6 +291,8 @@ if(errs.length) process.exitCode=1;
  }
  const ratio=tok/(tok+lit);
  console.log(`3.2 token ratio: ${tok}/${tok+lit} = ${(ratio*100).toFixed(1)}%`);
+ const rawType=lits.filter(l=>/^(font-size|line-height):/.test(l));
+ if(rawType.length) errs.push('3.2: raw type sizes bypass the --fs-*/--lh-* tokens: '+rawType.join(' | '));
  if(ratio<.9) errs.push(`3.2: token ratio ${(ratio*100).toFixed(1)}% < 90%. literals: ${lits.join(' | ')}`);
  if(errs.length&&!process.exitCode) {console.log('ERRORS:',errs.join('\n'));process.exitCode=1;}
 }
