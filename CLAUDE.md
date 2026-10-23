@@ -1,6 +1,6 @@
 # ClearGrid Borrower Profile — working rules
 
-Dense-UI redesign for collections agents. Desktop only, 1440×900, degrading to 1280.
+Dense-UI redesign for collections agents. Desktop only, designed for 1366×768 and 1920×1080; 1024–1365 renders the 1366 layout scaled; below 1024 shows a fallback page. Plan: ../cleargrid-reinterview-plan.md (H0 + P1 done).
 Two language builds: English LTR, Arabic RTL.
 
 ## Commands
@@ -20,10 +20,11 @@ untested output.
 |---|---|---|
 | `src/core.js` | Clock, formatters, state, selectors, escalation logic | Rarely |
 | `src/i18n.js` | EN/AR dictionary | Any string change |
-| `src/data.js` | The four test records | Data changes only |
+| `src/data.js` | The six test records (stress, omar, aisha, sparse, blocked, ksa) | Data changes only |
 | `src/components.js` | Badge, field row, block, bars | New atom |
 | `src/regions.js` | Spine, three columns, compare view | Most layout work |
-| `src/app.js` | Nav, render, events | Interaction work |
+| `src/story.js` | Tour steps, decision cards, log view, strip, spotlight, Why links | Tour or decision copy |
+| `src/app.js` | Nav, render, events, URL state, reviewer bar | Interaction work |
 | `src/tokens.css` | All styling | Visual work |
 
 Read only the file you need. Do not read `dist/` — it is generated.
@@ -58,23 +59,25 @@ the row when folded into Emphasis. That toggle has been removed — this is the 
 | Style | Spec | Job |
 |---|---|---|
 | `display` | Mono, 500, 24/28 (`.sm` = 16/24), tabular, -1% tracking | The numbers an agent reads aloud |
-| `title` | Inter, 600, 16/24 | The borrower's name — spine header and queue rows, plus the queue page title |
-| `emphasis` (`.t-pri`) | Inter, 600, 13/20 | Names/headline text inside a row — card lender, log outcome; buttons (md) |
-| `label` (`.t-sec`, `.eyebrow`) | Inter, 400, 12/16 | Everything else: field labels, table headers, nav, log meta, badges, sub-captions |
+| `title` | Geist, 600, 14/20 (AR 16) | The borrower's name — spine header and queue rows, plus the queue page title |
+| `emphasis` (`.t-pri`) | Geist, 600, 13/20 | Names/headline text inside a row — card lender, log outcome; buttons (md) |
+| `label` (`.t-sec`, `.eyebrow`) | Geist, 400, 12/16 | Everything else: field labels, table headers, nav, log meta, badges, sub-captions |
 
-Body text is 13/20. **Four sizes exist — 12, 13, 16, 24 — as `--fs-*` tokens. Nothing smaller
-than 12 anywhere, no half-pixel sizes.** Spacing is a 4px grid (`--s1..--s6` = 4/8/12/16/24),
-radii `--r-sm:4` / `--r-md:6` / 50% (avatars). Control heights: 32 (`.act`), 28 (`.mini`),
-24 (tab buttons), 20 (badges). Column heads are a fixed 44px so the three share a baseline.
+Body text is 13/20. **Four sizes per script as `--fs-*` tokens: EN 12/13/14/24, AR 14/16/16/24
+(P2: goals 2.1 + DualKit Arabic floor). Nothing smaller than 12.** Spacing is Atlassian steps
+(`--space-025..--space-600` = 2/4/6/8/12/16/24/32/48), radii `--radius-sm:3` / `--radius-md:6` / 50%.
+Control heights (Primer): 32 (`.act`), 28 (`.mini`), 24 (xs), 20 (badges). Column heads are a fixed
+44px so the three share a baseline; tabs are underlines sitting on that rule.
 Arabic swaps the px line-heights for ×1.7 through the same tokens.
 
-`.eyebrow` still exists as a class (many templates already reference it) but its declaration
-is intentionally identical to `.t-sec` now, not a fork — a block heading and a field label
-render the same, and position/spacing is what tells them apart, not typography.
+Tokens are three layers in `tokens.css`: palette -> roles (`--text-muted`, `--action-primary`,
+`--escalation-fg`...) -> components. Components use roles only. `verify.js` fails the build
+below 90% token use (currently about 98%).
 
-Two weights system-wide: 400 / 600. **No 500, no 700** — one disclosed exception: JetBrains
-Mono ships no 600 weight file (only 400/500/700), so `display` stays at 500 rather than
-requesting a weight the font can't render — a real font limitation, not a design choice.
+`.eyebrow` still exists as a class but renders like `.t-sec`; a group heading (`.blk-h .eyebrow`)
+is the same size at weight 600 in text colour.
+
+Two weights: 400 / 600, plus 500 on mono display figures (`--fw-figure`).
 
 Mono for numerals, IDs, timestamps, amounts. Never for text labels — not even as
 uppercase+tracked "eyebrow" styling. All-caps mono labels were tried and removed: they read
@@ -94,7 +97,8 @@ as a handoff reference again.
 
 ## Arabic rules
 
-- Tajawal, loaded. Never Inter for Arabic.
+- IBM Plex Sans Arabic (400/600, real 600 weight). Never Geist for Arabic. Opposite-language spans carry `lang`.
+- Arabic size floor (DualKit): meta 14, body 16, title 16, display 24, via `html[lang=ar]` tokens.
 - Line height ×1.7. Tracking 0 on anything with Arabic glyphs. No italics. No weight below 400.
 - Logical CSS properties only (`margin-inline-start`, `border-inline-end`, `text-align: start`).
   A physical `left`/`right` in `tokens.css` is a bug.
@@ -103,6 +107,26 @@ as a handoff reference again.
 - Western digits, Gregorian calendar, both pinned. Money and dates come from `Intl`;
   never hand-concatenate a currency symbol.
 - Counted-noun agreement: dual for 2, plural for 3–10, singular for 11+.
+
+## Surfaces and colour (P2)
+
+Columns sit on the canvas; each group is a white bordered panel with a ruled head; field rows,
+log rows, table rows and queue rows carry a hairline; account cards are bordered panels; tabs are
+underlines. **Do not remove the panels or row hairlines**: P2 tried spacing-only rows and labels and
+values read as floating (user review, 23 Oct 2026: usability and legibility over a cleaner look).
+Hue meanings: teal = interactive, coral = why this reached you (`data-role=escalation` only),
+amber = account needs care, green = plan running. Status badges only for minority states.
+One `stat()` component for every label/value/sub figure; a null value renders in body text, never at hero size.
+
+## Story mode and decision log (P3)
+
+The tour is an overlay on the live product: same DOM, same fixtures. A step only sets
+`fx`, `lang`, `mode` and spotlights a selector; no state exists only in the tour. Story motion
+uses `--story-*` tokens and never animates a product component. Tour claims and card answers are
+drafts until the author rewrites them.
+The agent screen must read as finished UI: no "proposed" tags on it by default. Proposed fields
+are disclosed in the tour, the decision log and the reviewer bar's "Proposed fields" switch (`?prop=1`).
+The six in-context Why links are off by default too (`?ann=1` or the "Why links" switch). `verify.js` walks all 12 steps and checks every target exists.
 
 ## Nulls
 
@@ -114,7 +138,11 @@ Near none. Button press `scale(0.97)` 120ms. Entry form open 180ms. Everything e
 including the nav collapse and a newly logged row (static `tealWash`, no pulse).
 Account selection and tab switches get no animation.
 
-## No harness in the shipped page
+## Reviewer bar (replaces "No harness in the shipped page")
+
+The re-interview plan (H0) adds a 36px dark bar labelled "Prototype controls, not product UI": fixture switcher, EN/ع, fixture-clock note, Self-graded badge. `?debug=1` adds the T1 layout check (`cgT1()` in the console). Everything below is the earlier history.
+
+### Earlier: no harness
 
 The dev-only top bar (record/direction switcher, squint toggle) and the live layout-audit
 panel were removed from the product entirely — they're not just visually separated anymore,

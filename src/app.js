@@ -17,12 +17,7 @@ function nav(){
   <div class="nav-bottom">
    <div class="nav-lang">
     <button data-v="en"${S.lang==='en'?' class="on"':''}><span class="full">English</span><span class="ic">EN</span></button>
-    <button data-v="ar"${S.lang==='ar'?' class="on"':''}><span class="full">العربية</span><span class="ic">ع</span></button>
-   </div>
-   <div class="nav-promo">
-    <div class="t-pri">${esc(n.voiceTitle)}</div>
-    <div class="t-sec">${esc(n.voiceSub)}</div>
-    <button class="nav-promo-btn">${icon('mic')}<span>${esc(n.voiceBtn)}</span></button>
+    <button data-v="ar"${S.lang==='ar'?' class="on"':''} lang="ar"><span class="full">العربية</span><span class="ic">ع</span></button>
    </div>
    <div class="nav-profile">
     <div class="avatar">R</div>
@@ -34,6 +29,74 @@ function nav(){
    <button id="b-navcollapse" title="${esc(S.navCollapsed?n.expand:n.collapse)}">${icon('dcaret')}</button>
   </div>`;
 }
+
+/* ═══ 11.1 · reviewer bar (H0). chrome around the product, labelled as such, so a
+   reviewer can switch fixture and language without guessing. not product UI. ═══ */
+const FX=['stress','omar','aisha','sparse','blocked','ksa'];
+function rbar(){
+ const b=t().bar;
+ return `<span class="rb-label">${esc(b.label)}</span>
+  <label class="rb-fx"><span>${esc(b.fx)}</span><select id="rb-fx">${FX.map(k=>
+   `<option value="${k}"${S.rec===k?' selected':''}>${esc(L(R[k].name))} · ${esc(b.fxName[k])}</option>`).join('')}</select></label>
+  <span class="rb-lang"><button data-v="en"${S.lang==='en'?' aria-pressed="true"':''}>EN</button><button data-v="ar" lang="ar"${S.lang==='ar'?' aria-pressed="true"':''}>ع</button></span>
+  <span class="rb-note">${esc(b.fixtures)}</span>
+  ${SCALED?`<span class="rb-note">${esc(b.scaled)}</span>`:''}
+  ${DEBUG?`<span class="rb-t1" id="rb-t1"></span>`:''}
+  <span class="rb-links">
+   <button type="button" id="rb-tour"${S.step&&!S.paused?' aria-pressed="true"':''}>${esc(t().st.startTour)}</button>
+   <button type="button" id="rb-log"${S.mode==='log'?' aria-pressed="true"':''}>${esc(t().st.log)}</button>
+   <button type="button" id="rb-ann" aria-pressed="${S.ann}">${esc(t().st.anns)}</button>
+   <button type="button" id="rb-prop" aria-pressed="${S.prop}">${esc(t().st.props)}</button>
+  </span>
+  <span class="rb-badge">${esc(b.selfGraded)}</span>`;
+}
+
+/* ═══ 11.2 · URL state (plan §3.2). every view a reviewer sees is a link they can share.
+   unknown values fall back silently; changes replace history, never push. ═══ */
+const Q=new URLSearchParams(location.search);
+const DEBUG=Q.get('debug')==='1';
+let SCALED=false;
+function readUrl(){
+ if(['en','ar'].includes(Q.get('lang'))) S.lang=Q.get('lang');
+ if(FX.includes(Q.get('fx'))) S.rec=Q.get('fx');
+ if(['i','m','t','k'].includes(Q.get('tab'))) S.tab=Q.get('tab');
+ if(Q.get('scope')==='acct') S.scope='a'; /* default all: the list opens full, the agent narrows it */
+ if(Q.get('view')==='queue') S.mode='queue';
+ if(Q.get('view')==='log'){ S.mode='log'; S.card=CARDS.some(c=>c[0]===Q.get('card'))?Q.get('card'):null; }
+ if(Q.get('ann')==='1') S.ann=true; /* why links: reviewer layer, off by default */
+ if(Q.get('prop')==='1') S.prop=true;
+ S.sel=defaultSel();
+ const i=accts().findIndex(a=>a.ref===Q.get('acct')); if(i>=0) S.sel=i;
+}
+function writeUrl(){
+ const u=new URLSearchParams();
+ u.set('lang',S.lang); u.set('fx',S.rec);
+ if(S.mode==='queue') u.set('view','queue');
+ else if(S.mode==='log'){ u.set('view','log'); if(S.card) u.set('card',S.card); }
+ else { u.set('acct',acc().ref); u.set('tab',S.tab); u.set('scope',S.scope==='all'?'all':'acct'); }
+ if(S.step&&!S.paused) u.set('step',S.step);
+ if(S.ann) u.set('ann','1');
+ if(S.prop) u.set('prop','1');
+ if(DEBUG) u.set('debug','1');
+ /* step changes push, so browser Back steps back through the tour; all else replaces */
+ try{ history[PUSH?'pushState':'replaceState'](null,'','?'+u); }catch(e){}
+}
+
+/* ═══ 11.3 · T1 (rule W5): no column scrolls while another has > 25% of its area empty.
+   debug only; also callable from the console as cgT1(). ═══ */
+function cgT1(){
+ const cols=[...document.querySelectorAll('.cols>.col')].map(c=>{
+  const body=c.querySelector('.colbody'),head=c.querySelector('.colhead');
+  /* content bottom measured from the column's own top, plus the body's end padding */
+  const top=c.getBoundingClientRect().top-c.scrollTop;
+  const used=body?[...body.children].reduce((m,el)=>Math.max(m,el.getBoundingClientRect().bottom-top),head?head.offsetHeight:0)+parseFloat(getComputedStyle(body).paddingBlockEnd):0;
+  return {id:c.id||'col',w:c.clientWidth,scrolls:c.scrollHeight>c.clientHeight+1,
+   empty:Math.max(0,(c.clientHeight-used)/c.clientHeight)};
+ });
+ const fail=cols.some(c=>c.scrolls)&&cols.some(c=>!c.scrolls&&c.empty>.25);
+ return {pass:!fail,cols:cols.map(c=>`${c.id} ${c.w}px ${c.scrolls?'scrolls':Math.round(c.empty*100)+'% empty'}`)};
+}
+window.cgT1=cgT1;
 
 function render(){
  document.documentElement.lang=S.lang;
@@ -48,13 +111,21 @@ function render(){
     the account-card rail visible instead of introducing a second layout. */
  if(S.mode==='queue'){
   stack.innerHTML=queueView();
+ } else if(S.mode==='log'){
+  stack.innerHTML=logView();
  } else if(S.mode==='wrapup'){
   stack.innerHTML=spine()+`<div class="cols compare">${borrowerCol()}${wrapupView()}</div>`;
  } else {
   stack.innerHTML=spine()+
-   `<div class="cols${S.mode==='compare'?' compare':''}">${borrowerCol()}${S.mode==='compare'?compareView():accountCol()+activityCol()}</div>`;
+   `<div class="cols${S.mode==='compare'?' compare':''}${rec().logs.length<8?' act-sparse':''}">${borrowerCol()}${S.mode==='compare'?compareView():accountCol()+activityCol()}</div>`;
  }
+ document.getElementById('rbar').innerHTML=rbar();
+ writeUrl();
  wire();
+ storySync();
+ if(S.mode==='log'&&S.card){const c=document.getElementById('card-'+S.card); if(c&&c.scrollIntoView) c.scrollIntoView({block:'start'});}
+ if(DEBUG) requestAnimationFrame(()=>{const r=cgT1(),el=document.getElementById('rb-t1');
+  if(el){el.textContent=`T1 ${r.pass?'pass':'FAIL'}`;el.title=r.cols.join(' | ');el.dataset.pass=r.pass;}});
 }
 
 /* default selection: the account the escalation line names, else the largest. */
@@ -141,22 +212,25 @@ function wire(){
  on('b-scope',()=>{S.scope=S.scope==='a'?'all':'a';render();});
  on('b-entry',()=>{S.mode='wrapup';S.wrapDone=false;render();});
  on('b-inbox',()=>{S.mode='profile';S.tab='m';S.scope='all';render();});
- on('w-cancel',()=>{S.mode='profile';render();});
+ /* exit is faster than entry (150ms vs 180ms); reduced motion keeps the fade only */
+ on('w-cancel',()=>{const w=document.querySelector('.wrap'); if(w)w.classList.add('leaving');
+  setTimeout(()=>{S.mode='profile';render();},150);});
  on('w-save',()=>{
   const a=acc(),r=rec();
   const out=document.getElementById('w-out').value;
   const note=document.getElementById('w-note').value.trim();
-  const amt=parseFloat(document.getElementById('w-amt').value.replace(/[^\d.]/g,''));
+  const amt=parseFloat(toWesternDigits(document.getElementById('w-amt').value).replace(/[^\d.]/g,''));
   const date=document.getElementById('w-date').value;
-  const entry={at:new Date().toISOString().slice(0,16),a:a.ref,src:'phone',dir:'out',out,
+  const entry={at:new Date().toISOString(),a:a.ref,src:'phone',dir:'out',out,
     by:r.owner||'Agent',note:note?{en:note,ar:note}:null};
-  r.logs.unshift(entry); S.justLogged=entry;
+  r.logs.unshift(entry); S.justLogged=entry; S.enter=true;
   /* one write, three synchronised reads: spine stat, account card, this list */
   if(amt&&date){ a.ptp={amt,date,state:'open'}; }
   S.wrapDone=true; S.tab='i'; render();
  });
  on('w-return',()=>{S.wrapDone=false;S.mode='queue';render();});
  on('b-navcollapse',()=>{S.navCollapsed=!S.navCollapsed;render();});
+ on('b-id',()=>{S.showId=!S.showId;render();});
  wireNavFlyout();
  s.querySelectorAll('.dd').forEach(wireDropdown);
 }
@@ -205,7 +279,7 @@ function wireDropdown(dd){
  const dayF=new Intl.DateTimeFormat(loc,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
  const wk=Array.from({length:7},(_,i)=>new Intl.DateTimeFormat(loc,{weekday:S.lang==='ar'?'narrow':'short'})
    .format(new Date(2026,0,5+i))).map(w=>S.lang==='ar'?w:w.slice(0,2));
- const today=ISO(TODAY);
+ const today=TODAY_ISO;
  const draw=focusIso=>{
   const y=view.getFullYear(),m=view.getMonth(),days=new Date(y,m+1,0).getDate(),lead=(new Date(y,m,1).getDay()+6)%7;
   const atStart=y===TODAY.getFullYear()&&m===TODAY.getMonth();
@@ -219,9 +293,9 @@ function wireDropdown(dd){
        tabindex="${iso===tgt?0:-1}" aria-pressed="${iso===sel}" aria-label="${dayF.format(new Date(y,m,d))}">${N(d)}</button>`;
   }
   pop.innerHTML=`<div class="cal-head">
-    <button type="button" class="cal-nav" data-m="-1"${atStart?` aria-disabled="true" data-tip="${esc(T_.noPast)}"`:''} aria-label="${esc(T_.prevMonth)}">${icon('prev')}</button>
+    <button type="button" class="mini icon-only cal-nav" data-m="-1"${atStart?` aria-disabled="true" data-tip="${esc(T_.noPast)}"`:''} aria-label="${esc(T_.prevMonth)}">${icon('prev')}</button>
     <span class="cal-cap" aria-live="polite">${esc(monthF.format(view))}</span>
-    <button type="button" class="cal-nav" data-m="1" aria-label="${esc(T_.nextMonth)}">${icon('next')}</button></div>
+    <button type="button" class="mini icon-only cal-nav" data-m="1" aria-label="${esc(T_.nextMonth)}">${icon('next')}</button></div>
    <div class="cal-grid" role="grid">${wk.map(w=>`<span class="cal-wd" aria-hidden="true">${esc(w)}</span>`).join('')}${cells}</div>`;
   const f=pop.querySelector(`[data-d="${tgt}"]`)||pop.querySelector('.cal-day[data-d]');
   if(f){f.tabIndex=0; if(focusIso!==null)f.focus();}
@@ -251,5 +325,75 @@ function wireDropdown(dd){
   draw(iso);
  });
 }
-S.sel=defaultSel();
-render();
+/* reviewer bar: fixture + language. delegated, the bar re-renders each time. */
+document.getElementById('rbar').addEventListener('change',e=>{
+ if(e.target.id==='rb-fx'){S.rec=e.target.value;S.mode='profile';S.showId=false;S.sel=defaultSel();render();}});
+document.getElementById('rbar').addEventListener('click',e=>{
+ const b=e.target.closest('.rb-lang button'); if(b){S.lang=b.dataset.v;render();}});
+
+/* ═══ 13.3 · screen fit (plan §3.4). >=1366 as designed; 1024-1365 the 1366 layout
+   scaled down; below 1024 or touch-only, the fallback page unless "Open anyway". ═══ */
+function fit(){
+ const w=window.innerWidth,root=document.getElementById('root'),fb=document.getElementById('fallback');
+ const small=(w<1024||(window.matchMedia&&matchMedia('(hover:none) and (pointer:coarse)').matches))&&!sessionStorageGet('cg-force');
+ fb.hidden=!small; root.hidden=small;
+ SCALED=!small&&w<1366;
+ const k=SCALED?w/1366:1;
+ Object.assign(root.style,SCALED?{position:'fixed',top:'0',left:'0',width:'1366px',height:(window.innerHeight/k)+'px',
+  transform:`scale(${k})`,transformOrigin:'0 0'}:{position:'',top:'',left:'',width:'',height:'',transform:''});
+}
+function sessionStorageGet(k){try{return sessionStorage.getItem(k);}catch(e){return null;}}
+document.getElementById('fb-open').addEventListener('click',()=>{try{sessionStorage.setItem('cg-force','1');}catch(e){}
+ document.getElementById('fallback').hidden=true;document.getElementById('root').hidden=false;fit();render();});
+document.getElementById('fb-copy').addEventListener('click',e=>{
+ navigator.clipboard&&navigator.clipboard.writeText(location.href).then(()=>{e.target.textContent='✓';});});
+window.addEventListener('resize',()=>{const was=SCALED;fit();if(was!==SCALED)render();});
+
+/* ═══ 13.4 · story + decision log wiring ═══ */
+/* why links (product annotations and the strip's own): open the card in the log */
+document.addEventListener('click',e=>{
+ const a=e.target.closest('a.ann'); if(!a) return;
+ e.preventDefault();
+ if(S.mode!=='log') S.prevMode=S.mode;
+ if(S.step) S.paused=true;
+ S.card=a.dataset.card||null; S.mode='log'; render();
+});
+document.getElementById('rbar').addEventListener('click',e=>{
+ const b=e.target.closest('button'); if(!b) return;
+ if(b.id==='rb-tour') goStep(S.step||1,true);
+ if(b.id==='rb-log'){ if(S.mode!=='log'){S.prevMode=S.mode;S.card=null;S.mode='log';} else S.mode=S.prevMode; if(S.step)S.paused=true; render(); }
+ if(b.id==='rb-ann'){ S.ann=!S.ann; render(); }
+ if(b.id==='rb-prop'){ S.prop=!S.prop; render(); }
+});
+document.getElementById('stack').addEventListener('click',e=>{
+ if(e.target.closest('#b-logback')){ S.mode=S.prevMode==='log'?'profile':S.prevMode; S.card=null; render(); }
+});
+/* a click inside the product, outside the strip, means the reviewer wants to explore: pause */
+document.addEventListener('pointerdown',e=>{
+ if(S.step&&!S.paused&&!e.target.closest('#story,#rbar')) pauseStory();
+},true);
+/* tour keys: forward arrow / back arrow follow reading direction; Backspace back; Esc explore */
+document.addEventListener('keydown',e=>{
+ if(!S.step||S.paused||e.target.matches('input,textarea,select')||e.target.closest('.dd')) return;
+ const fwd=S.lang==='ar'?'ArrowLeft':'ArrowRight', bwd=S.lang==='ar'?'ArrowRight':'ArrowLeft';
+ if(e.key==='Escape'){ e.preventDefault(); exitStory(); }
+ else if(e.key===fwd){ e.preventDefault(); S.step===STEPS.length?exitStory():goStep(S.step+1,true); }
+ else if((e.key===bwd||e.key==='Backspace')&&S.step>1){ e.preventDefault(); goStep(S.step-1,true); }
+});
+window.addEventListener('popstate',()=>{
+ const p=new URLSearchParams(location.search),n=+p.get('step');
+ if(n>=1&&n<=STEPS.length) goStep(n,false); else if(S.step){ S.step=0; render(); }
+});
+window.addEventListener('resize',()=>placeSpot());
+/* columns scroll under the spotlight: keep it on its target */
+document.addEventListener('scroll',()=>{ if(S.step&&!S.paused) placeSpot(); },true);
+
+readUrl();
+fit();
+/* landing (plan decision 1): a first visit with a bare link starts the tour at step 1;
+   ?step=n opens that step; any other link opens free explore */
+const firstVisit=(()=>{try{return !localStorage.getItem('cg-toured');}catch(e){return false;}})();
+const stepQ=+Q.get('step');
+if(stepQ>=1&&stepQ<=STEPS.length) goStep(stepQ,false);
+else if(firstVisit&&!location.search) goStep(1,false);
+else render();

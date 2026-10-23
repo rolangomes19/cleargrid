@@ -1,8 +1,9 @@
 const fs=require('fs'),{JSDOM}=require('jsdom');
 const errs=[];
 const dom=new JSDOM(fs.readFileSync('dist/cleargrid-borrower-profile.html','utf8'),
- {runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.addEventListener('error',e=>errs.push(e.message))}});
+ {url:'http://localhost/',runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.addEventListener('error',e=>errs.push(e.message))}});
 const {window}=dom,doc=window.document;
+function R10(){return window.eval('R.ksa.logs').filter(l=>l.src==='phone').length===10;}
 const click=el=>el&&el.dispatchEvent(new window.Event('click',{bubbles:true}));
 // drives the real product UI now that the harness is gone — the queue and the nav's own
 // EN/AR toggle are real controls, so tests exercise the same paths an agent would.
@@ -10,17 +11,22 @@ const toQueue=()=>click(doc.querySelector('[data-nav="queue"]'));
 const openCase=key=>click(doc.querySelector(`[data-q="${key}"]`));
 const setLang=l=>click(doc.querySelector(`.nav-lang button[data-v="${l}"]`));
 
-// queue screen — this is what the app boots into (S.mode defaults to 'queue'),
-// so this is the true initial-load state, captured before anything else touches S.
+// landing (plan decision 1): a first visit with a bare link opens the tour at step 1
+if(!doc.querySelector('#story .strip')||!/step=1/.test(window.location.search)) errs.push('P3: first visit did not open the tour at step 1');
+// boot state (plan §3.1): the 7-account Stress profile, English, URL carries the state
+if(!doc.querySelector('.spine')||doc.querySelectorAll('.card').length!==7) errs.push('BOOT: expected the Stress profile with 7 accounts');
+if(!/fx=stress/.test(window.location.search)) errs.push('URL: fx not written to the address bar');
+if(doc.querySelector('.nav-promo')) errs.push('2.10: promo still in nav');
+toQueue();
 const qrows=doc.querySelectorAll('.qrow');
-if(qrows.length!==4) errs.push(`QUEUE row count = ${qrows.length}, expected 4`);
+if(qrows.length!==6) errs.push(`QUEUE row count = ${qrows.length}, expected 6`);
 const qAlerts=doc.querySelectorAll('[data-alert="1"]').length;
 if(qAlerts>3) errs.push(`QUEUE coral budget: ${qAlerts} elements, cap is 3`);
 console.log('queue rows:',qrows.length,'| coral:',qAlerts,
  '| order:',[...qrows].map(r=>r.dataset.q).join(' > '));
 
 console.log('\nrec       dir  accts sel          alerts  spineNums');
-for(const r of ['omar','aisha','stress','sparse']){
+for(const r of ['omar','aisha','stress','sparse','blocked','ksa']){
  toQueue();
  openCase(r);
  for(const d of ['en','ar']){
@@ -31,6 +37,19 @@ for(const r of ['omar','aisha','stress','sparse']){
   if(bad) errs.push(`TOKEN ${r}/${d}: ${bad[0].replace(/\s+/g,' ')}`);
   const alertCount=doc.querySelectorAll('[data-alert="1"]').length;
   if(alertCount>3) errs.push(`CORAL ${r}/${d}: ${alertCount} elements, cap is 3`);
+  // 1.9: every restricted channel shows a reason and a source chip, before any click
+  const off=doc.querySelectorAll('.rail .act.off').length, notes=doc.querySelectorAll('.cnote').length,
+   chips=doc.querySelectorAll('.cnote .src').length;
+  if(off!==notes||notes!==chips) errs.push(`1.9 ${r}/${d}: ${off} restricted, ${notes} reasons, ${chips} sources`);
+  // B2 (amended): the agent screen carries no proposal tags; the reviewer switch adds them
+  if(doc.querySelector('#stack .tag')) errs.push(`B2 ${r}/${d}: proposal tag on the product screen by default`);
+  if(doc.querySelector('.why[data-alert]')){ click(doc.getElementById('rb-prop'));
+   if(!doc.querySelector('.why .tag')) errs.push(`B2 ${r}/${d}: reviewer switch did not mark the escalation line`);
+   click(doc.getElementById('rb-prop')); }
+  // A4: no English left in the Arabic view (names, brands, IDs excepted)
+  if(d==='ar'){const txt=doc.getElementById('stack').textContent;
+   const left=['System','Borrower','monthly','flat','AED','Proposed','Client policy'].filter(w=>txt.includes(w));
+   if(left.length) errs.push(`A4 ${r}/ar: English left: ${left.join(', ')}`);}
   const sel=doc.querySelector('.card.on .t-pri');
   const nums=[...doc.querySelectorAll('.stats .t-display')].map(e=>e.textContent.trim()).join(' | ');
   console.log(r.padEnd(9),d.padEnd(4),String(doc.querySelectorAll('.card').length).padEnd(5),
@@ -46,13 +65,13 @@ for(const r of ['omar','aisha','stress','sparse']){
   // a disputed card's own status badge already says "Disputed" in coral — that IS its
   // escalation-to-account link (regions.js: .reasoncue is a fallback for non-dispute
   // flags only, so checking for it here was asserting the wrong element).
-  behav.push(['disputed account shows a coral status badge', !!doc.querySelector('.card.hot .badge.alert')]);
+  behav.push(['named account carries the escalation cue', !!doc.querySelector('.card.hot [data-role=escalation]')]);
   const wa=[...doc.querySelectorAll('.rail .act')][2];
   behav.push(['whatsapp shown restricted', !!wa && wa.classList.contains('off')]);
  } else if(r==='aisha'){
   behav.push(['hardship is the escalation reason', (doc.querySelector('.why')?.textContent||'').toLowerCase().includes('hardship')]);
   behav.push(['open promise visible in glance', !!doc.querySelector('[data-g="ptp"] .t-display:not(.empty)')]);
-  behav.push(['call available', !doc.querySelector('.rail .act')?.classList.contains('off')]);
+  behav.push(['call cap shown as client policy, not law', /Client policy/.test(doc.querySelector('#cr-call')?.textContent||'')]);
  } else if(r==='stress'){
   const outs=[...doc.querySelectorAll('.card .card-r .t-display')].map(e=>parseFloat(e.textContent.replace(/[^\d.]/g,'')));
   const sorted=outs.every((v,i)=>i===0||outs[i-1]>=v);
@@ -62,15 +81,32 @@ for(const r of ['omar','aisha','stress','sparse']){
   click(doc.getElementById('b-compare'));
   behav.push(['every account reachable (cards match compare rows)', doc.querySelectorAll('.card[data-a]').length===compareRows]);
   behav.push(['compare reachable in one click', !!doc.getElementById('b-compare')]);
- } else {
+ } else if(r==='sparse'){
   behav.push(['nulls render as dash, not blank', !!doc.querySelector('.empty')]);
   behav.push(['labels persist beside empty values', !!doc.querySelector('.row.is-empty .k')]);
   behav.push(['three-column layout holds', doc.querySelectorAll('.cols>.col').length>=2]);
+ } else if(r==='blocked'){
+  behav.push(['all four channels restricted with reasons', doc.querySelectorAll('.cnote').length===4]);
+  behav.push(['UAE hours cite CBUAE', /CBUAE/.test(doc.querySelector('#cr-call')?.textContent||'')]);
+ } else if(r==='ksa'){
+  behav.push(['KSA call cap cites SAMA', /SAMA/.test(doc.querySelector('#cr-call')?.textContent||'')]);
+  behav.push(['10 call attempts logged to back the cap', R10()]);
+  behav.push(['amounts in SAR', /SAR/.test(doc.querySelector('.stats').textContent)]);
  }
  behav.forEach(([label,ok])=>{ if(!ok) errs.push(`BEHAV ${r}: ${label}`); });
  console.log(' behav:',behav.map(([l,ok])=>`${ok?'pass':'FAIL'} ${l}`).join(' | '));
  }
 }
+
+// 1.4: every fixture national ID passes its check digit (Luhn)
+const luhn=s=>{const d=s.replace(/\D/g,'');let t=0;for(let i=0;i<d.length;i++){let n=+d[d.length-1-i];if(i%2){n*=2;if(n>9)n-=9}t+=n}return t%10===0};
+for(const [k,r] of Object.entries(window.eval('R'))) if(r.eid&&!luhn(r.eid)) errs.push(`1.4 ${k}: ID ${r.eid} fails check digit`);
+// A10: typed Arabic-Indic digits survive
+const tw=window.eval('toWesternDigits');
+[['١٤٢٠','1420'],['١٬٤٢٠٫٥','1420.5'],['۱۲۳','123'],['1,420','1420']].forEach(([a,b])=>{if(tw(a)!==b) errs.push(`A10: ${a} -> ${tw(a)}, expected ${b}`);});
+// privacy default: ID masked until revealed
+toQueue();openCase('omar');setLang('en');
+if(/4471209/.test(doc.getElementById('c-bor').textContent)) errs.push('PRIVACY: Emirates ID shown unmasked by default');
 
 // reconciliation — a MISMATCH fails the script, not just a console note
 toQueue();openCase('omar');setLang('en');
@@ -113,7 +149,7 @@ console.log('spine promise (post-save) =',doc.querySelectorAll('.stats .t-displa
 // RTL diff, once, on the record already loaded
 setLang('ar');
 console.log('\nAR spine:',doc.querySelector('.why').textContent.replace(/\s+/g,' ').trim().slice(0,130));
-console.log('AR stat sub:',doc.querySelector('.stats .sub').textContent);
+console.log('AR stat sub:',doc.querySelector('.stats .stat-sub').textContent);
 
 // collapsed-nav toggle still works (jsdom has no real layout engine, so the actual
 // centering fix is a CSS-only claim verified visually in the browser, not here)
@@ -125,3 +161,54 @@ click(doc.getElementById('b-navcollapse'));
 
 console.log('\nERRORS:',errs.length?errs.join('\n'):'none');
 if(errs.length) process.exitCode=1;
+
+// P3: story mode, decision log, why links
+{
+ const key=k=>doc.body.dispatchEvent(new window.KeyboardEvent('keydown',{key:k,bubbles:true}));
+ click(doc.getElementById('rb-tour'));
+ const STEPS=window.eval('STEPS'),CARDS=window.eval('CARDS'),ids=CARDS.map(c=>c[0]);
+ for(let i=1;i<=STEPS.length;i++){
+  const st=STEPS[i-1];
+  if(window.eval('S.step')!==i) errs.push(`P3: expected step ${i}, at ${window.eval('S.step')}`);
+  if(!new RegExp('step='+i+'(&|$)').test(window.location.search)) errs.push(`P3: step ${i} not in URL`);
+  if(st.t&&!doc.querySelector(st.t)) errs.push(`P3: step ${i} target ${st.t} missing`);
+  if(st.card&&!ids.includes(st.card)) errs.push(`P3: step ${i} cites unknown card ${st.card}`);
+  if(!st.en||!st.ar) errs.push(`P3: step ${i} missing EN or AR claim`);
+  if(i<STEPS.length) key(window.eval("S.lang==='ar'?'ArrowLeft':'ArrowRight'"));
+ }
+ key('Escape');
+ if(doc.querySelector('#story .strip')||/step=/.test(window.location.search)) errs.push('P3: Esc did not leave the tour');
+ if(CARDS.length!==17) errs.push(`P3: ${CARDS.length} decision cards, expected 17`);
+ toQueue();openCase('omar');setLang('en');
+ if(doc.querySelector('#stack a.ann')) errs.push('P3: why links on the agent screen by default');
+ click(doc.getElementById('rb-ann'));
+ const anns=[...doc.querySelectorAll('#stack a.ann')].map(a=>a.dataset.card);
+ if(anns.length!==6) errs.push(`P3: ${anns.length} why links on Omar, expected 6 (${anns.join(',')})`);
+ anns.filter(c=>!ids.includes(c)).forEach(c=>errs.push(`P3: why link to unknown card ${c}`));
+ click(doc.querySelector('#stack a.ann[data-card="D4"]'));
+ const logCards=doc.querySelectorAll('.dcard').length;
+ if(logCards!==17) errs.push(`P3: log shows ${logCards} cards`);
+ if(!doc.querySelector('#card-D4.on')) errs.push('P3: why link did not open its card');
+ if(/\[R\d+\]/.test(doc.querySelector('.log-doc').textContent)) errs.push('P3: unresolved [R#] source in the log');
+ click(doc.getElementById('b-logback'));
+ if(!doc.querySelector('.spine')) errs.push('P3: log Back did not return to the profile');
+ console.log(`P3: ${STEPS.length} steps walked, ${logCards} cards, ${anns.length} why links`);
+ if(errs.length&&!process.exitCode){console.log('ERRORS:',errs.join(' | '));process.exitCode=1;}
+}
+
+// 3.2: values come from tokens. every colour, space, size, radius and type declaration in the
+// component layer counts; a literal px or colour fails it. target >= 90%.
+{
+ const css=fs.readFileSync('src/tokens.css','utf8').replace(/\/\*[\s\S]*?\*\//g,'');
+ const comp=css.slice(css.indexOf('*{box-sizing'));
+ const props=/^(color|background(-color)?|border(-[a-z-]+)?|padding(-[a-z-]+)?|margin(-[a-z-]+)?|gap|row-gap|column-gap|font-size|line-height|border-radius|inline-size|block-size|min-[a-z-]+|max-[a-z-]+|inset[a-z-]*|box-shadow|flex)$/;
+ let tok=0,lit=0;const lits=[];
+ for(const m of comp.matchAll(/([a-z-]+)\s*:\s*([^;{}]+)/g)){
+  const [,p,v]=m; if(!props.test(p)) continue;
+  if(/#[0-9a-f]{3,8}\b|rgba?\(|\b\d+(\.\d+)?px\b/i.test(v.replace(/var\([^)]*\)/g,''))){lit++;lits.push(p+':'+v.trim());} else if(/var\(/.test(v)) tok++;
+ }
+ const ratio=tok/(tok+lit);
+ console.log(`3.2 token ratio: ${tok}/${tok+lit} = ${(ratio*100).toFixed(1)}%`);
+ if(ratio<.9) errs.push(`3.2: token ratio ${(ratio*100).toFixed(1)}% < 90%. literals: ${lits.join(' | ')}`);
+ if(errs.length&&!process.exitCode) {console.log('ERRORS:',errs.join('\n'));process.exitCode=1;}
+}
