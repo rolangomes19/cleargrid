@@ -1,13 +1,23 @@
 // atoms: badge, field row, block, bars, icons.
 
 /* ═══ 5 · atoms ═══ */
-function statusBadge(a,flag){
- const cls=(a.status==='disputed'&&flag)?'alert':a.status==='plan'?'ok':a.status==='legal'?'warn':'q';
- return `<span class="badge ${cls}" data-alert="${cls==='alert'?1:0}"><i class="dot"></i>${esc(E('status',a.status))}</span>`;
+/* 2.4: a badge only for minority states. amber = the account needs care (dispute, legal),
+   green = a plan is running. the majority state (in collection) is plain text. never coral:
+   coral means "why this reached you" and nothing else. */
+function statusBadge(a){
+ const cls={disputed:'warn',legal:'warn',plan:'ok'}[a.status];
+ return cls?`<span class="badge ${cls}"><i class="dot"></i>${esc(E('status',a.status))}</span>`
+  :`<span class="status-plain">${esc(E('status',a.status))}</span>`;
 }
-function dpdBadge(a,flag){
- const d=dpd(a),f=flag&&d>=180;
- return `<span class="badge ${f?'alert':'q'}" data-alert="${f?1:0}">${N(d)} ${esc(t().dUnit)}</span>`;
+/* days past due is a number, not an alarm (D6). the old >=180 coral had no source (B1). */
+const dpdBadge=a=>`<span class="badge q">${N(dpd(a))} ${esc(t().dUnit)}</span>`;
+/* the one stat component (3.3): label, value, sub, optional bar. a missing value is said
+   in body text at the value's line height, so a null never sits at hero size (2.2) and
+   the row below does not move (1.8). */
+function stat(label,value,sub,o={}){
+ return `<div class="stat"${o.g?` data-g="${o.g}"`:''}><span class="stat-k">${esc(label)}${o.ann||''}</span>
+  ${value==null?`<div class="stat-v is-null">${esc(o.none||'–')}</div>`:`<div class="stat-v t-display">${value}</div>`}
+  <span class="stat-sub">${sub||'&nbsp;'}</span>${o.bar!=null?`<div class="bar"><i style="inline-size:${o.bar}%"></i></div>`:''}</div>`;
 }
 function row(k,v,mono,wide){
  const e=v==null||v==='';
@@ -52,4 +62,16 @@ function datePicker(id,labelId){
   <button type="button" class="dd-trigger date" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="${labelId} ${id}-v">
    ${icon('calendar')}<span class="dd-val empty-val" id="${id}-v">${esc(t().pickDate)}</span></button>
   <div class="dd-pop cal" role="dialog" aria-labelledby="${labelId}" hidden></div></div>`;
+}
+
+/* ═══ 5.3 · honesty atoms. B2: a field that does not exist today says so.
+   B4: a rule's source links to the page it was read from; client policy has no link. ═══ */
+/* the product screen reads as finished UI; whether a field exists today is reviewer
+   information, shown only when the reviewer bar's "Proposed fields" switch is on (B2, amended) */
+const proposedTag=()=>S.prop?`<span class="tag" title="${esc(t().proposedTip)}">${esc(t().proposed)}</span>`:'';
+function srcChip(s){
+ const T_=t();
+ if(!s) return `<span class="src" title="${esc(T_.src.title)}">${esc(T_.src.client)}</span>`;
+ const label=s.t==='cg'?T_.src.cg:s.t;
+ return `<a class="src" href="${s.u}" target="_blank" rel="noopener" title="${esc(T_.src.title)}">${esc(label)}</a>`;
 }

@@ -9,23 +9,30 @@ function spine(){
  /* T1: never a bare amount. multi-account records name the account + a count-across-accounts
     line in `sub`; single-account records keep the short date form. Always exactly
     eyebrow -> t-display -> sub, same shape as the other two spine stats, never a 3rd row. */
- const promise=openPtp
-   ? (n>1
-     ? `<div class="t-display">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promiseAcross(openAccts.length,n))} · ${esc(E('product',openPtp.product))}</span>`
-     : `<div class="t-display">${M(openPtp.ptp.amt)}</div><span class="sub">${esc(T_.promised)} ${D(openPtp.ptp.date)}${brokenN?` · ${esc(T_.brokenN(brokenN))}`:''}</span>`)
-   : `<div class="t-display empty">${esc(T_.noPromise)}</div><span class="sub">${brokenN?esc(T_.brokenN(brokenN)):'&nbsp;'}</span>`;
+ const promise=stat(T_.promise,openPtp?M(openPtp.ptp.amt):null,
+   openPtp
+    ? (n>1?`${esc(T_.promiseAcross(openAccts.length,n))} · ${esc(E('product',openPtp.product))}`
+          :`${esc(T_.promised)} ${D(openPtp.ptp.date)}${brokenN?` · ${esc(T_.brokenN(brokenN))}`:''}`)
+    : (brokenN?esc(T_.brokenN(brokenN)):''),
+   {g:'ptp',none:T_.noPromise});
 
- const chOff=k=>k==='review'||k==='dnc';
+ const rule=k=>k&&chRule(r.ch[k],r.market);
  const btn=(k,label,ic,pri,id)=>{
-   const off=chOff(r.ch[k]);
-   /* aria-disabled, not disabled: the button stays focusable and hoverable so the
-      tooltip saying why can reach both mouse and keyboard users */
-   return `<button ${id?`id="${id}" `:''}class="act${pri&&!off?' primary':''}${off?' off':''}"${off?` aria-disabled="true" data-tip="${esc(T_.ch[r.ch[k]])}"`:''}>
-     ${icon(off?'lock':ic)}<span>${esc(label)}</span></button>`;
+   const ru=rule(k);
+   /* aria-disabled, not disabled: stays focusable; the reason is described, not hidden */
+   return `<button ${id?`id="${id}" `:''}class="act${pri&&!ru?' primary':''}${ru?' off':''}"${ru?` aria-disabled="true" aria-describedby="cr-${k}"`:''}>
+     ${icon(ru?'lock':ic)}<span>${esc(label)}</span></button>`;
  };
+ const chNames={call:T_.call,sms:T_.sms,wa:T_.wa,email:T_.email};
+ const notes=Object.keys(chNames).filter(k=>rule(k)).map(k=>{const ru=rule(k);
+   return `<span class="cnote" id="cr-${k}"><b>${esc(chNames[k])}</b> ${esc(T_.ch[ru.r])} ${srcChip(ru.s)}</span>`;}).join('');
+ /* Q4: last thing said, across all accounts, whatever the activity column's scope */
+ const last=[...r.logs].sort((x,y)=>when(y.at)-when(x.at))[0];
+ const lastLine=last?`<div class="lastc" data-g="last"><span class="k">${esc(T_.lastContact)}</span>
+   <span class="num">${DT(last.at)}</span><span>${esc(E('src',last.src))} · <b>${esc(E('out',last.out))}</b>${last.note?` · ${esc(L(last.note))}`:''}</span></div>`:'';
 
  const band=rs.length
-  ? `<div class="why" data-alert="1" data-g="why"><span class="badge alert"><i class="dot"></i>${esc(T_.why)}</span>
+  ? `<div class="why" data-alert="1" data-role="escalation" data-g="why"><span class="badge alert"><i class="dot"></i>${esc(T_.why)}</span>${proposedTag()}${ann('D2')}
      <span><b>${esc(rs[0].x)}</b>${rs[1]?` ${esc(rs[1].x)}`:''}${rs.length>2?` <span class="dim">${esc(T_.more(rs.length-2))}</span>`:''}</span></div>`
   : `<div class="why calm" data-g="why"><span>${esc(T_.calm)}</span></div>`;
 
@@ -35,35 +42,32 @@ function spine(){
     <div class="avatar">${esc(r.ini)}</div>
     <div>
      <div class="names" data-g="name"><span class="t-title">${esc(L(r.name))}</span>
-      <span class="n2">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
+      <span class="n2" lang="${S.lang==='en'?'ar':'en'}">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
      <div class="idline">
-      <span class="badge teal">${esc(E('stage',r.stage))}</span>
+      <span class="badge q">${esc(E('stage',r.stage))}</span>
+      <span>${esc(T_.market)}: <b>${esc(T_.mk[r.market])}</b></span>
       <span>${esc(T_.f.lang)}: <b>${r.lang?esc(T_.langName[r.lang]):dash()}</b></span>
       <span>${esc(T_.f.owner)}: ${r.owner?esc(r.owner):dash()}</span>
      </div>
     </div>
    </div>
    <div class="stats">
-    <div class="stat" data-g="out"><span class="eyebrow">${esc(T_.outstanding)}</span>
-     <div class="t-display">${M(sumOut(r))}</div>
-     <span class="sub">${esc(T_.across(n))} · ${esc(T_.original)} ${M(sumTot(r))}</span></div>
-    <div class="stat" data-g="dpd"><span class="eyebrow">${esc(T_.worstDpd)}</span>
-     <div class="t-display">${N(dpd(w))}</div>
-     <span class="sub">${esc(T_.on)} ${esc(L(w.lender))} · ${esc(T_.asOf)} ${D(TODAY.toISOString())}</span></div>
-    <div class="stat" data-g="ptp"><span class="eyebrow">${esc(T_.promise)}</span>
-     ${promise}</div>
+    ${stat(T_.outstanding,M(sumOut(r)),`${esc(T_.across(n))} · ${esc(T_.original)} ${M(sumTot(r))}`,{g:'out',ann:ann('D1')})}
+    ${stat(T_.worstDpd,N(dpd(w)),`${esc(T_.on)} ${esc(L(w.lender))} · ${esc(T_.asOf)} ${D(TODAY_ISO)}`,{g:'dpd'})}
+    ${promise}
    </div>
   </div>
   <div class="band">
-   ${band}
+   ${band}${lastLine}
   </div>
   <div class="rail" data-g="rail">
    ${btn('call',T_.call,'phone',true)}${btn('sms',T_.sms,'chat')}${btn('wa',T_.wa,'wa')}${btn('email',T_.email,'mail')}
-   ${btn('email',T_.emailInbox,'inbox',false,'b-inbox')}
+   ${btn(null,T_.emailInbox,'inbox',false,'b-inbox')}
    <!-- the post-call write lives with the other actions: the activity head can't hold
         four tabs, a scope toggle and this button at 1280–1440 without wrapping -->
    <button class="act log-btn" id="b-entry">${icon('pencil')}<span>${esc(T_.logOutcome)}</span></button>
   </div>
+  ${notes?`<div class="cnotes">${notes}${ann('D4')}</div>`:''}
  </div>`;
 }
 /* ═══ 7 · REGION 2 · borrower column ═══ */
@@ -71,34 +75,32 @@ function borrowerCol(){
  const r=rec(),T_=t(),h=hot(r),list=accts();
  const cards=list.map((a,i)=>{
   const flag=h.has(a.ref),p=Math.round((a.out/a.total)*100);
-  /* T3: the card already spends one coral element on its status badge when disputed+flagged.
-     the dot is a fallback, not an addition — it only fires when neither badge on this card
-     is already carrying the coral for the same fact, so one alert is never marked twice. */
-  const dotDue=flag&&a.status!=='disputed';
+  /* the only coral on a card: one cue, on the accounts the escalation line names (2.4) */
   return `<div class="card${i===S.sel?' on':''}${flag?' hot':''}" data-a="${i}" tabindex="0" role="button">
    ${i<9?`<span class="kbd">${i+1}</span>`:''}
-   <div class="t-pri">${dotDue?'<i class="flagdot"></i>':''}${esc(L(a.lender))}</div>
+   <div class="t-pri">${esc(L(a.lender))}</div>
    <div class="t-sec">${esc(E('product',a.product))} · ${ltr(a.ref)}</div>
    <div class="card-r"><span class="t-display sm">${M(a.out)}</span>
     <span class="t-sec">${esc(T_.of)} ${M(a.total)}</span></div>
    <div class="bar"><i style="inline-size:${p}%"></i></div>
-   <div class="card-b">${statusBadge(a,flag)}${dpdBadge(a,flag&&a.status!=='disputed')}
+   <div class="card-b">${statusBadge(a)}${dpdBadge(a)}
     ${a.broken?`<span class="badge q">${esc(T_.brokenN(a.broken))}</span>`:''}
     ${a.plan?`<span class="badge ok">${M(a.plan.emi)}/${esc(T_.perMo)}</span>`:''}</div>
-   ${dotDue?`<div class="t-sec reasoncue">${esc(T_.reasonCue)}</div>`:''}
+   ${flag?`<div class="reasoncue" data-alert="1" data-role="escalation"><i class="dot"></i>${esc(T_.reasonCue)}</div>`:''}
   </div>`;
  }).join('');
 
  const c=r.calls||{};
- const contactHistory=(c.h||c.ai)?`<div class="rows grid2">
+ const contactHistory=(c.h||c.ai)?`<div class="rows">
    ${row(T_.f.humanCalls,N(c.h))}${row(T_.f.aiCalls,N(c.ai))}
    ${row(T_.f.lastHuman,c.lastH?DT(c.lastH):null)}${row(T_.lastAi,c.lastAi?DT(c.lastAi):null)}
   </div>
-  <div class="row prose">${c.ai_sum?esc(L(c.ai_sum)):`<span class="empty">${esc(T_.noAi)}</span>`}</div>`
+  <div class="row prose"><div class="prose-h"><span class="k">${esc(T_.f.aiSummary)}</span><span>${proposedTag()}${ann('D3')}</span></div>
+   ${c.ai_sum?esc(L(c.ai_sum)):`<span class="empty">${esc(T_.noAi)}</span>`}</div>`
   :`<div class="emptyline">${esc(T_.noContact)}</div>`;
 
  return `<div class="col" id="c-bor">
-  <div class="colhead"><span class="eyebrow">${esc(T_.accounts)} · ${N(list.length)}</span>
+  <div class="colhead"><span class="eyebrow">${esc(T_.accounts)} · ${N(list.length)} ${ann('D5')}</span>
    <button class="mini" id="b-compare">${esc(S.mode==='compare'?T_.back:T_.compare)}</button></div>
   <div class="colbody">
    ${cards}
@@ -107,15 +109,15 @@ function borrowerCol(){
         labels like "Emirates ID" / "Date of birth" need close to that — a 2-column split
         would wrap them. Fields ordered narrow-first, wide-last so no row goes stranded. -->
    <div class="blk"><div class="blk-h"><span class="eyebrow">${esc(T_.reference)}</span></div>
-    <div class="blk-b"><div class="rows">
+    <div class="blk-b"><div class="rows grid2">
      ${row(T_.f.dob,r.dob?D(r.dob):null)}
      ${row(T_.f.gender,r.gender?esc(E('gender',r.gender)):null)}
      ${row(T_.f.nat,r.nat?esc(r.nat):null)}
      ${row(T_.f.submit,r.submit?D(r.submit):null)}
      ${row(T_.f.phone,r.phone?ltr(r.phone,true):null)}
-     ${row(T_.f.mail,r.mail?ltr(r.mail,true):null)}
+     ${row(T_.f.mail,r.mail?ltr(r.mail,true):null,false,true)}
      ${row(T_.f.visa,r.visa?esc(L(r.visa)):null)}
-     ${row(T_.f.eid,r.eid?ltr(r.eid):null)}
+     ${row(T_.natId[r.market]||T_.f.eid,r.eid?`${ltr(S.showId?r.eid:maskId(r.eid))} <button class="linkbtn" id="b-id" aria-pressed="${S.showId}">${esc(S.showId?T_.hideId:T_.showId)}</button>`:null,false,true)}
     </div></div></div>
   </div></div>`;
 }
@@ -125,18 +127,13 @@ function accountCol(){
 
  const balance=block('balance',`
   <div class="hero">
-   <div class="stat"><span class="eyebrow">${esc(T_.f.out)}</span>
-    <div class="t-display">${M(a.out)}</div>
-    <span class="sub">${N(p)}% ${esc(T_.of)} ${M(a.total)}</span>
-    <div class="bar"><i style="inline-size:${p}%"></i></div></div>
-   <div class="stat"><span class="eyebrow">${esc(T_.f.dpd)}</span>
-    <div class="t-display">${N(d)}</div>
-    <span class="sub">${esc(T_.asOf)} ${D(TODAY.toISOString())}</span></div>
+   ${stat(T_.f.out,M(a.out),`${N(p)}% ${esc(T_.of)} ${M(a.total)}`,{bar:p})}
+   ${stat(T_.f.dpd,N(d),`${esc(T_.asOf)} ${D(TODAY_ISO)}`)}
   </div>
   <div class="rows grid2">
    ${row(T_.f.over,M(a.over))}${row(T_.f.due,D(a.due))}
-   ${row(T_.f.principal,M(a.principal))}${row(T_.f.interest,a.interest?esc(a.interest):null)}
-   ${row(T_.f.status,statusBadge(a,false))}${row(T_.f.product,esc(E('product',a.product)))}
+   ${row(T_.f.principal,M(a.principal))}${row(T_.f.interest,a.interest?esc(L(a.interest)):null)}
+   ${row(T_.f.status,statusBadge(a))}${row(T_.f.product,esc(E('product',a.product)))}
    ${row(T_.f.lender,esc(L(a.lender)))}${row(T_.f.merchant,a.merchant?esc(L(a.merchant)):null)}
    ${row(T_.f.ref,ltr(a.ref))}${row(T_.f.acctRef,ltr(a.aref))}
   </div>`);
@@ -157,23 +154,24 @@ function accountCol(){
   </div>`:`<div class="emptyline">${esc(T_.noPromise)}</div>`);
 
  const f=a.fields||{},fv=k=>f[k]===undefined?null:(f[k]==='yes'?esc(T_.yes):f[k]==='no'?esc(T_.no):esc(L(f[k])));
+ /* 3.6: label-driven. an account shows the portfolio fields its lender sends, in a fixed
+    order; a vertical adds keys without a layout change. disputed always shows (brief). */
+ const pf=[['verif'],['churn'],['repo'],['hardship'],['employer'],['settle',1]].filter(([k])=>f[k]!==undefined);
  const fields=block('fields',`<div class="rows grid2">
-   ${row(T_.f.disputed,a.dispute?`<span class="badge q">${esc(T_.yes)}</span>`:esc(T_.no))}${row(T_.f.verif,fv('verif'))}
-   ${row(T_.f.churn,fv('churn'))}${row(T_.f.repo,fv('repo'))}
-   ${row(T_.f.hardship,fv('hardship'))}${row(T_.f.employer,fv('employer'))}
-   ${row(T_.f.disputeWhy,a.dispute?esc(L(a.dispute.why)):null,false,true)}
-   ${row(T_.f.settle,fv('settle'),false,true)}
+   ${row(T_.f.disputed,a.dispute?`<span class="badge q">${esc(T_.yes)}</span>`:esc(T_.no))}
+   ${pf.map(([k,w])=>row(T_.f[k],fv(k),false,!!w)).join('')}
+   ${a.dispute?row(T_.f.disputeWhy,esc(L(a.dispute.why)),false,true):''}
   </div>`);
 
  const m=a.meta||{};
  const meta=block('meta',`<div class="rows grid2">
-   ${row(T_.f.cby,esc(m.cby))}${row(T_.f.cat,D(m.cat))}
-   ${row(T_.f.uby,esc(m.uby))}${row(T_.f.uat,D(m.uat))}
+   ${row(T_.f.cby,esc(E('by',m.cby)))}${row(T_.f.cat,D(m.cat))}
+   ${row(T_.f.uby,esc(E('by',m.uby)))}${row(T_.f.uat,D(m.uat))}
    ${row(T_.f.lenderId,ltr(a.lid),false,true)}
   </div>`);
 
  return `<div class="col" id="c-acc">
-  <div class="colhead"><span class="eyebrow">${esc(T_.selected)} · ${esc(L(a.lender))} · ${esc(E('product',a.product))} · ${ltr(a.ref)}</span>${statusBadge(a,false)}</div>
+  <div class="colhead"><span class="eyebrow">${esc(T_.selected)} · ${esc(L(a.lender))} · ${esc(E('product',a.product))} · ${ltr(a.ref)}</span>${statusBadge(a)}</div>
   <div class="colbody">
    ${balance}${plan}${promises}${fields}${meta}
   </div></div>`;
@@ -186,16 +184,17 @@ function activityCol(){
 
  let body='';
  if(S.tab==='i'||S.tab==='m'){
-  const list=filt(S.tab==='i'?r.logs:r.msgs).sort((x,y)=>new Date(y.at)-new Date(x.at));
+  const list=filt(S.tab==='i'?r.logs:r.msgs).sort((x,y)=>when(y.at)-when(x.at));
   body=list.length?list.map(x=>{
    const an=(r.accts.find(z=>z.ref===x.a)||{}).lender;
-   const cls=x===S.justLogged?'new':(x.src==='ai'?'ai':'');
+   /* the saved row enters once (2.9); later renders show it static */
+   const cls=x===S.justLogged?(S.enter?(S.enter=false,'new enter'):'new'):(x.src==='ai'?'ai':'');
    return `<div class="log ${cls}"><span class="when num">${DT(x.at)}</span><span>
     <b class="t-pri">${esc(E('out',x.out))}</b>
     <span class="t-sec"> ${esc(E('src',x.src))} · ${esc(E('dir',x.dir))}</span>
     ${x.note?`<div>${esc(L(x.note))}</div>`:''}
-    <div class="meta">${esc(x.by)}${S.scope==='all'&&an?` · ${esc(L(an))}`:''}</div></span></div>`;
-  }).join(''):`<div class="emptyline">${esc(T_.noLogs)}</div>`;
+    <div class="meta">${esc(E('by',x.by))}${S.scope==='all'&&an?` · ${esc(L(an))}`:''}</div></span></div>`;
+  }).join(''):`<div class="emptyline">${esc(S.scope==='all'?T_.noContact:T_.noLogs)}</div>`;
  } else if(S.tab==='t'){
   body=r.time.length?r.time.map(x=>`<div class="log"><span class="when num">${D(x.at)}</span>
    <span>${esc(L(x.t))}</span></div>`).join(''):`<div class="emptyline">${esc(T_.noTimeline)}</div>`;
@@ -208,9 +207,10 @@ function activityCol(){
  return `<div class="col" id="c-act">
   <div class="colhead">
    <div class="tabs">${tabs.map(([k,l])=>`<button data-t="${k}" class="${S.tab===k?'on':''}" data-gated="${S.tab===k?0:1}">${esc(l)}</button>`).join('')}</div>
-   <button class="mini" id="b-scope">${esc(S.scope==='a'?T_.scopeAcct:T_.scopeAll)}</button>
   </div>
   <div class="colbody">
+   <!-- scope sits with the list it filters, so the head holds the tabs alone at the 340px minimum -->
+   <div class="scope-row"><span class="t-sec">${esc(T_.showing)} ${ann('D17')}</span><button class="mini" id="b-scope">${esc(S.scope==='a'?T_.scopeAcct:T_.scopeAll)}</button></div>
    ${body}
   </div></div>`;
 }
@@ -226,7 +226,7 @@ function compareView(){
    <tbody>${list.map((a,i)=>`<tr data-a="${i}"><td>${ltr(a.ref)}</td><td>${ltr(a.aref)}</td>
     <td>${esc(E('product',a.product))}</td><td>${a.merchant?esc(L(a.merchant)):dash()}</td>
     <td class="n">${M(a.out)}</td><td class="n">${M(a.total)}</td><td>${D(a.due)}</td>
-    <td class="n">${N(dpd(a))}</td><td>${statusBadge(a,false)}</td>
+    <td class="n">${N(dpd(a))}</td><td>${statusBadge(a)}</td>
     <td><button class="mini" data-a="${i}">${esc(h.open)}</button></td></tr>`).join('')}</tbody></table>
   </div></div>`;
 }
@@ -249,7 +249,7 @@ function queueView(){
      the detail line carries the specifics. top-1 reason only: one coral badge per flagged
      row holds the fixtures at exactly 3, the existing budget cap (see spec.md). */
   const why=top
-    ?`<div class="top"><span class="badge alert" data-alert="1"><i class="dot"></i>${esc(T_.rk[top.k])}</span>
+    ?`<div class="top"><span class="badge alert" data-alert="1" data-role="escalation"><i class="dot"></i>${esc(T_.rk[top.k])}</span>
       ${rs.length>1?`<span class="t-sec">${esc(T_.more(rs.length-1))}</span>`:''}</div>
      <span class="t-sec detail" title="${esc(top.x)}">${esc(top.d)}</span>`
     :`<span class="t-sec">${esc(T_.q.noFlag)}</span>`;
@@ -257,10 +257,10 @@ function queueView(){
    <div class="qrow-id">
     <div class="avatar">${esc(r.ini)}</div>
     <div class="who"><span class="t-title">${esc(L(r.name))}</span>
-     <span class="t-sec">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
+     <span class="t-sec" lang="${S.lang==='en'?'ar':'en'}">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
    </div>
    <div class="qrow-why">${why}</div>
-   <div class="qrow-num"><div class="t-display sm">${M(sumOut(r))}</div>
+   <div class="qrow-num"><div class="t-display sm">${M(sumOut(r),r)}</div>
     <span class="t-sec">${esc(T_.across(r.accts.length))}</span></div>
    <div class="qrow-num"><div class="t-display sm">${N(dpd(w))}</div>
     <span class="t-sec">${esc(T_.on)} ${esc(L(w.lender))}</span></div>
@@ -304,10 +304,10 @@ function wrapupView(){
    <div class="f"><span id="w-out-l">${esc(T_.outcome)}</span>
     ${selectMenu('w-out',['rpc','noans','promise','callback','dispute','hardship','wrong'].map(k=>[k,E('out',k)]),'w-out-l')}</div>
    <label class="f"><span>${esc(T_.notes)}</span>
-    <input type="text" id="w-note"></label>
+    <input type="text" id="w-note" dir="auto"></label>
    <div class="f" role="group" aria-labelledby="w-ptp-l"><span id="w-ptp-l">${esc(T_.setPtp)}</span>
     <span class="pair">
-     <input type="text" id="w-amt" class="amt" placeholder="AED" dir="ltr" aria-label="${esc(T_.f.ptpAmt)}">
+     <input type="text" id="w-amt" class="amt" inputmode="decimal" placeholder="${esc(T_.amtPh)}" dir="ltr" aria-label="${esc(T_.f.ptpAmt)}">
      ${datePicker('w-date','w-ptp-l')}</span></div>
    <div class="wrap-note">${esc(T_.wrap.note)}</div>
    <div class="actions">
