@@ -144,6 +144,9 @@ doc.getElementById('w-note').value='Agreed 500 after payday.';
 doc.getElementById('w-amt').value='500';
 doc.getElementById('w-date').value='2026-09-25';
 click(doc.getElementById('w-save'));
+// the selected account is in dispute: the first save warns, the second goes through
+if(doc.querySelector('.wrap-done')||!doc.querySelector('.save-fail')) errs.push('WRAPUP: a promise on a disputed account did not warn first');
+click(doc.getElementById('w-save'));
 if(!doc.querySelector('.wrap-done')) errs.push('WRAPUP: save did not show the confirmation state');
 console.log('wrapup save: confirmation shown =',!!doc.querySelector('.wrap-done'));
 click(doc.getElementById('w-return'));
@@ -256,6 +259,40 @@ if(errs.length) process.exitCode=1;
  if(!ed) errs.push('3.5: editable field is not a control');
  else { click(ed); click(doc.querySelector('.row.edit .dd-opt[data-v="yes"]'));
   if(W('acc().fields.verif')!=='yes') errs.push('3.5: editable field did not write back'); }
+ // council pass 2: entry validation, ID mask, channel gating, plurals
+ {
+  toQueue();openCase('omar');setLang('en');
+  click(doc.getElementById('b-entry'));
+  const nLogs=()=>W('rec().logs.length'), L0=nLogs(), setv=(id,v)=>{ if(!doc.getElementById(id)) W("S.wrapDone=false;S.mode='wrapup';render()"); doc.getElementById(id).value=v; };
+  setv('w-out','rpc'); setv('w-amt','abc'); click(doc.getElementById('w-save'));
+  if(!doc.querySelector('.save-fail')||doc.getElementById('w-amt')?.getAttribute('aria-invalid')!=='true'||nLogs()!==L0||W('S.wrapDone'))
+   errs.push('V1: an amount that is not a number must be marked invalid with a message and log nothing');
+  setv('w-out','promise'); setv('w-amt',''); click(doc.getElementById('w-save'));
+  if(nLogs()!==L0||W('S.wrapDone')) errs.push('V2: Promise taken saved without an amount and a date');
+  setv('w-amt','500'); setv('w-date','2026-09-20'); click(doc.getElementById('w-save'));
+  if(nLogs()!==L0) errs.push('V3: a promise on a disputed account saved without the warning first');
+  click(doc.getElementById('w-save'));
+  if(nLogs()!==L0+1) errs.push('V3: the second save did not log the promise');
+  W("S.wrapDone=false;S.mode='profile';render()");
+  // PDPL: the full ID is not in the page until it is asked for, and it goes back to masked
+  const eid=W('rec().eid');
+  if(doc.getElementById('stack').innerHTML.includes(eid)) errs.push('V4: full ID present before reveal');
+  click(doc.getElementById('b-id'));
+  if(!doc.getElementById('stack').innerHTML.includes(eid)) errs.push('V4: reveal did not show the ID');
+  click(doc.getElementById('b-id'));
+  if(doc.getElementById('stack').innerHTML.includes(eid)) errs.push('V4: hide did not mask the ID again');
+  // channels with no address behind them are off, and a stage never contradicts the channels
+  toQueue();openCase('sparse');
+  const em=doc.querySelector('[data-ch="email"]');
+  if(!em||em.getAttribute('aria-disabled')!=='true'||!/email address/i.test(doc.getElementById('cr-email')?.textContent||'')) errs.push('V5: Email enabled with no address on record');
+  if(!W("Object.values(R).every(r=>r.stage!=='ntc'||Object.values(r.ch).every(v=>v!=='ok'))")) errs.push("V5: a record is 'Not contactable' while a channel is open");
+  // Arabic plurals follow CLDR through Intl.PluralRules (100-102 and 200 take 'other', 103-110 'few', 11-99 'many')
+  const pl=W("S.lang='ar';const o=[0,1,2,3,11,100,103,110,200].map(n=>t().days(n));S.lang='en';o");
+  const [z,one,two,few,many,h100,h103,h110,h200]=pl;
+  if(!(/أيام/.test(few)&&/يوماً/.test(many)&&/يوم$/.test(h100)&&!/يوماً/.test(h100)&&/أيام/.test(h103)&&/أيام/.test(h110)&&/يوم$/.test(h200)&&two==='يومان'&&one==='يوم واحد'))
+   errs.push('V6: Arabic day plurals wrong: '+pl.join(' | '));
+  setLang('en'); toQueue(); openCase('omar');
+ }
  // 3.8 component sheet + dictionary
  click(doc.getElementById('rb-sheet'));
  const specs=doc.querySelectorAll('.sheet-grid>.blk').length, dict=doc.querySelectorAll('#dict tbody tr').length;

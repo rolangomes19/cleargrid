@@ -48,8 +48,14 @@ async function hCheck(f,W,H){
   if(!e.getClientRects().length) return;
   const cs=w.getComputedStyle(e),txt=[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());
   if(txt) sizes.add(cs.fontSize);
-  const paints=[cs.backgroundColor,cs.color,+parseFloat(cs.borderInlineStartWidth)>0?cs.borderInlineStartColor:null];
-  if(paints.some(c=>ESC.has(c))){ painted.push(e); if(!e.closest('[data-role="escalation"]')) coral.push(e.className||e.tagName); }
+  /* every way an element can be painted coral: text, fill, any border edge, outline, shadow, and its ::before/::after */
+  const paintsOf=(el,ps)=>{const c=w.getComputedStyle(el,ps);
+   if(ps&&(c.content==='none'||c.content==='normal')) return [];
+   const edge=['Top','Right','Bottom','Left'].filter(x=>+parseFloat(c['border'+x+'Width'])>0&&c['border'+x+'Style']!=='none').map(x=>c['border'+x+'Color']);
+   return [c.backgroundColor,c.color,c.outlineStyle!=='none'?c.outlineColor:null,...edge,...(c.boxShadow==='none'?[]:[...ESC].filter(k=>c.boxShadow.includes(k)))];};
+  const paints=[...paintsOf(e,null),...paintsOf(e,'::before'),...paintsOf(e,'::after')];
+  /* only these three components may be coral; the data-role attribute alone no longer earns the exemption */
+  if(paints.some(c=>ESC.has(c))){ painted.push(e); if(!e.closest('.why[data-role="escalation"],.reasoncue,.badge.alert')) coral.push(e.className||e.tagName); }
   if(txt&&/Mono/.test(cs.fontFamily.split(',')[0])&&+cs.fontWeight>500) mono.push(e.className||e.tagName);
  });
  out.type=[sizes.size<=4,[...sizes].sort().join(', ')];
