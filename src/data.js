@@ -3,8 +3,8 @@
 /* ═══ 2 · records. every DPD derived from its due date. nothing hardcoded twice. ═══ */
 const R={
 omar:{
-  name:{en:'Omar Al-Hassan',ar:'عمر الحسن'},ini:'OH',lang:'ar',gender:'m',nat:'JOR',
-  dob:'1988-11-05',eid:'784-1988-4471209-3',visa:{en:'Resident',ar:'مقيم'},
+  name:{en:'Omar Al-Hassan',ar:'عمر الحسن'},market:'AE',ini:'OH',lang:'ar',gender:'m',nat:'JOR',
+  dob:'1988-11-05',eid:'784-1988-4471209-5',visa:{en:'Resident',ar:'مقيم'},
   owner:'Faisal Noor',stage:'disp',submit:'2026-04-30',synced:'2026-09-11T08:41',
   phone:'+971 55 321 7740',mail:'omar.h@example.com',
   ch:{call:'ok',sms:'ok',wa:'review',email:'ok'},
@@ -14,13 +14,13 @@ omar:{
   accts:[
    {ref:'CC-77102',aref:'AC-33011-GMB',lender:{en:'Gulf Meridian Bank',ar:'بنك الخليج ميريديان'},lid:'GMB-021',
     merchant:null,product:'card',total:7000,out:4860,over:4860,principal:6500,due:'2026-04-18',
-    status:'disputed',interest:'2.99% monthly',plan:null,ptp:null,broken:0,
+    status:'disputed',interest:{en:'2.99% monthly',ar:'2.99% شهرياً'},plan:null,ptp:null,broken:0,
     dispute:{date:'2026-08-26',why:{en:'Transaction not recognised',ar:'عملية غير معروفة'}},
     fields:{verif:'no',settle:{en:'Blocked while disputed',ar:'موقوفة أثناء الاعتراض'}},
     meta:{cby:'System',cat:'2026-04-30',uby:'Faisal Noor',uat:'2026-08-26'}},
    {ref:'PL-11833',aref:'AC-33011-GMB2',lender:{en:'Gulf Meridian Bank',ar:'بنك الخليج ميريديان'},lid:'GMB-021',
     merchant:null,product:'personal',total:11500,out:8000,over:1420,principal:11000,due:'2026-05-06',
-    status:'plan',interest:'4.2% flat',plan:{emi:1420,paid:4,of:12,next:'2026-10-06',
+    status:'plan',interest:{en:'4.2% flat',ar:'4.2% ثابتة'},plan:{emi:1420,paid:4,of:12,next:'2026-10-06',
       flags:{en:'On schedule, next instalment not yet due',ar:'ملتزم بالجدول، القسط القادم لم يستحق بعد'}},
     ptp:{amt:1420,date:'2026-10-06',state:'open'},broken:0,
     fields:{verif:'yes',settle:{en:'Up to 20%',ar:'حتى 20%'}},
@@ -47,8 +47,8 @@ omar:{
 },
 
 aisha:{
-  name:{en:'Aisha Rahman',ar:'عائشة رحمن'},ini:'AR',lang:'en',gender:'f',nat:'IND',
-  dob:'1992-03-12',eid:'784-1992-3318407-2',visa:{en:'Employment visa',ar:'تأشيرة عمل'},
+  name:{en:'Aisha Rahman',ar:'عائشة رحمن'},market:'AE',ini:'AR',lang:'en',gender:'f',nat:'IND',
+  dob:'1992-03-12',eid:'784-1992-3318407-8',visa:{en:'Employment visa',ar:'تأشيرة عمل'},
   owner:'Nadia Karim',stage:'rpc',submit:'2026-07-14',synced:'2026-09-11T08:41',
   phone:'+971 50 555 0188',mail:'aisha.r@example.com',
   ch:{call:'cap',sms:'ok',wa:'ok',email:'ok'},
@@ -59,7 +59,7 @@ aisha:{
   accts:[
    {ref:'DL-20481',aref:'AC-90812-EFIN',lender:{en:'Emirates Finance',ar:'إمارات للتمويل'},lid:'EFN-014',
     merchant:null,product:'personal',total:10000,out:7420,over:1000,principal:10000,due:'2026-06-10',
-    status:'coll',interest:'3.5% flat',plan:null,
+    status:'coll',interest:{en:'3.5% flat',ar:'3.5% ثابتة'},plan:null,
     ptp:{amt:1000,date:'2026-09-18',state:'open'},broken:1,brokenLast:'2026-08-18',brokenType:'missed',
     fields:{verif:'yes',employer:{en:'Private sector',ar:'القطاع الخاص'},hardship:{en:'Medium',ar:'متوسط'}},
     meta:{cby:'System',cat:'2026-07-14',uby:'Nadia Karim',uat:'2026-09-02'}}],
@@ -76,7 +76,7 @@ aisha:{
 },
 
 sparse:{
-  name:{en:'Khalid Noor',ar:'خالد نور'},ini:'KN',lang:null,gender:'na',nat:null,
+  name:{en:'Khalid Noor',ar:'خالد نور'},market:'AE',ini:'KN',lang:null,gender:'na',nat:null,
   dob:null,eid:null,visa:null,owner:null,stage:'ntc',submit:'2026-09-09',synced:'2026-09-11T08:41',
   phone:'+971 52 000 0140',mail:null,
   ch:{call:'window',sms:'ok',wa:'ok',email:'ok'},
@@ -94,7 +94,7 @@ sparse:{
 (function(){
  const b=JSON.parse(JSON.stringify(R.omar));
  b.name={en:'Mohammed Al Suwaidi',ar:'محمد السويدي'};b.ini='MS';b.lang='ar';b.gender='m';b.nat='AE';
- b.dob='1979-11-05';b.eid='784-1979-6620143-1';b.owner='Rabab Abbas';b.stage='rpc';
+ b.dob='1979-11-05';b.eid='784-1979-6620143-2';b.owner='Rabab Abbas';b.stage='rpc';
  const seed=[
   ['FB-8802','First Abu Dhabi Bank','بنك أبوظبي الأول','card',56000,44210,'2024-11-02','coll',3,'missed'],
   ['TM-8815','Tamara','تمارا','bnpl',2400,2400,'2026-05-19','disputed',0,null],
@@ -124,3 +124,46 @@ sparse:{
  }
  R.stress=b;
 })();
+
+/* blocked record (UAE): every restricted channel state at once, so the reasons and
+   their sources can be checked on one screen. no escalation flag. */
+R.blocked={
+  name:{en:'Layla Haddad',ar:'ليلى حداد'},ini:'LH',market:'AE',lang:'en',gender:'f',nat:'LBN',
+  dob:'1990-02-21',eid:'784-1990-5521736-0',visa:{en:'Resident',ar:'مقيمة'},
+  owner:'Nadia Karim',stage:'rpc',submit:'2026-06-02',synced:'2026-09-11T08:41',
+  phone:'+971 56 410 2297',mail:'layla.h@example.com',
+  ch:{call:'window',sms:'cap',wa:'consent',email:'dnc'},
+  calls:{h:2,ai:3,lastH:'2026-09-04T10:20',lastAi:'2026-09-10T17:05',ai_sum:null},
+  accts:[
+   {ref:'BN-30417',aref:'AC-41870-TBY',lender:{en:'Tabby',ar:'تابي'},lid:'TBY-007',
+    merchant:{en:'Tabby',ar:'تابي'},product:'bnpl',total:3200,out:2150,over:1075,principal:3200,due:'2026-07-20',
+    status:'coll',interest:null,plan:null,ptp:null,broken:0,
+    fields:{verif:'yes'},meta:{cby:'System',cat:'2026-06-02',uby:'Nadia Karim',uat:'2026-09-04'}}],
+  logs:[
+   {at:'2026-09-10T17:05',a:'BN-30417',src:'ai',dir:'out',out:'callback',by:'ClearVoice',
+    note:{en:'Asked to be called back after work hours.',ar:'طلبت معاودة الاتصال بعد ساعات العمل.'}},
+   {at:'2026-09-04T10:20',a:'BN-30417',src:'phone',dir:'out',out:'rpc',by:'Nadia Karim',
+    note:{en:'Confirmed identity. Prefers calls to messages.',ar:'تم التحقق من الهوية. تفضّل الاتصال على الرسائل.'}},
+   {at:'2026-06-14T09:00',a:'BN-30417',src:'email',dir:'in',out:'received',by:'Borrower',
+    note:{en:'Asked to stop receiving emails.',ar:'طلبت إيقاف رسائل البريد.'}}],
+  msgs:[],time:[{at:'2026-06-02',t:{en:'Account placed with ClearGrid.',ar:'تم إسناد الحساب إلى كليرجريد.'}}]
+};
+
+/* KSA record: SAMA rules. ten unanswered call attempts in the last 30 days, so the
+   attempt cap shown on the rail matches the log underneath it. */
+R.ksa={
+  name:{en:'Fahad Al-Qahtani',ar:'فهد القحطاني'},ini:'FQ',market:'SA',lang:'ar',gender:'m',nat:'SAU',
+  dob:'1986-07-30',eid:'1082345677',visa:null,
+  owner:'Rabab Abbas',stage:'ntc',submit:'2026-07-01',synced:'2026-09-11T08:41',
+  phone:'+966 55 218 4410',mail:'fahad.q@example.com',
+  ch:{call:'cap',sms:'ok',wa:'notPermitted',email:'ok'},
+  calls:{h:10,ai:0,lastH:null,lastAi:null,ai_sum:null},
+  accts:[
+   {ref:'PL-52190',aref:'AC-61020-RJH',lender:{en:'Al Rajhi Bank',ar:'مصرف الراجحي'},lid:'RJH-011',
+    merchant:null,product:'personal',total:18000,out:12600,over:2100,principal:18000,due:'2026-06-25',
+    status:'coll',interest:null,plan:null,ptp:null,broken:0,
+    fields:{verif:'yes'},meta:{cby:'System',cat:'2026-07-01',uby:'System',uat:'2026-09-10'}}],
+  logs:Array.from({length:10},(_,i)=>({at:new Date(Date.UTC(2026,8,10-i*3,10+i%8)).toISOString().slice(0,16),
+    a:'PL-52190',src:'phone',dir:'out',out:'noans',by:'Rabab Abbas',note:null})),
+  msgs:[],time:[{at:'2026-07-01',t:{en:'Account placed with ClearGrid.',ar:'تم إسناد الحساب إلى كليرجريد.'}}]
+};
