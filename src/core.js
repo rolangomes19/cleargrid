@@ -46,7 +46,7 @@ function chRule(k,m){
 }
 
 /* mode: 'queue' (case list, screen zero) | 'profile' | 'compare' | 'wrapup' (post-call write) */
-let S={rec:'stress',lang:'en',sel:0,tab:'i',scope:'all',mode:'profile',wrapDone:false,justLogged:null,navCollapsed:false,showId:false,
+let S={rec:'stress',lang:'en',sel:0,tab:'i',scope:'all',mode:'profile',wrapDone:false,justLogged:null,navCollapsed:false,showId:false,bar:false,
  step:0,paused:false,ann:false,prop:false,state:null,dispatch:null,card:null,prevMode:'profile'};
 
 const t=()=>T[S.lang];

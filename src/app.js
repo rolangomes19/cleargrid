@@ -69,6 +69,7 @@ function readUrl(){
  if(Q.get('view')==='log'){ S.mode='log'; S.card=CARDS.some(c=>c[0]===Q.get('card'))?Q.get('card'):null; }
  if(Q.get('ann')==='1') S.ann=true; /* why links: reviewer layer, off by default */
  if(Q.get('prop')==='1') S.prop=true;
+ if(Q.get('bar')==='1') S.bar=true; /* prototype controls: hidden unless asked for (P, or ?bar=1) */
  if(Q.get('view')==='sheet') S.mode='sheet';
  if(Q.get('view')==='test') S.mode='test';
  if(STATES.includes(Q.get('state'))) S.state=Q.get('state');
@@ -86,6 +87,7 @@ function writeUrl(){
  if(S.step&&!S.paused) u.set('step',S.step);
  if(S.ann) u.set('ann','1');
  if(S.prop) u.set('prop','1');
+ if(S.bar) u.set('bar','1');
  if(S.state) u.set('state',S.state);
  if(DEBUG) u.set('debug','1');
  /* step changes push, so browser Back steps back through the tour; all else replaces */
@@ -135,6 +137,7 @@ function render(){
   stack.innerHTML=spine()+
    `<div class="cols${S.mode==='compare'?' compare':''}${rec().logs.length<8?' act-sparse':''}">${borrowerCol()}${S.mode==='compare'?compareView():accountCol()+activityCol()}</div>`;
  }
+ document.getElementById('rbar').hidden=!S.bar;
  document.getElementById('rbar').setAttribute('aria-label',t().bar.region);
  document.getElementById('rbar').innerHTML=rbar();
  writeUrl();
@@ -177,7 +180,9 @@ document.getElementById('nav').addEventListener('keydown',e=>{
    digits/compare only act once a case is open, so a stray keystroke on the queue
    or mid-write on the wrap-up screen can't silently jump the agent somewhere else. */
 document.addEventListener('keydown',e=>{
- if(e.target.matches('input,textarea,select'))return;
+ if(e.target.matches('input,textarea,select')||e.target.isContentEditable)return;
+ /* P or Shift+P shows and hides the prototype controls; never while typing, never with a command modifier */
+ if((e.key==='p'||e.key==='P')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){S.bar=!S.bar;render();return;}
  const inCase=S.mode==='profile'||S.mode==='compare';
  const n=parseInt(e.key,10);
  if(inCase&&n>=1&&n<=9&&accts()[n-1]){S.sel=n-1;S.mode='profile';render();}
@@ -270,9 +275,13 @@ function wire(){
  on('w-return',()=>{S.wrapDone=false;S.mode='queue';render();});
  on('b-navcollapse',()=>{S.navCollapsed=!S.navCollapsed;render();});
  /* the full ID is shown only on request and goes back to masked after 15 s. a real build also records who revealed it */
+ /* in place: swap the text and the button label only, so nothing moves and the column keeps its scroll position */
+ const setId=()=>{const v=document.getElementById('eid-v'),b=document.getElementById('b-id'); if(!v||!b) return;
+  v.innerHTML=ltr(S.showId?rec().eid:maskId(rec().eid)); b.textContent=S.showId?t().hideId:t().showId;
+  b.setAttribute('aria-pressed',String(S.showId)); b.title=S.showId?t().idShown:'';};
  on('b-id',()=>{S.showId=!S.showId;clearTimeout(on.idT);
-  if(S.showId) on.idT=setTimeout(()=>{if(S.showId){S.showId=false;render();}},15000);
-  render();});
+  if(S.showId) on.idT=setTimeout(()=>{if(S.showId){S.showId=false;setId();}},15000);
+  setId();});
  /* 3.5: the editable portfolio field writes back to the record */
  const fv=document.getElementById('f-verif');
  if(fv) fv.addEventListener('change',()=>{ acc().fields.verif=fv.value; });
