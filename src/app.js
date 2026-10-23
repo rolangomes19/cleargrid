@@ -110,6 +110,19 @@ function cgT1(){
 }
 window.cgT1=cgT1;
 
+let lastEnter='',lastTab='';
+/* scroll memory per pane, kept across renders (so a pane that leaves, e.g. the account column during
+   wrap-up, comes back where it was). cleared only when a different case or screen opens. */
+let SCROLL={};
+const paneKey=(c,i)=>c.id||(c.matches('.log-page')?'page':'col'+i);
+/* the control the agent just used, so a keyboard user keeps their place after the rebuild */
+function focusKey(){
+ const a=document.activeElement; if(!a||a===document.body||!document.getElementById('stack').contains(a)) return null;
+ const q=v=>String(v).replace(/["\\]/g,'\\$&');
+ if(a.id) return `[id="${q(a.id)}"]`;
+ for(const k of ['data-a','data-t','data-ch','data-q','data-v']) if(a.hasAttribute(k)) return `[${k}="${q(a.getAttribute(k))}"]`;
+ return null;
+}
 function render(){
  document.documentElement.lang=S.lang;
  document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';
@@ -117,6 +130,8 @@ function render(){
  document.getElementById('nav').classList.toggle('collapsed',S.navCollapsed);
  document.getElementById('nav').innerHTML=nav();
  const stack=document.getElementById('stack');
+ stack.querySelectorAll('.col,.log-page').forEach((c,i)=>{SCROLL[paneKey(c,i)]=c.scrollTop;});
+ const fk=focusKey();
  /* the only screen-swap mechanism the app has: a state field branched once, here.
     'queue' has no spine (no borrower is open yet); 'wrapup' reuses the exact
     two-column shape 'compare' already uses so the write pane keeps the spine and
@@ -137,6 +152,14 @@ function render(){
   stack.innerHTML=spine()+
    `<div class="cols${S.mode==='compare'?' compare':''}${rec().logs.length<8?' act-sparse':''}">${borrowerCol()}${S.mode==='compare'?compareView():accountCol()+activityCol()}</div>`;
  }
+ /* entrance motion runs once per opened case or screen, never on a tab, account or language change */
+ const ek=['profile','compare','wrapup'].includes(S.mode)?'case:'+S.rec:S.mode;
+ stack.dataset.enter=ek!==lastEnter?'1':'';
+ /* a new case or screen starts at the top; a new tab starts its own list at the top; everything else keeps its place */
+ if(ek!==lastEnter) SCROLL={}; else if(S.tab!==lastTab) delete SCROLL['c-act'];
+ lastEnter=ek; lastTab=S.tab;
+ stack.querySelectorAll('.col,.log-page').forEach((c,i)=>{const y=SCROLL[paneKey(c,i)]; if(y) c.scrollTop=y;});
+ if(fk){const el=stack.querySelector(fk); if(el) el.focus({preventScroll:true});}
  document.getElementById('rbar').hidden=!S.bar;
  document.getElementById('rbar').setAttribute('aria-label',t().bar.region);
  document.getElementById('rbar').innerHTML=rbar();
@@ -167,7 +190,7 @@ document.getElementById('nav').addEventListener('click',e=>{
      clicked — flipping there too would make clicking the already-active language switch
      away from it, which is wrong for an ordinary two-button toggle. */
   const collapsed=document.getElementById('nav').classList.contains('collapsed');
-  S.lang=collapsed?(S.lang==='en'?'ar':'en'):b.dataset.v; render(); return;
+  S.lang=collapsed?(S.lang==='en'?'ar':'en'):b.dataset.v; if(S.tourLang) S.tourLang=S.lang; render(); return;
  }
  if(e.target.closest('[data-nav]')){ S.mode='queue'; render(); }
 });
@@ -282,6 +305,19 @@ function wire(){
  on('b-id',()=>{S.showId=!S.showId;clearTimeout(on.idT);
   if(S.showId) on.idT=setTimeout(()=>{if(S.showId){S.showId=false;setId();}},15000);
   setId();});
+ /* segmented toggles: change in place (no render), radio keyboard model (arrows move the choice) */
+ s.querySelectorAll('.seg').forEach(g=>{
+  const bs=[...g.querySelectorAll('[role="radio"]')],input=g.parentElement.querySelector('input[type="hidden"]');
+  const pick=b=>{ bs.forEach(x=>{const on=x===b; x.setAttribute('aria-checked',on); x.tabIndex=on?0:-1;});
+   if(input.value!==b.dataset.v){ input.value=b.dataset.v; input.dispatchEvent(new Event('change',{bubbles:true})); } };
+  bs.forEach((b,i)=>{
+   b.addEventListener('click',()=>pick(b));
+   b.addEventListener('keydown',e=>{
+    const fwd=S.lang==='ar'?'ArrowLeft':'ArrowRight',back=S.lang==='ar'?'ArrowRight':'ArrowLeft';
+    const d=e.key===fwd||e.key==='ArrowDown'?1:e.key===back||e.key==='ArrowUp'?-1:0; if(!d) return;
+    e.preventDefault(); const n=bs[(i+d+bs.length)%bs.length]; pick(n); n.focus();});
+  });
+ });
  /* 3.5: the editable portfolio field writes back to the record */
  const fv=document.getElementById('f-verif');
  if(fv) fv.addEventListener('change',()=>{ acc().fields.verif=fv.value; });
@@ -384,7 +420,7 @@ function wireDropdown(dd){
 document.getElementById('rbar').addEventListener('change',e=>{
  if(e.target.id==='rb-fx'){S.rec=e.target.value;S.mode='profile';S.showId=false;S.sel=defaultSel();render();}});
 document.getElementById('rbar').addEventListener('click',e=>{
- const b=e.target.closest('.rb-lang button'); if(b){S.lang=b.dataset.v;render();}});
+ const b=e.target.closest('.rb-lang button'); if(b){S.lang=b.dataset.v; if(S.tourLang) S.tourLang=S.lang; render();}});
 
 /* ═══ 13.3 · screen fit (plan §3.4). >=1366 as designed; 1024-1365 the 1366 layout
    scaled down; below 1024 or touch-only, the fallback page unless "Open anyway". ═══ */
@@ -440,7 +476,7 @@ document.addEventListener('pointerdown',e=>{
 /* tour keys: forward arrow / back arrow follow reading direction; Backspace back; Esc explore */
 document.addEventListener('keydown',e=>{
  if(!S.step||S.paused||e.target.matches('input,textarea,select')||e.target.closest('.dd')) return;
- const fwd=S.lang==='ar'?'ArrowLeft':'ArrowRight', bwd=S.lang==='ar'?'ArrowRight':'ArrowLeft';
+ const tl=S.tourLang||S.lang, fwd=tl==='ar'?'ArrowLeft':'ArrowRight', bwd=tl==='ar'?'ArrowRight':'ArrowLeft';
  if(e.key==='Escape'){ e.preventDefault(); exitStory(); }
  else if(e.key===fwd){ e.preventDefault(); S.step===STEPS.length?exitStory():goStep(S.step+1,true); }
  else if((e.key===bwd||e.key==='Backspace')&&S.step>1){ e.preventDefault(); goStep(S.step-1,true); }
