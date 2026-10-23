@@ -15,7 +15,7 @@ which channels and why not) with zero clicks, in English and Arabic.
 
 ## Links
 
-- Live link: _add after the repo is on GitHub Pages_ (also set `og:url` and `og:image` in `src/index.html`)
+- Live link: https://rolangomes19.github.io/cleargrid/ (deployed from `master` by `.github/workflows/pages.yml` after `verify.js` passes; `og:image` still to add)
 - Guided tour: 12 steps over the live product (`?step=1`); opens by itself on a first visit with a bare link. Esc or "Explore freely" leaves it; browser Back steps back.
 - Decision log: `?view=log` (17 cards: hardest question, draft 30-second answer, linked evidence, trade-off). `?view=log&card=D4` opens one card.
 - Six "Why" links on the product open their card. Off by default so the agent screen reads as finished UI; the reviewer bar's "Why links" switch turns them on (`?ann=1`). The tour's own Why link is always there.
