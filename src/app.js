@@ -130,7 +130,7 @@ function render(){
  } else if(S.state==='loading'&&S.mode==='profile'){
   stack.innerHTML=skeletonView();
  } else if(S.mode==='wrapup'){
-  stack.innerHTML=spine()+`<div class="cols compare">${borrowerCol()}${wrapupView()}</div>`;
+  stack.innerHTML=spine()+`<div class="cols${rec().logs.length<8?' act-sparse':''}">${borrowerCol()}${wrapupView()}${activityCol()}</div>`;
  } else {
   stack.innerHTML=spine()+
    `<div class="cols${S.mode==='compare'?' compare':''}${rec().logs.length<8?' act-sparse':''}">${borrowerCol()}${S.mode==='compare'?compareView():accountCol()+activityCol()}</div>`;
@@ -248,6 +248,15 @@ function wire(){
   /* council R-E: an unreadable promised amount is marked, not silently dropped */
   const rawAmt=document.getElementById('w-amt').value.trim(), amtBad=!!rawAmt&&!(amt>0);
   document.getElementById('w-amt').setAttribute('aria-invalid',String(amtBad));
+  /* a promise needs an amount and a date; an amount that is not a number is marked and nothing is logged */
+  const w=document.querySelector('.wrap'), amtEl=document.getElementById('w-amt');
+  const stop=msg=>{ let m=w.querySelector('.save-fail');
+   if(!m){ w.querySelector('.actions').insertAdjacentHTML('beforebegin','<div class="save-fail" role="alert"></div>'); m=w.querySelector('.save-fail'); }
+   m.textContent=msg; };
+  const badPtp=out==='promise'&&!(amt>0&&date);
+  if(amtBad||badPtp){ amtEl.setAttribute('aria-invalid','true'); stop(amtBad?t().wrap.badAmt:t().wrap.needPtp); amtEl.focus(); return; }
+  /* settlement is blocked on a disputed account: warn once, a second save goes through */
+  if(out==='promise'&&a.dispute&&!w.dataset.warned){ w.dataset.warned='1'; stop(t().wrap.disputedPtp); return; }
   const entry={at:new Date().toISOString(),a:a.ref,src:'phone',dir:'out',out,
     by:r.owner||'Agent',note:note?{en:note,ar:note}:null};
   r.logs.unshift(entry); S.justLogged=entry; S.enter=true;
@@ -259,7 +268,10 @@ function wire(){
  });
  on('w-return',()=>{S.wrapDone=false;S.mode='queue';render();});
  on('b-navcollapse',()=>{S.navCollapsed=!S.navCollapsed;render();});
- on('b-id',()=>{S.showId=!S.showId;render();});
+ /* the full ID is shown only on request and goes back to masked after 15 s. a real build also records who revealed it */
+ on('b-id',()=>{S.showId=!S.showId;clearTimeout(on.idT);
+  if(S.showId) on.idT=setTimeout(()=>{if(S.showId){S.showId=false;render();}},15000);
+  render();});
  /* 3.5: the editable portfolio field writes back to the record */
  const fv=document.getElementById('f-verif');
  if(fv) fv.addEventListener('change',()=>{ acc().fields.verif=fv.value; });
