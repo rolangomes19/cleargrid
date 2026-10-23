@@ -77,7 +77,7 @@ aisha:{
 
 sparse:{
   name:{en:'Khalid Noor',ar:'خالد نور'},market:'AE',ini:'KN',lang:null,gender:'na',nat:null,
-  dob:null,eid:null,visa:null,owner:null,stage:'ntc',submit:'2026-09-09',synced:'2026-09-11T08:41',
+  dob:null,eid:null,visa:null,owner:null,stage:'new',submit:'2026-09-09',synced:'2026-09-11T08:41',
   phone:'+971 52 000 0140',mail:null,
   ch:{call:'window',sms:'ok',wa:'ok',email:'ok'},
   calls:{h:0,ai:0,lastH:null,lastAi:null,ai_sum:null},
@@ -162,7 +162,7 @@ R.blocked={
 R.ksa={
   name:{en:'Fahad Al-Qahtani',ar:'فهد القحطاني'},ini:'FQ',market:'SA',lang:'ar',gender:'m',nat:'SAU',
   dob:'1986-07-30',eid:'1082345677',visa:null,
-  owner:'Rabab Abbas',stage:'ntc',submit:'2026-07-01',synced:'2026-09-11T08:41',
+  owner:'Rabab Abbas',stage:'unr',submit:'2026-07-01',synced:'2026-09-11T08:41',
   phone:'+966 55 218 4410',mail:'fahad.q@example.com',
   ch:{call:'cap',sms:'ok',wa:'notPermitted',email:'ok'},
   calls:{h:10,ai:0,lastH:null,lastAi:null,ai_sum:null},

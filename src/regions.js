@@ -18,7 +18,9 @@ function spine(){
 
  /* KSA: an open complaint stops reminders on every channel (SAMA Art. 6(4)), not one */
  const complaint=r.market==='SA'&&r.accts.some(a=>a.dispute);
- const rule=k=>k&&chRule(complaint?'complaint':r.ch[k],r.market);
+ /* a channel with no address behind it cannot be used, whatever the market allows */
+ const noAddr=k=>(k==='email'&&!r.mail)?'noMail':((k==='call'||k==='sms'||k==='wa')&&!r.phone)?'noPhone':null;
+ const rule=k=>k&&chRule(complaint?'complaint':(noAddr(k)||r.ch[k]),r.market);
  const btn=(k,label,ic,pri,id)=>{
    const ru=rule(k);
    /* aria-disabled, not disabled: stays focusable; the reason is described, not hidden */
@@ -134,7 +136,7 @@ function borrowerCol(){
      ${row(T_.f.phone,r.phone?ltr(r.phone,true):null)}
      ${row(T_.f.mail,r.mail?ltr(r.mail,true):null,false,true)}
      ${row(T_.f.visa,r.visa?esc(L(r.visa)):null)}
-     ${row(T_.natId[r.market]||T_.f.eid,r.eid?`${ltr(S.showId?r.eid:maskId(r.eid))} <button class="linkbtn" id="b-id" aria-pressed="${S.showId}">${esc(S.showId?T_.hideId:T_.showId)}</button>`:null,false,true)}
+     ${row(T_.natId[r.market]||T_.f.eid,r.eid?`${ltr(S.showId?r.eid:maskId(r.eid))} <button class="linkbtn" id="b-id" aria-pressed="${S.showId}">${esc(S.showId?T_.hideId:T_.showId)}</button>${S.showId?` <span class="t-sec">${esc(T_.idShown)}</span>`:''}`:null,false,true)}
     </div></div></div>
   </div></div>`;
 }

@@ -78,6 +78,7 @@ const proposedTag=()=>S.prop?`<span class="tag" title="${esc(t().proposedTip)}">
 function srcChip(s){
  const T_=t();
  if(!s) return `<span class="src" title="${esc(T_.src.title)}">${esc(T_.src.client)}</span>`;
+ if(s.t==='data') return `<span class="src">${esc(T_.src.data)}</span>`;
  const label=s.t==='cg'?T_.src.cg:s.t;
  return `<a class="src" href="${s.u}" target="_blank" rel="noopener" title="${esc(T_.src.title)}">${esc(label)}</a>`;
 }

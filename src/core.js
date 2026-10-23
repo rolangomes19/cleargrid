@@ -31,7 +31,8 @@ const SRC={
  sama43:{t:'SAMA Art. 4(3)',u:'https://rulebook.sama.gov.sa/en/node/10400'},
  sama51:{t:'SAMA Art. 5(1)',u:'https://rulebook.sama.gov.sa/en/node/10400'},
  sama64:{t:'SAMA Art. 6(4)',u:'https://rulebook.sama.gov.sa/en/node/10400'},
- cg:{t:'cg',u:'https://cleargrid.co'}};
+ cg:{t:'cg',u:'https://cleargrid.co'},
+ data:{t:'data'}};   // not a rule: the record itself has no address to use
 function chRule(k,m){
  const sa=m==='SA';
  return {window:{r:'window',s:sa?null:SRC.cbuae},
@@ -40,7 +41,8 @@ function chRule(k,m){
   notPermitted:{r:'notPermitted',s:SRC.sama51},
   complaint:{r:'complaint',s:SRC.sama64},
   review:{r:'review',s:null},
-  dnc:{r:'dnc',s:SRC.cg}}[k]||null;
+  dnc:{r:'dnc',s:SRC.cg},
+  noPhone:{r:'noPhone',s:SRC.data},noMail:{r:'noMail',s:SRC.data}}[k]||null;
 }
 
 /* mode: 'queue' (case list, screen zero) | 'profile' | 'compare' | 'wrapup' (post-call write) */

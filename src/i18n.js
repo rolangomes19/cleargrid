@@ -3,7 +3,10 @@
 /* ═══ 0.1 · Arabic counted-noun agreement: dual for 2, plural for 3–10, singular
    (accusative) for 11+. one helper instead of five duplicated ternary chains —
    English doesn't need this (singular/plural only), so it's Arabic-only. ═══ */
-const pluralAr=(n,f)=>n===1?f.one:n===2?f.two:n<=10?f.few:f.many;
+/* CLDR categories from Intl, not hand-written ranges: zero/one/two/few (3-10, 103-110...)/many (11-99...)/other (100-102, 200...).
+   a noun with no `other` form takes `many`. */
+const AR_PR=new Intl.PluralRules('ar');
+const pluralAr=(n,f)=>{const c=AR_PR.select(n);return f[c]??(c==='zero'?f.other:undefined)??(c==='other'?f.many:undefined)??f.many;};
 
 /* ═══ 1 · dictionary. written before markup. the AR view is generated, not mirrored. ═══ */
 const T={
@@ -35,12 +38,12 @@ en:{
  call:'Call',sms:'SMS',wa:'WhatsApp',email:'Email',
  ch:{window:'Outside call hours, 09:00–20:00',capClient:'Contact cap reached',capSama:'10 of 10 call attempts used in 30 days',
      consent:'Needs the borrower’s consent',notPermitted:'Not a permitted channel in KSA',
-     complaint:'Open complaint: no reminders on any channel',
+     complaint:'Open complaint: no reminders on any channel',noPhone:'No phone number on record',noMail:'No email address on record',
      review:'Paused while the dispute is open',dnc:'Borrower opted out on 14 Jun'},
- src:{client:'Client policy',cg:'ClearGrid policy',title:'Rule source'},
+ src:{client:'Client policy',data:'Record',cg:'ClearGrid policy',title:'Rule source'},
  proposed:'Proposed field', proposedTip:'Not in the system today. A proposal, computed from existing fields.',
  lastContact:'Last contact', market:'Market', mk:{AE:'UAE',SA:'KSA'}, natId:{AE:'Emirates ID',SA:'National ID'},
- showId:'Show', hideId:'Hide', amtPh:'AED',
+ showId:'Show', hideId:'Hide', idShown:'Shown for 15 s, then hidden again.', amtPh:'AED',
  st:{tour:'Guided tour',next:'Next',back:'Back',finish:'Finish',explore:'Explore freely (Esc)',
      paused:(n,t)=>`Tour paused at ${n}/${t}. Resume`,go:n=>`Go to step ${n}`,why:'Why',log:'Decisions',test:'Testing',testLink:'How I’d test this',
      back2:'Back',enOnly:'',startTour:'Tour',anns:'Why links',props:'Proposed fields',sheet:'Components'},
@@ -65,6 +68,8 @@ en:{
     needsAttention:n=>n===1?'1 needs attention':`${n} need attention`},
  wrap:{title:'Wrap up', forAccount:'Outcome for', save:'Save outcome',
     logged:'Outcome logged', returnToQueue:'Return to queue',
+    needPtp:'A promise needs an amount and a date.',badAmt:'Enter the promised amount as a number.',
+    disputedPtp:'This account is in dispute. Save again to log the promise anyway.',
     note:'This outcome is scored on the same rubric as AI-handled calls, and feeds back into the models that route the next case.'},
  f:{dob:'Date of birth',gender:'Gender',nat:'Nationality',eid:'Emirates ID',visa:'Visa status',
     lang:'Language',owner:'Owner',stage:'Stage',submit:'Submitted',phone:'Phone',mail:'Email',
@@ -82,7 +87,7 @@ en:{
  yes:'Yes',no:'No',of:'of',
  e:{status:{coll:'In collection',disputed:'Disputed',plan:'Payment plan active',legal:'With legal',settled:'Settled'},
     product:{card:'Credit card',bnpl:'Buy now pay later',auto:'Auto finance',personal:'Personal loan',telecom:'Telecom postpaid',sme:'SME facility'},
-    stage:{rpc:'Right party contact',ptp:'Promise to pay',disp:'In dispute',ntc:'Not contactable'},
+    stage:{rpc:'Right party contact',ptp:'Promise to pay',disp:'In dispute',ntc:'Not contactable',new:'New, not yet contacted',unr:'Not reached'},
     gender:{m:'Male',f:'Female',na:'–'},
     ptp:{open:'Open',broken:'Broken',kept:'Kept'},
     src:{phone:'Phone',ai:'AI voice',sms:'SMS',wa:'WhatsApp',email:'Email',portal:'Portal',sys:'System'},
@@ -122,16 +127,16 @@ ar:{
     broken:(n,a)=>`${pluralAr(n,{one:'وعد واحد',two:'وعدان',few:`${n} وعود`,many:`${n} وعداً`})} على ${a}`,
     first:n=>`تواصل معه النظام الآلي ${pluralAr(n,{one:'مرة واحدة',two:'مرتين',few:`${n} مرات`,many:`${n} مرة`})}`},
  langName:{ar:'العربية',en:'الإنجليزية'}, pickDate:'اختر تاريخاً', prevMonth:'الشهر السابق', nextMonth:'الشهر التالي',
- noPast:'لا يمكن أن يكون تاريخ الوعد في الماضي', days:n=>pluralAr(n,{one:'يوم واحد',two:'يومان',few:`${N(n)} أيام`,many:`${N(n)} يوماً`}), perMo:'شهر', noPlan:'لا توجد خطة سداد على هذا الحساب.',
+ noPast:'لا يمكن أن يكون تاريخ الوعد في الماضي', days:n=>pluralAr(n,{zero:`${N(n)} يوم`,one:'يوم واحد',two:'يومان',few:`${N(n)} أيام`,many:`${N(n)} يوماً`,other:`${N(n)} يوم`}), perMo:'شهر', noPlan:'لا توجد خطة سداد على هذا الحساب.',
  call:'اتصال',sms:'رسالة نصية',wa:'واتساب',email:'بريد',
  ch:{window:'خارج ساعات الاتصال، 09:00–20:00',capClient:'تم بلوغ حد التواصل',capSama:'استُخدمت 10 من 10 محاولات اتصال خلال 30 يوماً',
      consent:'تتطلب موافقة المدين',notPermitted:'قناة غير مسموحة في السعودية',
-     complaint:'شكوى قائمة: لا تذكير عبر أي قناة',
+     complaint:'شكوى قائمة: لا تذكير عبر أي قناة',noPhone:'لا يوجد رقم هاتف في السجل',noMail:'لا يوجد بريد إلكتروني في السجل',
      review:'موقوفة طالما الاعتراض قائم',dnc:'ألغى المدين الاستقبال في 14 يونيو'},
- src:{client:'سياسة الجهة الدائنة',cg:'سياسة كليرجريد',title:'مصدر القاعدة'},
+ src:{client:'سياسة الجهة الدائنة',data:'السجل',cg:'سياسة كليرجريد',title:'مصدر القاعدة'},
  proposed:'حقل مقترح', proposedTip:'غير موجود في النظام حالياً. مقترح محسوب من حقول قائمة.',
  lastContact:'آخر تواصل', market:'السوق', mk:{AE:'الإمارات',SA:'السعودية'}, natId:{AE:'رقم الهوية الإماراتية',SA:'رقم الهوية الوطنية'},
- showId:'إظهار', hideId:'إخفاء', amtPh:'المبلغ',
+ showId:'إظهار', hideId:'إخفاء', idShown:'ظاهر لمدة 15 ثانية ثم يُخفى مجدداً.', amtPh:'المبلغ',
  st:{tour:'جولة إرشادية',next:'التالي',back:'السابق',finish:'إنهاء',explore:'استكشاف حر (Esc)',
      paused:(n,t)=>`الجولة متوقفة عند ${n}/${t}. متابعة`,go:n=>`الانتقال إلى الخطوة ${n}`,why:'لماذا',log:'القرارات',test:'الاختبار',testLink:'خطة الاختبار',
      back2:'رجوع',enOnly:'هذه الصفحة متاحة بالإنجليزية فقط.',startTour:'الجولة',anns:'روابط «لماذا»',props:'الحقول المقترحة',sheet:'المكوّنات'},
@@ -156,6 +161,8 @@ ar:{
     needsAttention:n=>pluralAr(n,{one:'حالة واحدة تحتاج انتباهاً',two:'حالتان تحتاجان انتباهاً',few:`${n} حالات تحتاج انتباهاً`,many:`${n} حالة تحتاج انتباهاً`})},
  wrap:{title:'إنهاء المكالمة', forAccount:'النتيجة لحساب', save:'حفظ النتيجة',
     logged:'تم تسجيل النتيجة', returnToQueue:'العودة إلى القائمة',
+    needPtp:'الوعد يحتاج إلى مبلغ وتاريخ.',badAmt:'أدخل المبلغ الموعود كرقم.',
+    disputedPtp:'هذا الحساب قيد الاعتراض. احفظ مرة أخرى لتسجيل الوعد رغم ذلك.',
     note:'تُقيَّم هذه النتيجة على نفس معايير المكالمات الآلية، وتُغذّي النماذج التي توجّه الحالة التالية.'},
  f:{dob:'تاريخ الميلاد',gender:'الجنس',nat:'الجنسية',eid:'رقم الهوية',visa:'حالة الإقامة',
     lang:'اللغة',owner:'المسؤول',stage:'المرحلة',submit:'تاريخ الإحالة',phone:'الهاتف',mail:'البريد',
@@ -173,7 +180,7 @@ ar:{
  yes:'نعم',no:'لا',of:'من',
  e:{status:{coll:'قيد التحصيل',disputed:'محل اعتراض',plan:'خطة سداد نشطة',legal:'محال للقانوني',settled:'مسدد'},
     product:{card:'بطاقة ائتمانية',bnpl:'اشترِ الآن وادفع لاحقاً',auto:'تمويل سيارة',personal:'قرض شخصي',telecom:'اتصالات آجل',sme:'تسهيل للمنشآت'},
-    stage:{rpc:'تواصل مع الشخص المعني',ptp:'وعد بالسداد',disp:'قيد الاعتراض',ntc:'تعذر التواصل'},
+    stage:{rpc:'تواصل مع الشخص المعني',ptp:'وعد بالسداد',disp:'قيد الاعتراض',ntc:'تعذر التواصل',new:'جديد، لم يُتواصل معه بعد',unr:'لم يتم الوصول إليه'},
     gender:{m:'ذكر',f:'أنثى',na:'–'},
     ptp:{open:'قائم',broken:'لم يُنفَّذ',kept:'تم الوفاء'},
     src:{phone:'هاتف',ai:'مكالمة آلية',sms:'رسالة نصية',wa:'واتساب',email:'بريد',portal:'البوابة',sys:'النظام'},
