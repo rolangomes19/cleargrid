@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClearGrid — Design Tokens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Tajawal:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../src/tokens.css">
+<style>
+/* ── showcase chrome — not part of the product, styled to match it ── */
+body{overflow:auto;height:auto}
+.tk-page{max-width:1080px;margin:0 auto;padding:0 0 80px}
+.tk-hero{background:var(--surface);border-bottom:1px solid var(--line);padding:34px 28px 26px}
+.tk-hero .eyebrow{display:block;margin-block-end:6px}
+.tk-hero h1{margin:0 0 8px;font-size:20px;font-weight:600;letter-spacing:-.01em;color:var(--text)}
+.tk-hero p{margin:0;color:var(--text2);font-size:12.5px;max-inline-size:620px;line-height:1.55}
+.tk-hero .src{margin-block-start:12px;font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+
+.tk-sec{padding:28px}
+.tk-sec+.tk-sec{border-block-start:1px solid var(--line)}
+.tk-sec>.eyebrow{display:block;margin-block-end:14px}
+.tk-note{color:var(--text2);font-size:11.5px;max-inline-size:640px;margin:0 0 16px;line-height:1.6}
+
+/* type rows reuse .row semantics but wider */
+.tk-type{display:flex;align-items:baseline;gap:18px;padding:14px 0;border-block-end:1px solid #F4F5F6}
+.tk-type:last-child{border-block-end:0}
+.tk-type .sample{flex:0 0 230px;color:var(--text);min-inline-size:0}
+.tk-type .meta{flex:1;min-inline-size:0}
+.tk-type .meta .t-pri{margin-block-end:2px}
+.tk-type .meta .spec{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-block-end:5px}
+
+/* swatch cards reuse .card look */
+.tk-swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.tk-swatch{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:9px 10px}
+.tk-chip{block-size:38px;border-radius:var(--r-sm);margin-block-end:8px;border:1px solid rgba(0,0,0,.06)}
+.tk-swatch .hex{font-family:var(--mono);font-size:10px;color:var(--muted);margin-block-start:1px}
+.tk-swatch .use{font-size:11px;color:var(--text2);margin-block-start:6px;line-height:1.5}
+.tk-group-h{margin:22px 0 10px;font-size:11.5px}
+.tk-group-h:first-child{margin-block-start:0}
+
+.tk-budget{margin-block-start:16px}
+
+/* spacing */
+.tk-sp-row{display:flex;align-items:center;gap:14px;padding:7px 0}
+.tk-sp-bar{background:var(--teal);border-radius:2px;block-size:12px}
+.tk-sp-label{font-family:var(--mono);font-size:11px;inline-size:100px;flex:0 0 auto;color:var(--text2)}
+.tk-sp-use{font-size:11.5px;color:var(--text2)}
+
+/* radius/elevation demos reuse .blk shape */
+.tk-demo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.tk-demo{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:12px}
+.tk-demo .box{block-size:50px;background:var(--sunken);margin-block-end:9px}
+.tk-r-sm{border-radius:var(--r-sm)}
+.tk-r-md{border-radius:var(--r-md)}
+.tk-sh-sm{box-shadow:var(--shadow-sm)}
+.tk-sh-md{box-shadow:var(--shadow-md)}
+.tk-focus{box-shadow:var(--focus-ring)}
+.tk-demo .lbl{font-family:var(--mono);font-size:10.5px;color:var(--text2)}
+.tk-demo p{font-size:11px;color:var(--text2);margin:6px 0 0;line-height:1.5}
+
+/* motion table reuse table styles from product */
+.tk-motion td{vertical-align:top}
+.tk-play-cell{white-space:nowrap}
+#tk-open-stage,#tk-pulse-stage{margin-block-start:10px;display:none}
+#tk-open-stage{border:1px solid var(--teal);border-radius:var(--r-md);background:var(--tealWash);padding:9px 10px}
+#tk-pulse-stage{border-radius:var(--r-md);padding:8px 10px;font-size:11.5px}
+
+.tk-rules{display:grid;gap:8px}
+.tk-rule{display:flex;gap:11px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px}
+.tk-rule .n{flex:0 0 auto;inline-size:20px;block-size:20px;border-radius:50%;background:var(--sunken);color:var(--text2);
+  display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:600}
+.tk-rule .t{font-size:11.5px;line-height:1.55;color:var(--text)}
+
+code.tk-code{font-family:var(--mono);background:var(--sunken);padding:1px 5px;border-radius:4px;font-size:10.5px}
+</style>
+</head>
+<body>
+<div class="tk-page">
+
+  <div class="tk-hero">
+    <span class="eyebrow">Design system reference</span>
+    <h1>ClearGrid Borrower Profile — Design Tokens</h1>
+    <p>Every typescale, colour, spacing step, radius, shadow and motion value defined in <code class="tk-code">src/tokens.css</code> — rendered with the product's own stylesheet, fonts and components, with what each token means and exactly where it's used.</p>
+    <div class="src">source: src/tokens.css · src/components.js · src/regions.js</div>
+  </div>
+
+  <section class="tk-sec">
+    <span class="eyebrow">Typography — 4 styles</span>
+    <p class="tk-note">Audited down from 16, then from 6. Two weights system-wide: 400 and 600 — no 500, no 700, except JetBrains Mono's <code class="tk-code">display</code> tier, which ships no 600 file. A new visual need is a modifier on one of these four, never a 5th named style.</p>
+
+    <div class="tk-type">
+      <div class="sample"><span class="t-display">51,240 <span class="t-display sm">AED</span></span></div>
+      <div class="meta">
+        <div class="t-pri">display · <code class="tk-code">.t-display</code></div>
+        <div class="spec">JetBrains Mono · 500 · 23px / 16px (.sm) · tabular-nums · -1% tracking</div>
+        <div class="t-sec">The numbers an agent reads aloud — borrower total outstanding in the spine, account totals, hero stat blocks. <code class="tk-code">.sm</code> for a secondary figure beside a primary one.</div>
+      </div>
+    </div>
+
+    <div class="tk-type">
+      <div class="sample"><span style="font-size:16.5px;font-weight:600;letter-spacing:-.01em">Fatima Al Suwaidi</span></div>
+      <div class="meta">
+        <div class="t-pri">title · <code class="tk-code">.names .n1</code></div>
+        <div class="spec">Inter · 600 · 16.5px</div>
+        <div class="t-sec">The borrower's own name header in the spine — kept as its own size after an A/B pass because a name is a recurring identity pattern that disappeared into the row when folded into <code class="tk-code">emphasis</code>.</div>
+      </div>
+    </div>
+
+    <div class="tk-type">
+      <div class="sample"><span class="t-pri">Gulf Meridian Bank</span></div>
+      <div class="meta">
+        <div class="t-pri">emphasis · <code class="tk-code">.t-pri</code></div>
+        <div class="spec">Inter · 600 · 12.5px</div>
+        <div class="t-sec">Names/headline text inside a row — a card's lender name, an activity log's outcome text, block-header action labels.</div>
+      </div>
+    </div>
+
+    <div class="tk-type">
+      <div class="sample"><span class="t-sec">Outstanding · across 2 accounts</span></div>
+      <div class="meta">
+        <div class="t-pri">label · <code class="tk-code">.t-sec</code> / <code class="tk-code">.eyebrow</code></div>
+        <div class="spec">Inter · 400 · 11.5px · text2</div>
+        <div class="t-sec">Everything else: field labels <b>and</b> field values, table cells/headers, nav items, log meta, block-heading eyebrows, sub-captions. <code class="tk-code">.eyebrow</code> is the same declaration, not a fork — position tells a heading from a label apart, not type.</div>
+      </div>
+    </div>
+
+    <div class="tk-demo-grid" style="margin-block-start:16px">
+      <div class="tk-demo"><span class="lbl">mono / tabular-nums</span><p>Every numeral, ID, timestamp and amount — <code class="tk-code">.num</code>. Never for text labels, not even uppercase-tracked "eyebrows" (tried, removed: read like a code editor).</p></div>
+      <div class="tk-demo"><span class="lbl">middle-dot meta</span><p>At most one <code class="tk-code">·</code>-separated meta string per line.</p></div>
+    </div>
+  </section>
+
+  <section class="tk-sec">
+    <span class="eyebrow">Colour — 16 tokens</span>
+    <p class="tk-note">Structural neutrals plus one identity hue (teal) and three status hues (coral, green, amber), each paired with its own pale "wash" for backgrounds.</p>
+
+    <div class="tk-group-h eyebrow">Structure</div>
+    <div class="tk-swatches">
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--bg)"></div><div class="t-pri">bg</div><div class="hex">#F4F5F7</div><div class="use">App canvas behind the spine and columns.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--surface)"></div><div class="t-pri">surface</div><div class="hex">#FFFFFF</div><div class="use">Cards, blocks, the spine, table rows.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--sunken)"></div><div class="t-pri">sunken</div><div class="hex">#EDEFF2</div><div class="use">Totals bar, table headers, progress-bar track, quiet badge fill.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--text)"></div><div class="t-pri">text</div><div class="hex">#0A0A08</div><div class="use">Primary text — body copy, field values.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--text2)"></div><div class="t-pri">text2</div><div class="hex">#5B6166</div><div class="use">Secondary text — second name line, field labels, log timestamps.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--muted)"></div><div class="t-pri">muted</div><div class="hex">#8A9094</div><div class="use">Nulls (en dash), disabled action text, empty states.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--line)"></div><div class="t-pri">line</div><div class="hex">#E5E7E9</div><div class="use">Default hairline — column dividers, card/block borders.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--line2)"></div><div class="t-pri">line2</div><div class="hex">#D3D7DA</div><div class="use">Stronger hairline — card hover border, mini-button border.</div></div>
+    </div>
+
+    <div class="tk-group-h eyebrow">Identity — teal</div>
+    <div class="tk-swatches">
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--teal)"></div><div class="t-pri">teal</div><div class="hex">#069494</div><div class="use">Primary actions, selected-card ring, focus ring, avatar fill, progress fill, active nav item.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--tealDeep)"></div><div class="t-pri">tealDeep</div><div class="hex">#04716D</div><div class="use">Text on the "teal" badge variant.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--tealDeeper)"></div><div class="t-pri">tealDeeper</div><div class="hex">#035854</div><div class="use">Reserved deepest ramp step.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--tealWash)"></div><div class="t-pri">tealWash</div><div class="hex">#EAF5F5</div><div class="use">Teal badge fill, new-log-row highlight, entry-form panel background.</div></div>
+    </div>
+
+    <div class="tk-group-h eyebrow">Status — coral / green / amber</div>
+    <div class="tk-swatches">
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--coral)"></div><div class="t-pri">coral</div><div class="hex">#DC4A3E</div><div class="use">Escalation band, alert badges, flag dots, reason-cue text.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--coralDeep)"></div><div class="t-pri">coralDeep</div><div class="hex">#B23A30</div><div class="use">Reason-cue text under a flagged card.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--coralWash)"></div><div class="t-pri">coralWash</div><div class="hex">#FDEEEC</div><div class="use">Alert badge fill, calm escalation-band fill.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--green)"></div><div class="t-pri">green</div><div class="hex">#1E8E5A</div><div class="use">"ok" badge text — active repayment plan.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--greenWash)"></div><div class="t-pri">greenWash</div><div class="hex">#E9F5EF</div><div class="use">"ok" badge fill.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--amber)"></div><div class="t-pri">amber</div><div class="hex">#B8790A</div><div class="use">"warn" badge text (legal), pending-action subtext.</div></div>
+      <div class="tk-swatch"><div class="tk-chip" style="background:var(--amberWash)"></div><div class="t-pri">amberWash</div><div class="hex">#FBF2E0</div><div class="use">"warn" badge fill.</div></div>
+    </div>
+
+    <div class="rail tk-budget">
+      <span class="badge alert"><i class="dot"></i>coral</span>
+      <span class="badge ok"><i class="dot"></i>green</span>
+      <span class="badge warn"><i class="dot"></i>amber</span>
+      <span class="badge teal"><i class="dot"></i>teal</span>
+      <span class="badge q"><i class="dot"></i>quiet</span>
+    </div>
+    <div class="why" style="margin-block-start:10px;max-inline-size:640px">
+      <span><b>Coral budget:</b> maximum three coral elements on screen — the escalation channel only, not a general "danger" colour. A disputed+flagged card already spends its coral on the status badge, so its flag dot is suppressed rather than doubling up.</span>
+    </div>
+  </section>
+
+  <section class="tk-sec">
+    <span class="eyebrow">Spacing — 10-step scale</span>
+    <p class="tk-note">Linear 2px steps at the small end, widening past 12px. Everything in the layout is one of these ten values.</p>
+    <div class="tk-sp-row"><span class="tk-sp-label">--sp-1 · 2px</span><div class="tk-sp-bar" style="inline-size:2px"></div><span class="tk-sp-use">Status-dot to badge text.</span></div>
+    <div class="tk-sp-row"><span class="tk-sp-label">--sp-2 · 4px</span><div class="tk-sp-bar" style="inline-size:4px"></div><span class="tk-sp-use">Badge/rail internal gaps, tight row rhythm.</span></div>
+    <div class="tk-sp-row"><span class="tk-sp-label">--sp-3 · 6px</span><div class="tk-sp-bar" style="inline-size:6px"></div><span class="tk-sp-use">Collapsed-nav item padding, sparkline bar gaps.</span></div>
+    <div class="tk-sp-row"><span class="tk-sp-label">--sp-4 · 8px</span><div class="tk-sp-bar" style="inline-size:8px"></div><span class="tk-sp-use">Avatar-to-name gap, badge padding, table cell padding.</span></div>
+    <div class="tk-sp-row"><span class="tk-sp-label">--sp-5 · 10px</span><div class="tk-sp-bar" style="inline-size:10px"></div><span class="tk-sp-use">"Why" band padding, card padding.</span></div>
+    <div class="tk-sp-row"><span class="tk-sp-label">--sp-6 · 12px</span><div class="tk-sp-bar" style="inline-size:12px"></div><span class="tk-sp-use">Block header/body padding, act-button padding, spine padding.</span></div>
+    <div class="tk-sp-row"><span class="tk-sp-label">--sp-7 · 14px</span><div class="tk-sp-bar" style="inline-size:14px"></div><span class="tk-sp-use">Nav-scroll padding, harness bar padding.</span></div>
+    <div class="tk-sp-row"><span class="tk-sp-label">--sp-8 · 16px</span><div class="tk-sp-bar" style="inline-size:16px"></div><span class="tk-sp-use">Column-body padding, hero-stat gap.</span></div>
+    <div class="tk-sp-row"><span class="tk-sp-label">--sp-9 · 18px</span><div class="tk-sp-bar" style="inline-size:18px"></div><span class="tk-sp-use">Nav-promo vertical rhythm.</span></div>
+    <div class="tk-sp-row"><span class="tk-sp-label">--sp-10 · 22px</span><div class="tk-sp-bar" style="inline-size:22px"></div><span class="tk-sp-use">Spine-row gap, stat-to-stat gap.</span></div>
+  </section>
+
+  <section class="tk-sec">
+    <span class="eyebrow">Radius, elevation &amp; focus</span>
+    <div class="tk-demo-grid">
+      <div class="tk-demo"><div class="box tk-r-sm"></div><span class="lbl">--r-sm · 3px</span><p>Small controls — badges, the "why" band.</p></div>
+      <div class="tk-demo"><div class="box tk-r-md"></div><span class="lbl">--r-md · 6px</span><p>Standard container radius — cards, blocks, buttons, totals bar.</p></div>
+      <div class="tk-demo"><div class="box tk-r-md tk-sh-sm" style="background:var(--surface);border:1px solid var(--line)"></div><span class="lbl">--shadow-sm</span><p><code class="tk-code">0 1px 2px rgba(16,24,28,.08)</code> — defined, currently unused by any rendered element.</p></div>
+      <div class="tk-demo"><div class="box tk-r-md tk-sh-md" style="background:var(--surface)"></div><span class="lbl">--shadow-md</span><p>Nav flyout tooltip, the fixed audit panel — floating chrome above the flat page.</p></div>
+      <div class="tk-demo"><div class="box tk-r-md tk-focus" style="background:var(--surface)"></div><span class="lbl">--focus-ring</span><p>2px surface offset + 4px teal ring — keyboard focus on action buttons.</p></div>
+    </div>
+  </section>
+
+  <section class="tk-sec">
+    <span class="eyebrow">Motion</span>
+    <p class="tk-note">Near none, by design — this is a glance-mode tool, not a marketing site. The spine and panes never animate on their own; only discrete controls get a press or open transition.</p>
+    <table class="tk-motion">
+      <tr><th>Token</th><th>Applies to</th><th>Try it</th></tr>
+      <tr>
+        <td class="num">scale(.97) · 120ms</td>
+        <td>Button press — action-rail buttons, mini buttons, nav-lang toggle, promo CTA.</td>
+        <td class="tk-play-cell"><button class="mini pri" onclick="this.style.transform='scale(.97)';setTimeout(()=>this.style.transform='',120)">Press</button></td>
+      </tr>
+      <tr>
+        <td class="num">translateY(-4px)→0 · 180ms</td>
+        <td>The manual contact-log entry form opening (<code class="tk-code">.entry</code>).</td>
+        <td class="tk-play-cell"><button class="mini pri" id="tk-open-btn">Open</button></td>
+      </tr>
+      <tr>
+        <td class="num">background pulse · 700ms</td>
+        <td>A freshly-added activity-log row fading from white to tealWash.</td>
+        <td class="tk-play-cell"><button class="mini pri" id="tk-pulse-btn">Add row</button></td>
+      </tr>
+      <tr>
+        <td class="num">inline-size · 160ms</td>
+        <td>Nav collapse/expand width change.</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td class="num">none</td>
+        <td>Account selection, tab switches, column swaps — instant. <code class="tk-code">prefers-reduced-motion</code> disables everything above.</td>
+        <td>—</td>
+      </tr>
+    </table>
+    <div id="tk-open-stage" class="t-sec">A contact-log entry row would open here.</div>
+    <div id="tk-pulse-stage" class="t-sec">New log row</div>
+  </section>
+
+  <section class="tk-sec">
+    <span class="eyebrow">Locked rules these tokens serve</span>
+    <p class="tk-note">Each value above enforces one of the architecture rules in CLAUDE.md — changing a token without checking this list is how a rule gets silently broken.</p>
+    <div class="tk-rules">
+      <div class="tk-rule"><div class="n">1</div><div class="t"><b>Three scopes, one column each.</b> Column widths are fixed in <code class="tk-code">regions.js</code> (320px / 480px / flex), not a spacing token.</div></div>
+      <div class="tk-rule"><div class="n">2</div><div class="t"><b>The spine never scrolls.</b> <code class="tk-code">.spine</code> is <code class="tk-code">flex:0 0 auto</code>; only <code class="tk-code">.col</code> panes get <code class="tk-code">overflow:auto</code>.</div></div>
+      <div class="tk-rule"><div class="n">3</div><div class="t"><b>Coral is the escalation channel only</b> — three-element budget, above.</div></div>
+      <div class="tk-rule"><div class="n">5</div><div class="t"><b>Every figure carries its scope in its label.</b> The <code class="tk-code">label</code> style is what carries "across 2 accounts" next to every <code class="tk-code">display</code> figure.</div></div>
+      <div class="tk-rule"><div class="n">7</div><div class="t"><b>Account sort is outstanding descending, always.</b> A process rule, not a visual one — why cards never reorder when a badge colour changes.</div></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+document.getElementById('tk-open-btn').onclick=function(){
+  var s=document.getElementById('tk-open-stage');
+  s.style.display='none'; void s.offsetWidth;
+  s.style.animation='none'; void s.offsetWidth;
+  s.style.display='block';
+  s.style.animation='tkOpen 180ms cubic-bezier(.23,1,.32,1)';
+};
+document.getElementById('tk-pulse-btn').onclick=function(){
+  var s=document.getElementById('tk-pulse-stage');
+  s.style.display='block';
+  s.style.background='#fff';
+  s.style.transition='none';
+  void s.offsetWidth;
+  s.style.transition='background 700ms ease-out';
+  s.style.background='var(--tealWash)';
+};
+var st=document.createElement('style');
+st.textContent='@keyframes tkOpen{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}';
+document.head.appendChild(st);
+</script>
+</body>
+</html>
