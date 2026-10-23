@@ -41,7 +41,7 @@
   --ar:'IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
   /* Geist Mono has no Arabic: the Arabic face sits second so currency codes and month names are not drawn by a letter-spaced monospace fallback */
   --mono:'Geist Mono','IBM Plex Sans Arabic','Noto Sans Arabic',ui-monospace,monospace;
-  --fs-meta:12px; --fs-body:13px; --fs-title:14px; --fs-display:24px; --chrome-fs:12px; --chrome-lh:16px;
+  --fs-meta:12px; --fs-body:13px; --fs-title:14px; --fs-display:24px; --chrome-fs:12px; --chrome-lh:16px; --fs-ar-floor:14px; --lh-ar-floor:20px;
   --lh-meta:16px; --lh-body:20px; --lh-title:20px; --lh-display:28px;
   --fw-regular:400; --fw-strong:600; --fw-figure:500;
   --track-tight:-.01em;
@@ -212,6 +212,7 @@ html[dir="rtl"] .nav.collapsed .nav-foot .icon{transform:scaleX(1)}
   display:flex;align-items:center;justify-content:center;font-weight:var(--fw-strong);font-size:var(--fs-meta);flex:0 0 auto}
 .names{display:flex;align-items:baseline;gap:var(--space-100);flex-wrap:wrap}
 .names .n2,.idline{font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text-muted)}
+.names .n2[lang="ar"]{font-size:var(--fs-ar-floor);line-height:var(--lh-ar-floor)}
 .idline{display:flex;gap:var(--space-100);align-items:center;flex-wrap:wrap;margin-block-start:var(--space-050)}
 .stats{display:flex;gap:var(--space-300);margin-inline-start:auto;text-align:end;flex:0 0 auto}
 
@@ -274,8 +275,8 @@ a.src:active{background:var(--surface-sunken)}
   #c-bor .colbody>.blk{grid-column:1/-1}
 }
 @container bor (min-width:760px){#c-bor .colbody{grid-template-columns:1fr 1fr 1fr}}
-@container acc (min-width:760px){#c-acc .grid2{grid-template-columns:1fr 1fr 1fr}}
-@container bor (max-width:439px){#c-bor .grid2{grid-template-columns:1fr}}
+@container acc (min-width:760px){#c-acc .grid2{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@container bor (max-width:439px){#c-bor .grid2{grid-template-columns:minmax(0,1fr)}}
 
 /* containers: columns on the canvas; each group is a white panel with a ruled head; field rows
    carry a hairline so a label stays tied to its value across a wide row. (P2 tried spacing-only
@@ -312,20 +313,27 @@ a.src:active{background:var(--surface-sunken)}
    resort); prose values are flagged wide at the call site to take the full row. */
 .rows .row{display:flex;align-items:baseline;gap:var(--space-100);padding-block:var(--space-050);border-block-end:var(--stroke) solid var(--divider)}
 .rows .row:last-child{border-block-end:0}
-.grid2>.row:nth-last-child(2):not(.wide):nth-child(odd){border-block-end:0}
 .row .k{flex:0 1 auto;min-inline-size:0;max-inline-size:70%;font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text-muted);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row .v{font-weight:var(--fw-strong);margin-inline-start:auto;text-align:end;flex:1;min-inline-size:0;overflow-wrap:anywhere}
 /* council: a figure or date never breaks mid-token. in a short row the value keeps its width and the
    label gives way (ellipsis); prose values are flagged wide and still wrap. */
 .row:not(.wide):not(.prose) .v{flex:0 0 auto;white-space:nowrap;overflow-wrap:normal}
-.grid2{display:grid;grid-template-columns:1fr 1fr;column-gap:var(--space-300)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--space-300)}
 .grid2 .row.wide{grid-column:1/-1}
+/* council: dividers sit on top of each row and skip the first line, so rows line up across columns whatever the last line holds */
+.grid2>.row{border-block-end:0;border-block-start:var(--stroke) solid var(--divider)}
+.grid2>.row:nth-child(-n+2){border-block-start:0}
+/* a long value drops under its label instead of squeezing it; grid lines take the tallest row, so the columns stay aligned */
+.grid2>.row{flex-wrap:wrap;row-gap:0}
+@container acc (min-width:760px){#c-acc .grid2>.row:nth-child(3){border-block-start:0}}
+@container bor (max-width:439px){#c-bor .grid2>.row:nth-child(2){border-block-start:var(--stroke) solid var(--divider)}}
 .row.prose{display:block;padding-block:var(--space-100);border-block-end:var(--stroke) solid var(--divider)}
 .prose-h{display:flex;align-items:center;justify-content:space-between;gap:var(--space-100);margin-block-end:var(--space-050)}
 .prose-h .k{font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text-muted)}
-.hero{display:flex;gap:var(--space-300);align-items:flex-start;padding-block-end:var(--space-150);border-block-end:var(--stroke) solid var(--divider);margin-block-end:var(--space-050)}
-.hero .stat{flex:1 1 0}
+.hero{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--space-300);align-items:start;padding-block-end:var(--space-150);border-block-end:var(--stroke) solid var(--divider);margin-block-end:var(--space-050)}
+@container acc (min-width:760px){#c-acc .hero{grid-template-columns:repeat(3,minmax(0,1fr))}#c-acc .hero .stat:first-child{grid-column:span 2}}
+.hero .stat{min-inline-size:0}
 .emptyline{color:var(--text-muted);font-size:var(--fs-meta);line-height:var(--lh-meta);padding-block:var(--space-050)}
 
 /* underline tabs (2.7): the indicator sits on the column head's rule */
@@ -410,7 +418,9 @@ table{inline-size:100%;border-collapse:collapse;background:var(--surface)}
 th{text-align:start;font-size:var(--fs-meta);line-height:var(--lh-meta);font-weight:var(--fw-strong);color:var(--text-muted);
   padding:var(--space-100) var(--space-150);background:var(--surface);position:sticky;inset-block-start:0;border-block-end:var(--stroke) solid var(--border);white-space:nowrap}
 td{padding:var(--space-100) var(--space-150);border-block-end:var(--stroke) solid var(--divider)}
-td.n,th.n{text-align:end;font-family:var(--mono);font-variant-numeric:tabular-nums}
+td.n,th.n{text-align:end;font-variant-numeric:tabular-nums}
+td.n{font-family:var(--mono)}
+td>.stats{justify-content:flex-end;margin-inline-start:0}
 tbody tr{cursor:pointer} tbody tr:hover{background:var(--selected-wash)}
 tbody tr:hover .mini{border-color:var(--border-control)}
 
@@ -428,6 +438,9 @@ tbody tr:hover .mini{border-color:var(--border-control)}
 /* ── reviewer bar (H0). chrome, not product: black, 36px, labelled, 12px in English, 14px in Arabic (DualKit floor) ── */
 .rbar{flex:0 0 var(--rbar-h);display:flex;align-items:center;gap:var(--space-150);padding:0 var(--space-200);background:var(--chrome-bar);color:var(--chrome-text);
   font-size:var(--chrome-fs);line-height:var(--chrome-lh);white-space:nowrap;overflow:hidden}
+.rbar[hidden]{display:none}
+/* Arabic inside the English UI (the other-language name, the language switch): the Arabic face and the 14px floor, as in the Arabic UI */
+[lang="ar"]:not(html){font-family:var(--ar);font-size:max(1em,var(--fs-ar-floor));line-height:1.7}
 .rbar .rb-label,.rb-note{color:var(--chrome-text-muted)}
 .rb-fx{display:flex;align-items:center;gap:var(--space-100)}
 .rb-fx select{font:inherit;block-size:var(--control-xs);background:var(--chrome-bg);color:var(--chrome-text);border:var(--stroke) solid var(--chrome-control);

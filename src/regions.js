@@ -81,14 +81,14 @@ function spine(){
    the only coral on a card: one cue, on the accounts the escalation line names (2.4).
    static = specimen with no selection behaviour. ═══ */
 function acctCard(a,i,flag,on,staticCard){
- const T_=t(),p=Math.round((a.out/a.total)*100);
+ const T_=t(),paid=Math.max(0,Math.min(100,100-Math.round((a.out/a.total)*100)));
  return `<div class="card${on?' on':''}${flag?' hot':''}"${staticCard?'':` data-a="${i}" tabindex="0" role="button"`}>
    ${i<9?`<span class="kbd">${i+1}</span>`:''}
    <div class="t-pri">${esc(L(a.lender))}</div>
    <div class="t-sec">${esc(E('product',a.product))} · ${ltr(a.ref)}</div>
-   <div class="card-r"><span class="t-display sm">${M(a.out)}</span>
-    <span class="t-sec">${esc(T_.of)} ${M(a.total)}</span></div>
-   <div class="bar"><i style="inline-size:${p}%"></i></div>
+   <div class="card-r"><span><span class="t-display sm">${M(a.out)}</span> <span class="t-sec">${esc(T_.owed)}</span></span>
+    <span class="t-sec">${N(paid)}% ${esc(T_.paid)} ${esc(T_.of)} ${M(a.total)}</span></div>
+   <div class="bar" role="img" aria-label="${N(paid)}% ${esc(T_.paid)}"><i style="inline-size:${paid}%"></i></div>
    <div class="card-b">${statusBadge(a)}${dpdBadge(a)}
     ${a.broken?`<span class="badge q">${esc(T_.brokenN(a.broken))}</span>`:''}
     ${a.plan?`<span class="badge ok">${M(a.plan.emi)}/${esc(T_.perMo)}</span>`:''}</div>
@@ -136,17 +136,17 @@ function borrowerCol(){
      ${row(T_.f.phone,r.phone?ltr(r.phone,true):null)}
      ${row(T_.f.mail,r.mail?ltr(r.mail,true):null,false,true)}
      ${row(T_.f.visa,r.visa?esc(L(r.visa)):null)}
-     ${row(T_.natId[r.market]||T_.f.eid,r.eid?`${ltr(S.showId?r.eid:maskId(r.eid))} <button class="linkbtn" id="b-id" aria-pressed="${S.showId}">${esc(S.showId?T_.hideId:T_.showId)}</button>${S.showId?` <span class="t-sec">${esc(T_.idShown)}</span>`:''}`:null,false,true)}
+     ${row(T_.natId[r.market]||T_.f.eid,r.eid?`<span id="eid-v">${ltr(S.showId?r.eid:maskId(r.eid))}</span> <button class="linkbtn" id="b-id" aria-pressed="${S.showId}" title="${S.showId?esc(T_.idShown):''}">${esc(S.showId?T_.hideId:T_.showId)}</button>`:null,false,true)}
     </div></div></div>
   </div></div>`;
 }
 /* ═══ 8 · REGION 3 · account column. fixed block order, no disclosure controls. ═══ */
 function accountCol(){
- const a=acc(),T_=t(),d=dpd(a),p=Math.round((a.out/a.total)*100);
+ const a=acc(),T_=t(),d=dpd(a),paid=Math.max(0,Math.min(100,100-Math.round((a.out/a.total)*100)));
 
  const balance=block('balance',`
   <div class="hero">
-   ${stat(T_.f.out,M(a.out),`${N(p)}% ${esc(T_.of)} ${M(a.total)}`,{bar:p})}
+   ${stat(T_.f.out,M(a.out),`${N(paid)}% ${esc(T_.paid)} ${esc(T_.of)} ${M(a.total)}`,{bar:paid})}
    ${stat(T_.f.dpd,N(d),`${esc(T_.asOf)} ${D(TODAY_ISO)}`)}
   </div>
   <div class="rows grid2">
