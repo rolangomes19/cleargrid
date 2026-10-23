@@ -126,9 +126,16 @@ The tour is an overlay on the live product: same DOM, same fixtures. A step only
 `fx`, `lang`, `mode` and spotlights a selector; no state exists only in the tour. Story motion
 uses `--story-*` tokens and never animates a product component. Tour claims and card answers are
 drafts until the author rewrites them.
+The tour follows one agent's shift (queue, pick, glance, channels, accounts, balance, last contact, Arabic, wrap-up, next case); the persona and flow are in `docs/tour-storyline.md`. A first visit opens on the queue.
 The agent screen must read as finished UI: no "proposed" tags on it by default. Proposed fields
 are disclosed in the tour, the decision log and the reviewer bar's "Proposed fields" switch (`?prop=1`).
 The six in-context Why links are off by default too (`?ann=1` or the "Why links" switch). `verify.js` walks all 12 steps and checks every target exists.
+
+## Figures and fields (P6)
+
+A progress bar fills with what has been **paid down** (the convention); the figure beside it says what is **owed**, and its caption says `% paid of <original>`.
+Field grids (`.grid2`) use equal `minmax(0,1fr)` tracks, a hairline above every row except the first line, and the hero stats share those columns. A long value drops under its label instead of squeezing it.
+The ID reveal swaps text in place (`#eid-v`), never re-renders, so the column keeps its scroll position.
 
 ## System proof (P4)
 
@@ -161,6 +168,8 @@ including the nav collapse and a newly logged row (static `tealWash`, no pulse).
 Account selection and tab switches get no animation.
 
 ## Reviewer bar (replaces "No harness in the shipped page")
+
+**The bar is hidden by default.** `P` or `Shift+P` toggles it (never while typing in a field or with Ctrl/Cmd/Alt); `?bar=1` opens it. It is still in the DOM, so `verify.js` drives its buttons. Its Arabic text is 14px (`--chrome-fs` under `html[lang=ar]`).
 
 The re-interview plan (H0) adds a 36px dark bar labelled "Prototype controls, not product UI": fixture switcher, EN/ع, fixture-clock note, Self-graded badge. `?debug=1` adds the T1 layout check (`cgT1()` in the console). Everything below is the earlier history.
 

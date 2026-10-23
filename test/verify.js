@@ -17,6 +17,16 @@ const setLang=l=>click(doc.querySelector(`.nav-lang button[data-v="${l}"]`));
 // landing (plan decision 1): a first visit with a bare link opens the tour at step 1
 if(!doc.querySelector('#story .strip')||!/step=1/.test(window.location.search)) errs.push('P3: first visit did not open the tour at step 1');
 // boot state (plan §3.1): the 7-account Stress profile, English, URL carries the state
+// a first visit opens the tour on the queue (the agent's first screen); opening the top case lands on the 7-account Stress profile
+if(!doc.querySelector('#q-list')) errs.push('BOOT: expected the queue under tour step 1');
+// prototype controls are hidden by default; P toggles them, but never while typing
+{const key=(k,el)=>(el||doc.body).dispatchEvent(new window.KeyboardEvent('keydown',{key:k,bubbles:true}));
+ if(!doc.getElementById('rbar').hidden) errs.push('BAR: prototype controls visible by default');
+ key('p'); if(doc.getElementById('rbar').hidden) errs.push('BAR: P did not show the prototype controls');
+ key('P'); if(!doc.getElementById('rbar').hidden) errs.push('BAR: Shift+P did not hide them again');
+ const inp=doc.createElement('input'); doc.body.appendChild(inp); key('p',inp);
+ if(!doc.getElementById('rbar').hidden) errs.push('BAR: P toggled the bar while typing in a field'); inp.remove();}
+openCase('stress');
 if(!doc.querySelector('.spine')||doc.querySelectorAll('.card').length!==7) errs.push('BOOT: expected the Stress profile with 7 accounts');
 if(!/fx=stress/.test(window.location.search)) errs.push('URL: fx not written to the address bar');
 if(doc.querySelector('.nav-promo')) errs.push('2.10: promo still in nav');
