@@ -7,7 +7,8 @@ const LOGO=`<img class="logo-full" alt="ClearGrid" src="../assets/cleargrid-icon
    <img class="logo-mark" alt="ClearGrid" src="../assets/cleargrid-icon.webp">`;
 function nav(){
  const n=t().nav;
- const i=(k,ic,on,key)=>`<div class="item${on?' on':''}"${key?` data-nav="${key}" tabindex="0" role="button"`:''}>${icon(ic)}<span class="label">${esc(k)}</span></div>`;
+ /* a collapsed nav hides the label; aria-label keeps the accessible name (axe aria-command-name) */
+ const i=(k,ic,on,key)=>`<div class="item${on?' on':''}"${key?` data-nav="${key}" tabindex="0" role="button" aria-label="${esc(k)}"`:''}>${icon(ic)}<span class="label">${esc(k)}</span></div>`;
  return `<div class="nav-scroll">
    <div class="logo">${LOGO}</div>
    <div class="gl">${esc(n.p)}</div>${i(n.dash,'dash')}${i(n.bor,'users',1,'queue')}${i(n.acc,'wallet')}
@@ -33,6 +34,7 @@ function nav(){
 /* ═══ 11.1 · reviewer bar (H0). chrome around the product, labelled as such, so a
    reviewer can switch fixture and language without guessing. not product UI. ═══ */
 const FX=['stress','omar','aisha','sparse','blocked','ksa'];
+const REVIEW=['log','sheet','test'];
 function rbar(){
  const b=t().bar;
  return `<span class="rb-label">${esc(b.label)}</span>
@@ -40,11 +42,13 @@ function rbar(){
    `<option value="${k}"${S.rec===k?' selected':''}>${esc(L(R[k].name))} · ${esc(b.fxName[k])}</option>`).join('')}</select></label>
   <span class="rb-lang"><button data-v="en"${S.lang==='en'?' aria-pressed="true"':''}>EN</button><button data-v="ar" lang="ar"${S.lang==='ar'?' aria-pressed="true"':''}>ع</button></span>
   <span class="rb-note">${esc(b.fixtures)}</span>
-  ${SCALED?`<span class="rb-note">${esc(b.scaled)}</span>`:''}
+  ${SCALED?`<span class="rb-note" data-scaled title="${esc(b.scaledTip)}">${esc(b.scaled)}</span>`:''}
   ${DEBUG?`<span class="rb-t1" id="rb-t1"></span>`:''}
   <span class="rb-links">
    <button type="button" id="rb-tour"${S.step&&!S.paused?' aria-pressed="true"':''}>${esc(t().st.startTour)}</button>
    <button type="button" id="rb-log"${S.mode==='log'?' aria-pressed="true"':''}>${esc(t().st.log)}</button>
+   <button type="button" id="rb-sheet"${S.mode==='sheet'?' aria-pressed="true"':''}>${esc(t().st.sheet)}</button>
+   <button type="button" id="rb-test"${S.mode==='test'?' aria-pressed="true"':''}>${esc(t().st.test)}</button>
    <button type="button" id="rb-ann" aria-pressed="${S.ann}">${esc(t().st.anns)}</button>
    <button type="button" id="rb-prop" aria-pressed="${S.prop}">${esc(t().st.props)}</button>
   </span>
@@ -65,6 +69,9 @@ function readUrl(){
  if(Q.get('view')==='log'){ S.mode='log'; S.card=CARDS.some(c=>c[0]===Q.get('card'))?Q.get('card'):null; }
  if(Q.get('ann')==='1') S.ann=true; /* why links: reviewer layer, off by default */
  if(Q.get('prop')==='1') S.prop=true;
+ if(Q.get('view')==='sheet') S.mode='sheet';
+ if(Q.get('view')==='test') S.mode='test';
+ if(STATES.includes(Q.get('state'))) S.state=Q.get('state');
  S.sel=defaultSel();
  const i=accts().findIndex(a=>a.ref===Q.get('acct')); if(i>=0) S.sel=i;
 }
@@ -73,10 +80,13 @@ function writeUrl(){
  u.set('lang',S.lang); u.set('fx',S.rec);
  if(S.mode==='queue') u.set('view','queue');
  else if(S.mode==='log'){ u.set('view','log'); if(S.card) u.set('card',S.card); }
+ else if(S.mode==='sheet') u.set('view','sheet');
+ else if(S.mode==='test') u.set('view','test');
  else { u.set('acct',acc().ref); u.set('tab',S.tab); u.set('scope',S.scope==='all'?'all':'acct'); }
  if(S.step&&!S.paused) u.set('step',S.step);
  if(S.ann) u.set('ann','1');
  if(S.prop) u.set('prop','1');
+ if(S.state) u.set('state',S.state);
  if(DEBUG) u.set('debug','1');
  /* step changes push, so browser Back steps back through the tour; all else replaces */
  try{ history[PUSH?'pushState':'replaceState'](null,'','?'+u); }catch(e){}
@@ -113,6 +123,12 @@ function render(){
   stack.innerHTML=queueView();
  } else if(S.mode==='log'){
   stack.innerHTML=logView();
+ } else if(S.mode==='sheet'){
+  stack.innerHTML=sheetView();
+ } else if(S.mode==='test'){
+  stack.innerHTML=testView();
+ } else if(S.state==='loading'&&S.mode==='profile'){
+  stack.innerHTML=skeletonView();
  } else if(S.mode==='wrapup'){
   stack.innerHTML=spine()+`<div class="cols compare">${borrowerCol()}${wrapupView()}</div>`;
  } else {
@@ -213,17 +229,30 @@ function wire(){
  on('b-entry',()=>{S.mode='wrapup';S.wrapDone=false;render();});
  on('b-inbox',()=>{S.mode='profile';S.tab='m';S.scope='all';render();});
  /* exit is faster than entry (150ms vs 180ms); reduced motion keeps the fade only */
+ /* council R-C: Arabic-keyboard digits are shown as Western as they are typed, not only when parsed on save */
+ const amtIn=document.getElementById('w-amt');
+ if(amtIn) amtIn.addEventListener('input',()=>{const v=amtIn.value.replace(/[٠-٩۰-۹]/g,c=>(c.charCodeAt(0)&15)%10).replace(/٫/g,'.').replace(/٬/g,',');
+  if(v!==amtIn.value) amtIn.value=v;});
  on('w-cancel',()=>{const w=document.querySelector('.wrap'); if(w)w.classList.add('leaving');
   setTimeout(()=>{S.mode='profile';render();},150);});
  on('w-save',()=>{
   const a=acc(),r=rec();
   const out=document.getElementById('w-out').value;
+  /* 1.5: save failed keeps every input and says so; nothing is re-rendered */
+  if(S.state==='savefail'){ const w=document.querySelector('.wrap');
+   if(!w.querySelector('.save-fail')) w.querySelector('.actions').insertAdjacentHTML('beforebegin',`<div class="save-fail" role="alert">${esc(t().sys.saveFail)}</div>`);
+   return; }
   const note=document.getElementById('w-note').value.trim();
   const amt=parseFloat(toWesternDigits(document.getElementById('w-amt').value).replace(/[^\d.]/g,''));
   const date=document.getElementById('w-date').value;
+  /* council R-E: an unreadable promised amount is marked, not silently dropped */
+  const rawAmt=document.getElementById('w-amt').value.trim(), amtBad=!!rawAmt&&!(amt>0);
+  document.getElementById('w-amt').setAttribute('aria-invalid',String(amtBad));
   const entry={at:new Date().toISOString(),a:a.ref,src:'phone',dir:'out',out,
     by:r.owner||'Agent',note:note?{en:note,ar:note}:null};
   r.logs.unshift(entry); S.justLogged=entry; S.enter=true;
+  /* 1.4: the call totals and 'latest answered' move with the log, so the record never contradicts itself */
+  r.calls.h++; if(out!=='noans') r.calls.lastH=entry.at;
   /* one write, three synchronised reads: spine stat, account card, this list */
   if(amt&&date){ a.ptp={amt,date,state:'open'}; }
   S.wrapDone=true; S.tab='i'; render();
@@ -231,6 +260,9 @@ function wire(){
  on('w-return',()=>{S.wrapDone=false;S.mode='queue';render();});
  on('b-navcollapse',()=>{S.navCollapsed=!S.navCollapsed;render();});
  on('b-id',()=>{S.showId=!S.showId;render();});
+ /* 3.5: the editable portfolio field writes back to the record */
+ const fv=document.getElementById('f-verif');
+ if(fv) fv.addEventListener('change',()=>{ acc().fields.verif=fv.value; });
  wireNavFlyout();
  s.querySelectorAll('.dd').forEach(wireDropdown);
 }
@@ -257,7 +289,8 @@ function wireDropdown(dd){
  if(dd.dataset.dd==='select'){
   const opts=[...pop.querySelectorAll('.dd-opt')];
   const pick=o=>{ input.value=o.dataset.v; dd.querySelector('.dd-val').textContent=o.textContent.trim();
-   opts.forEach(x=>x.setAttribute('aria-selected',x===o)); close(); };
+   opts.forEach(x=>x.setAttribute('aria-selected',x===o)); close();
+   input.dispatchEvent(new Event('change',{bubbles:true})); };
   trig.addEventListener('click',()=>{ if(!pop.hidden){close();return;} open();
    (opts.find(o=>o.dataset.v===input.value)||opts[0]).focus(); });
   trig.addEventListener('keydown',e=>{ if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();trig.click();} });
@@ -352,21 +385,31 @@ window.addEventListener('resize',()=>{const was=SCALED;fit();if(was!==SCALED)ren
 /* ═══ 13.4 · story + decision log wiring ═══ */
 /* why links (product annotations and the strip's own): open the card in the log */
 document.addEventListener('click',e=>{
- const a=e.target.closest('a.ann'); if(!a) return;
+ const a=e.target.closest('a.ann'); if(!a||a.hasAttribute('download')) return;
  e.preventDefault();
- if(S.mode!=='log') S.prevMode=S.mode;
+ if(a.dataset.view==='test'){ if(!REVIEW.includes(S.mode)) S.prevMode=S.mode; if(S.step) S.paused=true; S.mode='test'; render(); return; }
+ if(!REVIEW.includes(S.mode)) S.prevMode=S.mode;
  if(S.step) S.paused=true;
  S.card=a.dataset.card||null; S.mode='log'; render();
 });
 document.getElementById('rbar').addEventListener('click',e=>{
  const b=e.target.closest('button'); if(!b) return;
  if(b.id==='rb-tour') goStep(S.step||1,true);
- if(b.id==='rb-log'){ if(S.mode!=='log'){S.prevMode=S.mode;S.card=null;S.mode='log';} else S.mode=S.prevMode; if(S.step)S.paused=true; render(); }
+ /* reviewer pages (log, sheet, test) toggle; Back returns to the product screen you came from */
+ const page={'rb-log':'log','rb-sheet':'sheet','rb-test':'test'}[b.id];
+ if(page){ if(S.mode!==page){ if(!REVIEW.includes(S.mode)) S.prevMode=S.mode; S.card=null; S.mode=page; } else S.mode=S.prevMode;
+  if(S.step) S.paused=true; render(); }
  if(b.id==='rb-ann'){ S.ann=!S.ann; render(); }
  if(b.id==='rb-prop'){ S.prop=!S.prop; render(); }
 });
 document.getElementById('stack').addEventListener('click',e=>{
- if(e.target.closest('#b-logback')){ S.mode=S.prevMode==='log'?'profile':S.prevMode; S.card=null; render(); }
+ if(e.target.closest('#b-logback')){ S.mode=REVIEW.includes(S.prevMode)?'profile':S.prevMode; S.card=null; render(); }
+ if(e.target.closest('#b-harness')) runHarness();
+ if(e.target.closest('#b-refresh')){ S.state=null; render(); }
+ /* 1.5: an allowed channel refused at dispatch. only in ?state=blocked; otherwise the
+    prototype places nothing. the notice says nothing was sent. */
+ const ch=e.target.closest('[data-ch]');
+ if(ch&&S.state==='blocked'&&ch.getAttribute('aria-disabled')!=='true'){ S.dispatch=ch.dataset.ch; render(); }
 });
 /* a click inside the product, outside the strip, means the reviewer wants to explore: pause */
 document.addEventListener('pointerdown',e=>{

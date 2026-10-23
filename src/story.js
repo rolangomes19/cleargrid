@@ -7,7 +7,7 @@ const REF={
  R1:['ClearGrid home','https://cleargrid.co'],
  R2:['ClearGrid Arabic site','https://cleargrid.co/ar/'],
  R3:['CBUAE Rulebook 5.2.5','https://rulebook.centralbank.ae/en/rulebook/article-5-business-conduct'],
- R4:['SAMA Debt Collection Regulations (2018 text)','https://rulebook.sama.gov.sa/en/node/1696'],
+ R4:['SAMA Debt Collection Regulations (current text, node 10400)','https://rulebook.sama.gov.sa/en/node/10400'],
  R12:['DualKit skills','https://github.com/dualkit/dualkit'],
  R17:['Salesforce Collections','https://www.salesforce.com/financial-services/debt-collection-software/'],
  R22:['Dubai Islamic Bank job ad','https://careers.dib.ae/en/uae/jobs/assistant-consumer-sam-1100009511/'],
@@ -55,19 +55,19 @@ const STEPS=[
  {fx:'blocked',t:'.rail',t2:'.cnotes',card:'D4',
   en:'Compliance before the click. Each blocked channel names its reason and its rule: CBUAE 5.2.5, SAMA, or the client’s own policy.',
   ar:'الامتثال قبل النقر. كل قناة مقيدة تذكر سببها وقاعدتها: المصرف المركزي الإماراتي 5.2.5 أو ساما أو سياسة الجهة الدائنة.'},
- {fx:'stress',lang:'ar',t:'.why',card:'D9',
-  en:'Same answers, same places, in Arabic.',
-  ar:'الإجابات نفسها، في الأماكن نفسها، بالعربية.'},
+ {fx:'stress',lang:'ar',t:'#c-bor .row:has(#b-id)',card:'D9',
+  en:'Same answers, same places, in Arabic. IDs and phone numbers stay left-to-right inside right-to-left text.',
+  ar:'الإجابات نفسها، في الأماكن نفسها، بالعربية. وتبقى المعرّفات وأرقام الهاتف من اليسار إلى اليمين داخل النص من اليمين إلى اليسار.'},
  {fx:'sparse',lang:'en',t:'.cols',card:'D17',
   en:'Width follows content. A short history gets a narrow column, so the columns that overflow get the room.',
   ar:'العرض يتبع المحتوى. السجل القصير يأخذ عموداً ضيقاً، لتحصل الأعمدة الممتلئة على المساحة.'},
- {fx:'omar',t:'#b-entry',card:'D12',
+ {fx:'omar',mode:'wrapup',t:'.wrap',card:'D12',
   en:'Logging an outcome keeps the record in view beside the form, so the agent can read while writing.',
   ar:'تسجيل النتيجة يُبقي السجل ظاهراً بجانب النموذج، فتمكن القراءة أثناء الكتابة.'},
  {fx:'omar',t:'#c-acc .hero',card:'D6',
   en:'One stat component, one button family, colour by role. Coral means only why this reached you.',
   ar:'مكوّن واحد للأرقام، وعائلة أزرار واحدة، وألوان حسب الدور. اللون المرجاني يعني فقط سبب وصول الحالة إليك.'},
- {fx:'omar',mode:'queue',t:'.qbody',card:'D2',
+ {fx:'omar',mode:'queue',t:'#q-list',card:'D2',
   en:'The queue is a second screen built from the same parts, with no new styles.',
   ar:'قائمة الانتظار شاشة ثانية مبنية من الأجزاء نفسها، دون أنماط جديدة.'},
  {fx:'stress',t:'#c-bor .colbody',card:'D11',
@@ -112,7 +112,7 @@ function strip(){
    <span class="st-count num">${N(n)} / ${N(STEPS.length)}</span>
    <p class="st-claim" id="st-claim" aria-live="polite">${esc(st[S.lang]||st.en)}${!st.card&&last?'':''}</p>
    ${st.card?`<a class="ann" href="?view=log&card=${st.card}" data-card="${st.card}">${esc(T_.st.why)} · ${st.card}</a>`
-     :`<a class="ann" href="?view=log" data-card="">${esc(T_.st.log)}</a>`}
+     :`<a class="ann" href="?view=log" data-card="">${esc(T_.st.log)}</a><a class="ann" href="?view=test" data-view="test">${esc(T_.st.testLink)}</a>`}
    <div class="st-act">
     <button type="button" class="mini" id="st-back"${n===1?' disabled':''}>${esc(T_.st.back)}</button>
     <button type="button" class="mini pri" id="st-next">${esc(last?T_.st.finish:T_.st.next)}</button>
@@ -129,7 +129,12 @@ function placeSpot(){
  const x=Math.min(...r.map(b=>b.left))-pad,y=Math.min(...r.map(b=>b.top))-pad;
  const w=Math.max(...r.map(b=>b.right))-x+pad,h=Math.max(...r.map(b=>b.bottom))-y+pad;
  sp.hidden=false; sp.classList.remove('dim-only');
- Object.assign(sp.style,{width:w+'px',height:h+'px',transform:`translate(${x}px,${y}px)`});
+ const to=`translate(${x}px,${y}px)`;
+ Object.assign(sp.style,{width:w+'px',height:h+'px',transform:to});
+ /* council R-A: a CSS transition only moves in a focused, rendering tab; in a throttled or driven browser the ring
+    stayed on the previous step's target. once the travel time is up, snap to the final box (no-op when the transition finished). */
+ clearTimeout(placeSpot.t);
+ placeSpot.t=setTimeout(()=>{sp.style.transition='none';sp.style.transform=to;void sp.offsetWidth;sp.style.transition='';},400);
 }
 function storySync(){
  const host=document.getElementById('story');
