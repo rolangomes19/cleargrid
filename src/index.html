@@ -3,40 +3,75 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ClearGrid — Borrower Profile</title>
+<title>ClearGrid Borrower Profile redesign (prototype, self-graded)</title>
+<meta name="description" content="Coded prototype, English and Arabic. Fixtures only, no real data.">
+<meta property="og:title" content="ClearGrid Borrower Profile redesign (prototype, self-graded)">
+<meta property="og:description" content="Coded prototype, English and Arabic. Fixtures only, no real data.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_AE">
+<meta property="og:locale:alternate" content="ar_AE">
+<!-- og:image and og:url need the absolute Pages URL: add both once the repo exists (README, H0 checklist) -->
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Tajawal:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Geist+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 <link rel="stylesheet" href="tokens.css">
 </head>
 <body>
 
-<div class="harness">
-  <span class="k">Record</span>
-  <div class="seg" id="sw-rec">
-    <button data-v="omar" class="on">Omar · 2 accts</button>
-    <button data-v="aisha">Aisha · 1 acct</button>
-    <button data-v="stress">Stress · 7 accts</button>
-    <button data-v="sparse">Sparse</button>
+<div id="root">
+  <div class="rbar" id="rbar" role="region" aria-label="Prototype controls, not product UI"></div>
+  <div class="app">
+    <nav class="nav" id="nav"></nav>
+    <div class="stack" id="stack"></div>
   </div>
-  <div class="seg" id="sw-dir"><button data-v="ltr" class="on">EN · LTR</button><button data-v="rtl">AR · RTL</button></div>
-  <span class="sp"></span>
-  <label class="chk"><input type="checkbox" id="c-squint"> Squint</label>
 </div>
 
-<div class="app">
-  <nav class="nav" id="nav"></nav>
-  <div class="stack" id="stack"></div>
-</div>
-
-<div class="audit" id="audit"><h4><span>Layout audit (live)</span><span>▾</span></h4><div class="b" id="auditb"></div></div>
 <div id="nav-flyout" hidden></div>
+<!-- story mode overlay (P3): one spotlight element and the strip; reviewer layer, not product -->
+<div id="spot" hidden aria-hidden="true"></div>
+<div id="story"></div>
+
+<!-- plan §3.4: below 1024px or touch-only. bilingual, static, no product UI. -->
+<main id="fallback" class="fallback" hidden>
+  <section lang="en" dir="ltr">
+    <h1>ClearGrid Borrower Profile redesign</h1>
+    <p class="fb-meta">Prototype, self-graded. Fixture data only. Designed for desktop screens 1366px and wider.</p>
+    <!-- DRAFT: replace with your own 30-second answers (plan, decision 11) -->
+    <p>An agent gets the 5% of cases that need judgement. The profile answers the five questions they ask first, with zero clicks, in English and Arabic.</p>
+    <ul>
+      <li><b>Spine + scope columns.</b> Owed, how late, promise, why this case, and which channels are allowed sit in one pinned strip. Below it, one column each for person, account and activity.</li>
+      <li><b>Why this reached you.</b> A line computed from fields that exist today (dispute, hardship, broken promises). A proposed field: it does not exist in the system today.</li>
+      <li><b>Compliance before the click.</b> Each channel shows its state, reason and rule source (CBUAE 5.2.5, SAMA) before the agent tries it.</li>
+      <li><b>One dictionary, full mirror.</b> Arabic is generated from the same dictionary, with Arabic type sizes, Western digits and isolated IDs.</li>
+    </ul>
+  </section>
+  <section lang="ar" dir="rtl">
+    <h1>إعادة تصميم ملف المدين في كليرجريد</h1>
+    <p class="fb-meta">نموذج أولي بتقييم ذاتي. بيانات اختبار فقط. مصمم لشاشات سطح المكتب بعرض 1366 بكسل فأكثر.</p>
+    <p>يصل إلى الموظف 5% من الحالات التي تحتاج إلى تقدير بشري. يجيب الملف عن الأسئلة الخمسة الأولى دون أي نقرة، بالعربية والإنجليزية.</p>
+    <ul>
+      <li><b>شريط ثابت وأعمدة حسب النطاق.</b> المبلغ المستحق، ومدة التأخر، والوعد، وسبب الحالة، والقنوات المسموحة في شريط واحد ثابت.</li>
+      <li><b>سبب وصول الملف إليك.</b> سطر محسوب من حقول موجودة اليوم. حقل مقترح غير موجود في النظام حالياً.</li>
+      <li><b>الامتثال قبل النقر.</b> تعرض كل قناة حالتها وسببها ومصدر القاعدة قبل المحاولة.</li>
+      <li><b>قاموس واحد وانعكاس كامل.</b> الواجهة العربية مولّدة من القاموس نفسه، بأحجام خطوط عربية وأرقام غربية.</li>
+    </ul>
+  </section>
+  <div class="fb-actions">
+    <button type="button" id="fb-copy">Copy link for desktop · نسخ الرابط</button>
+    <button type="button" id="fb-open">Open anyway · افتح على أي حال</button>
+  </div>
+</main>
 
 <script src="core.js"></script>
 <script src="i18n.js"></script>
 <script src="data.js"></script>
 <script src="components.js"></script>
 <script src="regions.js"></script>
+<script src="story.js"></script>
+<script src="system.js"></script>
+<script src="harness.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

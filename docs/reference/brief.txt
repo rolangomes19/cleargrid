@@ -1,0 +1,403 @@
+           Borrower Profile Page
+                            Redesign
+                   Product Design Case Study Brief
+
+For Product Design Candidates
+
+
+
+
+Overview
+
+This case study brief invites product design candidates to redesign the
+Borrower Profile Page within ClearGrid's collections CRM platform. The
+objective is to improve visual hierarchy, data grouping, and overall usability
+while creating a design that works seamlessly in both English (LTR) and
+Arabic (RTL) layouts.
+
+The current interface is live and functional but has evolved organically over
+time. This presents an opportunity to apply fresh UX thinking and design
+clarity to create a more efficient, agent-friendly experience.
+
+
+
+About ClearGrid
+
+ClearGrid is a next-generation debt resolution partner helping institutions
+improve recovery, reduce cost-to-collect, and enhance customer experience
+across the full DPD (Days Past Due) spectrum. Using predictive AI, omni-
+channel orchestration, and real-time portfolio intelligence, ClearGrid creates a
+resolution process that is faster, fairer, and more consistent for lenders and
+borrowers alike.
+
+ClearGrid operates primarily in the UAE and KSA (Saudi Arabia) markets,
+serving clients across banking, BNPL, telecom, digital SMEs, and embedded
+finance sectors.
+
+
+
+The Challenge
+
+Current State Analysis
+
+The existing Borrower Profile Page serves as the primary workspace for
+collections agents. After analyzing the current interface, several UX/UI issues
+have been identified that impact agent efficiency and user experience.
+
+
+  Issue
+                   Current Problem                      Business Impact
+  Category
+
+
+  Visual           Information lacks clear visual       Agents struggle to
+  Hierarchy        distinction between primary and      quickly locate critical
+                   secondary data. Font sizes and       borrower information,
+                   weights are inconsistent.            leading to longer call
+                                                        handling times.
+
+
+  Data             Related information is scattered     Increased cognitive load
+  Grouping         across disconnected sections.        as agents must piece
+                   Contact details, financial status,   together related
+                   and interaction history are          information from multiple
+                   fragmented.                          areas.
+
+
+  Layout           Excessive scrolling required to      Reduced agent
+  Efficiency       access key information. Poor         productivity and potential
+                   utilization of screen real estate.   for missed critical data
+                                                        points.
+
+
+  Component        Current design lacks modular,        Difficult to maintain
+  Scalability      reusable components.                 consistency and scale as
+                                                        new features are added.
+
+
+  Bilingual        Limited consideration for RTL        Suboptimal experience
+  Support          (Arabic) layout requirements.        for Arabic-speaking
+                                                        agents and markets.
+Current Interface Screenshots
+
+The following screenshots represent the current state of the Borrower Profile
+Page:
+
+Screenshot 1: Main Borrower Information
+
+
+
+
+   This view displays the primary borrower information including personal details,
+             financial status, and PTP (Promise to Pay) collections log.
+
+
+Screenshot 2: Deal Activity & Interaction Logs
+  The lower section contains email addresses, phone numbers, and tabular data for
+                                  interaction logs.
+
+
+Screenshot 3: Custom Attributes & Extended Details
+
+
+
+
+  Custom attributes section displays additional deal information including payment
+                      dates, amounts, and system metadata.
+
+
+Screenshot 4: Deal Timeline & Communication History
+
+
+
+
+              The deal activity timeline and expanded interaction logs.
+Redesign Requirements
+
+Your Redesign Should Include
+
+1. Redesigned UI Layout (Desktop Only)
+
+Create a comprehensive redesign of the Borrower Profile Page for both
+English (LTR) and Arabic (RTL) versions. The design should prioritize agent
+efficiency and quick access to critical information.
+
+2. Improved Visual Hierarchy
+
+Demonstrate clear thinking about which information should be prominent,
+grouped, collapsible, or tabbed. Consider the agent's workflow and prioritize
+information accordingly.
+
+3. Component-Based Thinking
+
+Design with modularity in mind. Create reusable components such as cards,
+tables, accordions, and action buttons that can scale across the platform.
+
+4. UX Rationale
+
+Provide a brief explanation (2-4 bullet points or a short Loom video)
+describing your thought process and how your redesign improves usability for
+collections agents.
+
+
+
+Data Elements to Include
+
+All of the following data must be represented in your redesign. You have full
+creative freedom to restructure and group these elements as you see fit.
+
+
+A. Borrower & Loan Information
+
+
+  Field                    Description
+
+
+  Name                     Borrower name (Arabic + English)
+
+
+  Gender                   Male/Female/N/A
+ Nationality               Country code (e.g., IND, UAE)
+
+
+ Date of Birth             DD/MM/YYYY format
+
+
+ Emirates ID               National identification number
+
+
+ Deal Owner                Assigned agent name
+
+
+ Deal Stage                Current stage (e.g., RPC, PTP)
+
+
+ Visa Status               Employment/residency status
+
+
+ Submit Date               Date case was submitted
+
+
+
+B. Financial Status
+
+
+ Field                        Description
+
+
+ Total Amount                 Original loan/debt amount
+
+
+ Outstanding Amount           Current balance owed
+
+
+ Overdue Amount               Amount past due date
+
+
+ Last Due Date                Most recent payment due date
+
+
+ Days Past Due (DPD)          Number of days overdue
+
+
+ Account Status               Current account state (e.g., IN_COLLECTION)
+
+
+
+C. PTP & Call Logs
+
+
+ Field                               Description
+
+
+ Total Human Calls                   Count of agent-initiated calls
+
+
+ Total AI Calls                      Count of automated AI calls
+
+
+ Latest Human Call Answered          Timestamp of last answered human call
+
+
+ Latest AI Call Answered             Timestamp of last answered AI call
+PTP Via Interaction Log   Promise to Pay amount and date
+
+
+Broken Promises           Type, date, and count of broken PTPs
+
+
+Interaction Logs          Table of all interactions
+
+
+Communication Logs        Table of all communications
+D. Loan/Deal Data Table
+
+For borrowers with multiple deals, display a table with:
+
+
+  Column                           Description
+
+
+  Reference ID                     Unique deal identifier
+
+
+  Account Reference ID             Linked account identifier
+
+
+  Balance Amount                   Current balance
+
+
+  Total Amount                     Original amount
+
+
+  Due Date                         Payment due date
+
+
+  Loan Type                        Type of loan (e.g., CREDIT_CARD)
+
+
+  Status                           Current status
+
+
+  Merchant Name                    Merchant (Arabic/English)
+
+
+  Action                           View/Edit actions
+
+
+
+E. Account Details (Expanded Deal View)
+
+
+  Field                           Description
+
+
+  Payment Plan Status             Active/Inactive payment plan
+
+
+  Interest/EMI/Installment        Payment breakdown information
+
+
+  Lender Name & ID                Financial institution details
+
+
+  Principal Amount                Original principal
+
+
+  Schedule/Payment Flags          Payment schedule indicators
+
+
+  Timeline Entries                Chronological activity log
+
+
+  Custom Attributes               Lender verification, dispute status, etc.
+F. Action Buttons
+
+
+  Action                            Description
+
+
+  Call                              Phone call initiation
+
+
+  SMS                               Text message
+
+
+  WhatsApp                          WhatsApp message
+
+
+  Email                             Email composition
+
+
+  Email Inbox                       View received emails
+
+
+
+
+Bilingual Design Requirements
+
+
+  English (LTR) Version                         Arabic (RTL) Version
+
+    • Standard left-to-right text                 • Right-to-left text flow and
+         flow                                        alignment
+
+    • Left-aligned labels and                     • Mirrored layout structure
+         content                                  • RTL-appropriate icon
+    • Standard icon placement                        placement
+
+                                                  • Arabic typography
+                                                     considerations
+
+
+
+You may present these as two separate frames or pages in your Figma file.
+Proper RTL alignment and language mirroring is required for the Arabic
+version.
+
+
+
+Deliverables
+
+  Deliverable                   Format                                  Required
+
+
+  Design File                   Figma file or link                      Yes
+  English (LTR) Layout           Desktop web design                    Yes
+
+
+  Arabic (RTL) Layout            Desktop web design                    Yes
+
+
+  UX Rationale                   Bullet points or Loom video           Yes
+
+
+
+
+Evaluation Criteria
+
+  Criterion                Weight     Description
+
+
+  Visual Design            25%        Clean, professional aesthetic aligned with
+  Clarity                             ClearGrid brand
+
+
+  UX Thinking              30%        Thoughtful hierarchy, grouping, and layout
+                                      decisions
+
+
+  Arabic Support &         25%        Proper RTL execution and bilingual design
+  RTL                                 quality
+
+
+  Initiative &             20%        Bonus points for thoughtful touches and
+  Ownership                           creative solutions
+
+
+
+
+Timeline
+
+
+   Please complete and submit your redesign within 48 hours of
+   receiving this brief.
+
+
+
+
+Questions?
+
+If you have any questions about this case study or need clarification on any
+requirements, please reach out to your hiring contact.
+                            Good luck!
+
+We look forward to seeing your creative approach to this challenge.
+
+
+
+
+         ClearGrid - Modern Collections, Better Outcomes
+
+                           cleargrid.ai
+

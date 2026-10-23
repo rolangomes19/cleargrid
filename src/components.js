@@ -1,59 +1,99 @@
-// atoms: badge, field row, block, bars, icons, sparkline.
+// atoms: badge, field row, block, bars, icons.
 
 /* ═══ 5 · atoms ═══ */
-function statusBadge(a,flag){
- const cls=(a.status==='disputed'&&flag)?'alert':a.status==='plan'?'ok':a.status==='legal'?'warn':'q';
- return `<span class="badge ${cls}" data-alert="${cls==='alert'?1:0}"><i class="dot"></i>${esc(E('status',a.status))}</span>`;
+/* 2.4: a badge only for minority states. amber = the account needs care (dispute, legal),
+   green = a plan is running. the majority state (in collection) is plain text. never coral:
+   coral means "why this reached you" and nothing else. */
+function statusBadge(a){
+ const cls={disputed:'warn',legal:'warn',plan:'ok'}[a.status];
+ return cls?`<span class="badge ${cls}"><i class="dot"></i>${esc(E('status',a.status))}</span>`
+  :`<span class="status-plain">${esc(E('status',a.status))}</span>`;
 }
-function dpdBadge(a,flag){
- const d=dpd(a),f=flag&&d>=180;
- return `<span class="badge ${f?'alert':'q'}" data-alert="${f?1:0}">${N(d)} ${S.lang==='en'?'d':'يوم'}</span>`;
+/* days past due is a number, not an alarm (D6). the old >=180 coral had no source (B1). */
+const dpdBadge=a=>`<span class="badge q">${esc(t().days(dpd(a)))}</span>`;
+/* the one stat component (3.3): label, value, sub, optional bar. a missing value is said
+   in body text at the value's line height, so a null never sits at hero size (2.2) and
+   the row below does not move (1.8). */
+function stat(label,value,sub,o={}){
+ return `<div class="stat"${o.g?` data-g="${o.g}"`:''}><span class="stat-k">${esc(label)}${o.ann||''}</span>
+  ${value==null?`<div class="stat-v is-null">${esc(o.none||'–')}</div>`:`<div class="stat-v t-display${o.sm?' sm':''}">${value}</div>`}
+  <span class="stat-sub">${sub||'&nbsp;'}</span>${o.bar!=null?`<div class="bar"><i style="inline-size:${o.bar}%"></i></div>`:''}</div>`;
 }
 function row(k,v,mono,wide){
  const e=v==null||v==='';
- return `<div class="row${e?' is-empty':''}${wide?' wide':''}"><span class="k">${esc(k)}</span>
+ return `<div class="row${e?' is-empty':''}${wide?' wide':''}"><span class="k" title="${esc(k)}">${esc(k)}</span>
   <span class="v${mono?' num':''}">${e?dash():v}</span></div>`;
+}
+/* 3.5: a field the agent can change is a visible control; read-only values stay text.
+   same row anatomy, so the label column does not move. */
+function rowEdit(k,id,opts,cur){
+ return `<div class="row edit"><span class="k" id="${id}-l" title="${esc(k)}">${esc(k)}</span>
+  <span class="v">${selectMenu(id,opts,id+'-l',cur,1)}</span></div>`;
+}
+/* field grid: every line is full. spans come from how many short rows there are, so no row floats beside empty space.
+   short rows first, wide rows after. --s3 is the span on the 6-track grid (3 columns, or 2 when it divides better), --s2 on the 2-track grid.
+   f3/f2/f1 mark the first line at each column count, so the hairlines line up. */
+function fieldGrid(items){
+ const isWide=h=>/class="row[^"]*\bwide\b/.test(h);
+ const all=items.filter(Boolean), nar=all.filter(h=>!isWide(h)), wide=all.filter(isWide), n=nar.length;
+ const c3=n===1?1:n===2?2:n===4?2:3, r3=n%c3, r2=n%2;
+ const cells=nar.map((h,i)=>{
+  const s3=(r3&&i>=n-r3)?6/r3:6/c3;
+  const s2=n===1?2:(r2&&i===n-1)?2:1;
+  const f=(i<c3?' f3':'')+(i<(n===1?1:2)?' f2':'')+(i===0?' f1':'');
+  return h.replace('<div class="row','<div style="--s3:'+s3+';--s2:'+s2+'" class="row'+f);
+ });
+ return `<div class="rows grid2">${cells.join('')}${wide.join('')}</div>`;
 }
 function block(key,body,head){
  return `<div class="blk"><div class="blk-h"><span class="eyebrow">${esc(t().blk[key])}</span>${head||''}</div>
   <div class="blk-b">${body}</div></div>`;
 }
 
-/* ═══ 5.1 · icons — Phosphor paths, inlined raw. no icon font/lib dependency. ═══ */
-const ICONS={
- phone:'<path d="M104,56v32a8,8,0,0,1-8,8A96.11,96.11,0,0,1,0,0,8,8,0,0,1,8,0H40a8,8,0,0,1,8,8,88.86,88.86,0,0,0,3.66,25.21A8,8,0,0,1,50,42.72L36.51,51.6A88.67,88.67,0,0,0,164.4,179.49l8.88-13.49a8,8,0,0,1,9.51-1.7A88.86,88.86,0,0,0,208,168a8,8,0,0,1,8,8v32a8,8,0,0,1-8,8A152,152,0,0,1,56,64,8,8,0,0,1,64,56Z" transform="translate(20,20)"/>',
- chat:'<path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Z"/>',
- wa:'<path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Z"/><circle class="dot" cx="128" cy="128" r="10"/>',
- mail:'<rect x="24" y="56" width="208" height="144" rx="8"/><polyline points="24,64 128,144 232,64"/>',
- dash:'<rect x="24" y="24" width="88" height="88" rx="4"/><rect x="144" y="24" width="88" height="56" rx="4"/><rect x="144" y="112" width="88" height="120" rx="4"/><rect x="24" y="144" width="88" height="88" rx="4"/>',
- users:'<circle cx="88" cy="108" r="44"/><path d="M16,224a72,72,0,0,1,144,0"/><path d="M172,92a44,44,0,0,1,0,88"/><path d="M172,140a72,72,0,0,1,68,72"/>',
- wallet:'<path d="M216,80H56a8,8,0,0,1,0-16H192a8,8,0,0,0,0-16H56a24,24,0,0,0-24,24V184a24,24,0,0,0,24,24H216a16,16,0,0,0,16-16V96A16,16,0,0,0,216,80Zm-36,80a20,20,0,1,1,20-20A20,20,0,0,1,180,160Z"/>',
- chartbar:'<line x1="32" y1="224" x2="224" y2="224"/><rect x="56" y="128" width="32" height="72"/><rect x="112" y="88" width="32" height="112"/><rect x="168" y="56" width="32" height="144"/>',
- robot:'<rect x="40" y="88" width="176" height="120" rx="16"/><line x1="128" y1="56" x2="128" y2="88"/><circle class="dot" cx="128" cy="40" r="12"/><circle class="dot" cx="92" cy="148" r="12"/><circle class="dot" cx="164" cy="148" r="12"/><line x1="88" y1="192" x2="168" y2="192"/>',
- megaphone:'<path d="M32,112v32a16,16,0,0,0,16,16H64l14,54a8,8,0,0,0,7.75,6H96a8,8,0,0,0,8-8V160h8l88,48V48L112,96H48A16,16,0,0,0,32,112Z"/>',
- flow:'<circle cx="56" cy="56" r="24"/><circle cx="200" cy="56" r="24"/><circle cx="128" cy="200" r="24"/><path d="M80,56H144a48,48,0,0,1,48,48v8"/><path d="M128,176V112A48,48,0,0,0,80,64"/>',
- pencil:'<path d="M92,220H40a8,8,0,0,1-8-8V160a8,8,0,0,1,2.34-5.66l128-128a8,8,0,0,1,11.32,0l40,40a8,8,0,0,1,0,11.32l-128,128A8,8,0,0,1,92,220Z"/><line x1="136" y1="64" x2="192" y2="120"/>',
- columns:'<rect x="32" y="40" width="70" height="176" rx="6"/><rect x="154" y="40" width="70" height="176" rx="6"/>',
- timeline:'<line x1="40" y1="128" x2="216" y2="128"/><circle cx="76" cy="128" r="14"/><circle cx="140" cy="128" r="14"/><circle cx="196" cy="128" r="14"/>',
- ticket:'<path d="M32,88a24,24,0,0,1,0-48H224a24,24,0,0,1,0,48,24,24,0,0,0,0,48,24,24,0,0,1,0,48H32a24,24,0,0,1,0-48,24,24,0,0,0,0-48Z"/>',
- mic:'<rect x="88" y="24" width="80" height="128" rx="40"/><path d="M56,112v8a72,72,0,0,0,144,0v-8"/><line x1="128" y1="192" x2="128" y2="232"/>',
- caret:'<polyline points="88,96 128,136 168,96"/><polyline points="88,160 128,120 168,160" transform="translate(0,0)"/>',
- dcaret:'<polyline points="160,64 96,128 160,192"/>',
- check:'<polyline points="44,132 100,188 212,72"/>',
-};
+/* ═══ 5.1 · icons — real Phosphor Icons (regular weight), loaded in index.html via
+   unpkg. Replaces a hand-simplified inline-SVG set that didn't hold up at small sizes —
+   this maps our short internal names to the library's actual icon slugs. ═══ */
+const PH={phone:'phone',chat:'chat-circle',wa:'whatsapp-logo',mail:'envelope-simple',
+ dash:'squares-four',users:'users',wallet:'wallet',chartbar:'chart-bar',robot:'robot',
+ megaphone:'flag',flow:'flow-arrow',pencil:'pencil-simple',columns:'columns',
+ timeline:'clock-countdown',ticket:'ticket',mic:'microphone',caret:'caret-down',
+ dcaret:'caret-left',check:'check',lock:'lock-simple',inbox:'tray',
+ calendar:'calendar-blank',prev:'caret-left',next:'caret-right'};
 /* every icon here is decorative — the adjacent text/label always carries the meaning,
    so aria-hidden belongs on the shared atom, not repeated at each call site. */
-function icon(name,cls){ return `<svg class="icon${cls?' '+cls:''}" viewBox="0 0 256 256" aria-hidden="true">${ICONS[name]||''}</svg>`; }
+function icon(name,cls){ return `<i class="ph ph-${PH[name]||name} icon${cls?' '+cls:''}" aria-hidden="true"></i>`; }
 
-/* ═══ 5.2 · contact-history sparkline. buckets last 10 weeks of logs. ═══ */
-const ANSWERED=new Set(['rpc','promise','plan','kept']);
-function sparkline(logs){
- const weeks=Array.from({length:10},()=>({n:0,ans:false}));
- (logs||[]).forEach(l=>{
-  const w=Math.floor(days(l.at)/7);
-  if(w>=0&&w<10){ const b=weeks[9-w]; b.n++; if(ANSWERED.has(l.out)) b.ans=true; }
- });
- const max=Math.max(1,...weeks.map(w=>w.n));
- return `<div class="spark">${weeks.map(w=>
-   `<i class="${w.ans?'ans':''}" style="block-size:${w.n?Math.max(15,Math.round((w.n/max)*100)):4}%"></i>`).join('')}</div>`;
+/* ═══ 5.2 · select + date picker, modelled on shadcn/ui's Select and Popover+Calendar.
+   A hidden input carries the value, so forms read .value exactly as with a native
+   control. Behaviour (open/close, keyboard, calendar grid) is wired in app.js. ═══ */
+function selectMenu(id,opts,labelId,cur,sm){
+ const [v0,l0]=opts.find(([v])=>v===cur)||opts[0];
+ return `<div class="dd${sm?' sm':''}" data-dd="select">
+  <input type="hidden" id="${id}" value="${v0}">
+  <button type="button" class="dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="${labelId} ${id}-v">
+   <span class="dd-val" id="${id}-v">${esc(l0)}</span>${icon('caret')}</button>
+  <div class="dd-pop" role="listbox" aria-labelledby="${labelId}" hidden>
+   ${opts.map(([v,l])=>`<div class="dd-opt" role="option" tabindex="-1" data-v="${v}" aria-selected="${v===v0}">
+    <span>${esc(l)}</span>${icon('check')}</div>`).join('')}
+  </div></div>`;
+}
+function datePicker(id,labelId){
+ return `<div class="dd" data-dd="date">
+  <input type="hidden" id="${id}">
+  <button type="button" class="dd-trigger date" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="${labelId} ${id}-v">
+   ${icon('calendar')}<span class="dd-val empty-val" id="${id}-v">${esc(t().pickDate)}</span></button>
+  <div class="dd-pop cal" role="dialog" aria-labelledby="${labelId}" hidden></div></div>`;
+}
+
+/* ═══ 5.3 · honesty atoms. B2: a field that does not exist today says so.
+   B4: a rule's source links to the page it was read from; client policy has no link. ═══ */
+/* the product screen reads as finished UI; whether a field exists today is reviewer
+   information, shown only when the reviewer bar's "Proposed fields" switch is on (B2, amended) */
+const proposedTag=()=>S.prop?`<span class="tag" title="${esc(t().proposedTip)}">${esc(t().proposed)}</span>`:'';
+function srcChip(s){
+ const T_=t();
+ if(!s) return `<span class="src" title="${esc(T_.src.title)}">${esc(T_.src.client)}</span>`;
+ if(s.t==='data') return `<span class="src">${esc(T_.src.data)}</span>`;
+ const label=s.t==='cg'?T_.src.cg:s.t;
+ return `<a class="src" dir="ltr" href="${s.u}" target="_blank" rel="noopener" title="${esc(T_.src.title)}">${esc(label)}</a>`;
 }

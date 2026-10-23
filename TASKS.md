@@ -61,3 +61,20 @@ inline rule, one `pluralAr` helper replacing five duplicated Arabic ternary chai
 ### T10 · verify.js real assertions  [test/verify.js]
 Coral-budget and reconciliation checks now actually fail the script instead of only
 printing — plus queue-row-count/order and wrap-up save/return coverage.
+
+### T11 · System consolidation pass (Refined)  [src/tokens.css, regions.js, components.js, core.js, i18n.js]
+13 font sizes → 4 tokens (12/13/16/24), 4px spacing grid, radii 4/6, fixed control heights,
+centred buttons with channel icons (lock on restricted), fixed 44px column heads. Log outcome
+moved to the spine rail (the activity head overflowed at 1280–1440). Queue is one table with a
+sticky header; the escalation cell leads with the reason's type badge + a detail line. Totals
+strip and contact sparkline removed (duplicate / unreadable). -Text colours re-measured to ≥5:1;
+primary fill → tealDeep; wrap-up fields got real labels. Nav now actually narrows to 64px under
+1360px (it hid its labels but stayed 184px wide, pushing the activity column off-screen).
+Figma page and docs/design-tokens.html still describe the old sizes.
+
+### T12 · Brand, hover, disabled reasons, form controls  [app.js, components.js, tokens.css, build.sh]
+Nav uses the shipped assets/ webp files untouched (lockup expanded, icon collapsed, same in RTL);
+build.sh inlines them. Why-band label lost its white chip. Every control has a hover state;
+restricted channels are aria-disabled (still focusable) with a plain-language tooltip. Wrap-up
+outcome + promise date are shadcn-style Select and Popover Calendar (hidden input keeps .value,
+keyboard: arrows/Home/End/Enter/Escape, RTL-aware arrows, Monday weeks, past days unselectable).
