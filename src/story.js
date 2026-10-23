@@ -40,42 +40,43 @@ const CARDS=[
 
 /* ═══ 14.2 · tour steps (plan §4.1). claims are drafts of the author's 30-second answers. ═══ */
 const STEPS=[
+ /* one agent, one shift (docs/tour-storyline.md): queue, pick, glance, channels, accounts, balance, last contact, Arabic, wrap-up, next case */
+ {fx:'stress',mode:'queue',t:'#q-list',card:'D2',
+  en:'Start of your shift. The queue holds only the cases the automation passed to a person, and each row says why, so you can pick the next one in seconds.',
+  ar:'بداية مناوبتك. تضم القائمة الحالات التي أحالتها الأتمتة إلى موظف فقط، ويذكر كل صف السبب، فتختار الحالة التالية في ثوانٍ.'},
  {fx:'stress',t:'.why',card:'D2',
-  en:'95% of contacts are automated. You get the 5% that need judgement, so the first thing on screen is why this case reached you.',
-  ar:'يتم 95% من التواصل آلياً. يصل إليك 5% من الحالات التي تحتاج إلى تقدير بشري، لذلك أول ما يظهر هو سبب وصول هذه الحالة إليك.'},
+  en:'You opened the top case. Before anything else, the screen says why it reached you, in one sentence.',
+  ar:'فتحت الحالة الأولى. قبل أي شيء، تقول الشاشة سبب وصولها إليك في جملة واحدة.'},
  {fx:'stress',t:'.stats',card:'D1',
-  en:'How much is owed and how late, with zero clicks, on every record.',
-  ar:'المبلغ المستحق ومدة التأخر، دون أي نقرة، في كل سجل.'},
- {fx:'aisha',t:'[data-g="ptp"]',card:'D5',
-  en:'The promise and the track record sit together. A payment plan is shown on its own.',
-  ar:'الوعد بالسداد وسجل الالتزام يظهران معاً. أما خطة السداد فتظهر منفصلة.'},
- {fx:'aisha',t:'#c-bor .row.prose',card:'D3',
-  en:'What the AI agent last heard, in words. This field does not exist today; it is a proposal, built to look finished.',
-  ar:'آخر ما سمعه الوكيل الآلي، بالكلمات. هذا الحقل غير موجود حالياً؛ إنه مقترح مصمم ليبدو مكتملاً.'},
- {fx:'blocked',t:'.rail',t2:'.cnotes',card:'D4',
-  en:'Compliance before the click. Each blocked channel names its reason and its rule: CBUAE 5.2.5, SAMA, or the client’s own policy.',
-  ar:'الامتثال قبل النقر. كل قناة مقيدة تذكر سببها وقاعدتها: المصرف المركزي الإماراتي 5.2.5 أو ساما أو سياسة الجهة الدائنة.'},
+  en:'How much, how late, what was promised. Three figures with no clicks, each naming its scope: this borrower, not one account.',
+  ar:'كم المبلغ، وكم التأخر، وماذا وُعد به. ثلاثة أرقام دون نقرة، وكل رقم يذكر نطاقه: هذا المدين لا حساباً واحداً.'},
+ {fx:'stress',t:'.rail',t2:'.cnotes',card:'D4',
+  en:'Before you dial: which channels you may use now. A locked channel says why, and cites the rule or the client’s policy.',
+  ar:'قبل أن تتصل: أي القنوات يمكنك استخدامها الآن. القناة المقفلة تذكر السبب والقاعدة أو سياسة الجهة الدائنة.'},
+ {fx:'stress',t:'#c-bor .card.hot',card:'D5',
+  en:'Seven accounts, always biggest first, so places never move. The account named in the reason is marked, so you know which one to talk about.',
+  ar:'سبعة حسابات، الأكبر أولاً دائماً، فلا تتغير الأماكن. الحساب المذكور في السبب مُعلَّم لتعرف أيها تتحدث عنه.'},
+ {fx:'stress',t:'#c-acc .hero',card:'D6',
+  en:'What exactly is owed on that account. The figure is what is owed; the bar shows how much has been paid down.',
+  ar:'ما المستحق بالضبط على ذلك الحساب. الرقم هو المستحق، ويُظهر الشريط ما سُدد منه.'},
+ {fx:'stress',t:'#c-bor .row.prose',card:'D3',
+  en:'What the AI agent heard last, in words, so you do not start from zero. This field does not exist today; it is a proposal.',
+  ar:'ما سمعه الوكيل الآلي آخر مرة، بالكلمات، فلا تبدأ من الصفر. هذا الحقل غير موجود حالياً؛ إنه مقترح.'},
  {fx:'stress',lang:'ar',t:'#c-bor .row:has(.ltr)',card:'D9',
-  en:'Same answers, same places, in Arabic. IDs and phone numbers stay left-to-right inside right-to-left text.',
-  ar:'الإجابات نفسها، في الأماكن نفسها، بالعربية. وتبقى المعرّفات وأرقام الهاتف من اليسار إلى اليمين داخل النص من اليمين إلى اليسار.'},
- {fx:'sparse',lang:'en',t:'.cols',card:'D17',
-  en:'Width follows content. A short history gets a narrow column, so the columns that overflow get the room.',
-  ar:'العرض يتبع المحتوى. السجل القصير يأخذ عموداً ضيقاً، لتحصل الأعمدة الممتلئة على المساحة.'},
- {fx:'omar',mode:'wrapup',t:'.wrap',t2:'#c-act',card:'D12',
-  en:'Logging an outcome puts the form in the middle and keeps the accounts and the interaction log in view on either side, so the agent can read while writing.',
-  ar:'تسجيل النتيجة يضع النموذج في الوسط ويُبقي الحسابات وسجل التفاعل ظاهرين على الجانبين، فتمكن القراءة أثناء الكتابة.'},
- {fx:'omar',t:'#c-acc .hero',card:'D6',
-  en:'One stat component, one button family, colour by role. Coral means only why this reached you.',
-  ar:'مكوّن واحد للأرقام، وعائلة أزرار واحدة، وألوان حسب الدور. اللون المرجاني يعني فقط سبب وصول الحالة إليك.'},
+  en:'The borrower asks for Arabic. Same answers, same places, mirrored. Phone numbers and IDs stay left to right inside right-to-left text.',
+  ar:'يطلب المدين العربية. الإجابات نفسها في الأماكن نفسها، معكوسة. وتبقى أرقام الهاتف والمعرّفات من اليسار إلى اليمين داخل النص.'},
+ {fx:'omar',lang:'en',mode:'wrapup',t:'.wrap',t2:'#c-act',card:'D12',
+  en:'The call is over. You record it with the accounts on one side and the interaction log on the other, so you can read while you write.',
+  ar:'انتهت المكالمة. تسجّلها والحسابات على جانب وسجل التفاعل على الجانب الآخر، فتقرأ وأنت تكتب.'},
  {fx:'omar',mode:'queue',t:'#q-list',card:'D2',
-  en:'The queue is a second screen built from the same parts, with no new styles.',
-  ar:'قائمة الانتظار شاشة ثانية مبنية من الأجزاء نفسها، دون أنماط جديدة.'},
- {fx:'stress',t:'#c-bor .colbody',card:'D11',
-  en:'Trade-offs accepted: no accordions, so columns run longer; accounts sort by amount, not risk, so places stay put.',
-  ar:'تنازلات مقبولة: لا طيّ للأقسام، فتطول الأعمدة؛ وترتيب الحسابات حسب المبلغ لا المخاطر، فتبقى الأماكن ثابتة.'},
+  en:'Saved. Back to the queue for the next case. Nothing is left to clear.',
+  ar:'تم الحفظ. نعود إلى القائمة للحالة التالية. لا شيء يحتاج إلى تنظيف.'},
+ {fx:'sparse',mode:'profile',t:'.cols',card:'D17',
+  en:'Not every case is rich. A new borrower with little history: empty fields say so, and the room goes to the columns that have something to show.',
+  ar:'ليست كل حالة غنية بالبيانات. مدين جديد وسجل قصير: الحقول الفارغة تقول ذلك، والمساحة تذهب إلى الأعمدة التي فيها ما يُعرض.'},
  {fx:'stress',t:null,card:null,
-  en:'Self-graded so far. The decision log gives the evidence for each choice, its trade-off, and what would make me drop it.',
-  ar:'التقييم ذاتي حتى الآن. يعرض سجل القرارات الدليل لكل خيار، والتنازل المقبول، وما قد يجعلني أتخلى عنه.'}];
+  en:'Trade-offs accepted: no accordions, so columns run longer; accounts sort by amount, not risk, so places stay put. The decision log has the evidence for each. Press P for the prototype controls.',
+  ar:'تنازلات مقبولة: لا طيّ للأقسام فتطول الأعمدة؛ وترتيب الحسابات حسب المبلغ لا المخاطر فتبقى الأماكن ثابتة. سجل القرارات فيه الدليل لكل منها. اضغط P لإظهار أدوات النموذج الأولي.'}];
 
 /* ═══ 14.3 · in-context why links (X2). six, each opens its card in the log. ═══ */
 const ann=id=>S.ann?`<a class="ann" href="?view=log&card=${id}" data-card="${id}">${esc(t().st.why)}</a>`:'';
@@ -124,7 +125,7 @@ function placeSpot(){
  const els=st&&st.t?[st.t,st.t2].filter(Boolean).map(q=>document.querySelector(q)).filter(Boolean):[];
  document.body.classList.toggle('story-on',!!(S.step&&!S.paused));
  if(!els.length){sp.classList.toggle('dim-only',!!st);sp.hidden=!st;if(st){Object.assign(sp.style,{width:'0px',height:'0px'});}return;}
- if(els[0].scrollIntoView) els[0].scrollIntoView({block:'nearest'});
+ if(els[0].scrollIntoView) els[0].scrollIntoView({block:'center'});
  const r=els.map(e=>e.getBoundingClientRect()),pad=6;
  const x=Math.min(...r.map(b=>b.left))-pad,y=Math.min(...r.map(b=>b.top))-pad;
  const w=Math.max(...r.map(b=>b.right))-x+pad,h=Math.max(...r.map(b=>b.bottom))-y+pad;
