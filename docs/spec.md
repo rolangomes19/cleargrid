@@ -155,7 +155,8 @@ Three stacked blocks in one column because all three are borrower-scope.
 - **Position:** middle of the borrower column, scrolls internally.
 - **Tier:** 1 for the flagged and worst cards, 2 for the rest.
 - **Card anatomy:** lender or merchant name, product type and reference, outstanding in display size, "of total", proportion bar, status, DPD, plan or promise marker, and a coral inline-start accent only if the escalation line names it.
-- **Sort:** outstanding descending, always, deterministic, same order every visit. **Not** sorted by flag. Flags are carried by the accent, not by position, because a list that reorders itself as flags change destroys the spatial memory the rail exists to build.
+- **Sort (revised 23 Oct 2026, user review):** disputed accounts first, then the rest; outstanding descending inside each group. Deterministic, same order every visit. The earlier rule below (outstanding only, never by flag) is kept for the record.
+- **Earlier sort:** outstanding descending, always, deterministic, same order every visit. **Not** sorted by flag. Flags are carried by the accent, not by position, because a list that reorders itself as flags change destroys the spatial memory the rail exists to build.
 - **Why here:** a table is a comparison instrument. Agents rarely compare accounts; they work one account while holding the borrower total in mind. Using a table as the navigation spine is what forced both ChatGPT prototypes to hardcode `deals[0]` and leave the second obligation unreachable. Cards solve selection; the table remains available for comparison (3.6).
 - **Breaks if moved:** put this in the centre and the account column has no stable neighbour to select it. Put it after the detail and the causal order reverses.
 - **Keyboard:** digits 1 to 9 select. No animation on selection; it is a many-times-a-day action.

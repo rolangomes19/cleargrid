@@ -34,6 +34,9 @@ function hAxe(f){
 }
 async function hCheck(f,W,H){
  const w=f.contentWindow,d=f.contentDocument,out={};
+ /* measure the settled screen: a case-open entrance (opacity) would read as low contrast mid-flight */
+ await Promise.race([Promise.all(d.getAnimations().map(x=>x.finished.catch(()=>{}))),new Promise(r=>setTimeout(r,1500))]);
+ d.getAnimations().forEach(x=>{try{x.finish()}catch(e){}});
  const seen=e=>{ if(!e) return false; const b=e.getBoundingClientRect();
   return b.width>0&&b.height>0&&b.top>=0&&b.bottom<=H&&e.textContent.trim().length>0; };
  const missing=['why','out','dpd','ptp','last','rail'].filter(g=>!seen(d.querySelector(`[data-g="${g}"]`)));
