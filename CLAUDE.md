@@ -24,6 +24,8 @@ untested output.
 | `src/components.js` | Badge, field row, block, bars | New atom |
 | `src/regions.js` | Spine, three columns, compare view | Most layout work |
 | `src/story.js` | Tour steps, decision cards, log view, strip, spotlight, Why links | Tour or decision copy |
+| `src/system.js` | Data dictionary, system states, component sheet | Dictionary, states, sheet |
+| `src/harness.js` | In-browser harness and the How I'd test this page | Checks or study plan |
 | `src/app.js` | Nav, render, events, URL state, reviewer bar | Interaction work |
 | `src/tokens.css` | All styling | Visual work |
 
@@ -127,6 +129,22 @@ drafts until the author rewrites them.
 The agent screen must read as finished UI: no "proposed" tags on it by default. Proposed fields
 are disclosed in the tour, the decision log and the reviewer bar's "Proposed fields" switch (`?prop=1`).
 The six in-context Why links are off by default too (`?ann=1` or the "Why links" switch). `verify.js` walks all 12 steps and checks every target exists.
+
+## System proof (P4)
+
+The queue owns no CSS: it is the panel, compare table, `stat`, badge and button (`verify.js` fails on any
+`.q*`/`#queue` rule). Account card and log row are single functions (`acctCard`, `logRow`) that the
+component sheet also renders. An editable field is `rowEdit()` (a small select), never plain text.
+Mono values use weight 500: Geist Mono ships 400/500 here and a 600 request gets faux-bolded (blurry).
+Every number has a dictionary entry in `system.js`; saving an outcome updates call totals with the log.
+
+Council review (23 Oct 2026, five isolated Claude reviewers, same-model, `CLAUDE.md` leaked into some contexts) drove: promise/date values never break mid-token
+(`.row:not(.wide) .v` is nowrap), KSA open complaint blocks every channel (SAMA Art. 6(4)), SAMA cites the current text not 2018, Arabic day plurals (`t().days`), typed
+Arabic digits normalised on input, Latin names tagged `lang=en` (`lat()`), mono stack falls back to the Arabic face, spotlight snaps after its travel time, harness counts painted
+coral from live tokens. Not done: Q3 "best next action" (scope), UAE primary-source check (CBUAE rulebook 403), native Arabic copy review, loading skeletons on every panel.
+
+`?view=test` → "Run the harness" is the real-browser check (layout, fonts, axe). Run it after visual
+changes; `verify.js` cannot see layout. Last run: all checks 36/36 except T1 29/36.
 
 ## Nulls
 
