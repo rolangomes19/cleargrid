@@ -134,7 +134,7 @@ The six in-context Why links are off by default too (`?ann=1` or the "Why links"
 ## Figures and fields (P6)
 
 A progress bar fills with what has been **paid down** (the convention); the figure beside it says what is **owed**, and its caption says `% paid of <original>`.
-Field grids (`.grid2`) use equal `minmax(0,1fr)` tracks, a hairline above every row except the first line, and the hero stats share those columns. A long value drops under its label instead of squeezing it.
+Field grids are built by `fieldGrid([...rows])`, never by hand: short rows first, wide rows after, and the spans come from how many short rows there are, so every line is full (2 short rows are 50% each, 3 are thirds, a lone last row spans the line). Rows are centred on one line height, with a hairline above every row except the first line; the hero stats start where the columns start. A long value drops under its label instead of squeezing it. `verify.js` checks the span rules.
 The ID reveal swaps text in place (`#eid-v`), never re-renders, so the column keeps its scroll position.
 
 ## System proof (P4)

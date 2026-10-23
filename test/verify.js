@@ -303,6 +303,10 @@ if(errs.length) process.exitCode=1;
    errs.push('V6: Arabic day plurals wrong: '+pl.join(' | '));
   setLang('en'); toQueue(); openCase('omar');
  }
+ // field grids fill every line: spans come from the number of short rows (wide rows excluded)
+ {const sp=n=>W("(()=>{const h=fieldGrid(Array.from({length:"+n+"},(_,i)=>row('k'+i,'v')).concat([row('w','v',false,true)]));return [...h.matchAll(/--s3:([0-9.]+);--s2:([0-9])/g)].map(m=>m[1]+'/'+m[2]).join(' ')})()");
+  const want={1:'6/2',2:'3/1 3/1',3:'2/1 2/1 2/2',4:'3/1 3/1 3/1 3/1',5:'2/1 2/1 2/1 3/1 3/2'};
+  for(const [n,w] of Object.entries(want)) if(sp(n)!==w) errs.push('GRID: '+n+' short rows give "'+sp(n)+'", expected "'+w+'"');}
  // 3.8 component sheet + dictionary
  click(doc.getElementById('rb-sheet'));
  const specs=doc.querySelectorAll('.sheet-grid>.blk').length, dict=doc.querySelectorAll('#dict tbody tr').length;
