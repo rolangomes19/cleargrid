@@ -141,7 +141,11 @@ Every number has a dictionary entry in `system.js`; saving an outcome updates ca
 Council review (23 Oct 2026, five isolated Claude reviewers, same-model, `CLAUDE.md` leaked into some contexts) drove: promise/date values never break mid-token
 (`.row:not(.wide) .v` is nowrap), KSA open complaint blocks every channel (SAMA Art. 6(4)), SAMA cites the current text not 2018, Arabic day plurals (`t().days`), typed
 Arabic digits normalised on input, Latin names tagged `lang=en` (`lat()`), mono stack falls back to the Arabic face, spotlight snaps after its travel time, harness counts painted
-coral from live tokens. Not done: Q3 "best next action" (scope), UAE primary-source check (CBUAE rulebook 403), native Arabic copy review, loading skeletons on every panel.
+coral from live tokens. Second pass (CLAUDE.md withheld from the reviewers) drove: an amount that is not a number marks the field invalid and logs nothing, Promise taken needs amount and date and warns once
+on a disputed account, the full ID exists in the page only while revealed (15 s, then masked), a channel with no address (no email) is off with its reason, a stage never says "Not contactable"
+while a channel is open, Arabic plurals come from `Intl.PluralRules` (`pluralAr`), the wrap-up form sits between the accounts and the interaction log, and the coral harness checks every border edge,
+outline, shadow and pseudo-element against a three-component allowlist. Not done: Q3 "best next action" (scope), UAE primary-source check (CBUAE rulebook 403), native Arabic copy review,
+loading and pending states, the 1024-1365 scale-to-fit versus the Arabic size floor (a design trade-off), one button family, DOB masking, WhatsApp consent as data, new outcomes (refused, voicemail, do-not-contact).
 
 `?view=test` → "Run the harness" is the real-browser check (layout, fonts, axe). Run it after visual
 changes; `verify.js` cannot see layout. Last run: all checks 36/36 except T1 29/36.
