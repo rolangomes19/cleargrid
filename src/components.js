@@ -11,13 +11,41 @@ function statusBadge(a){
 }
 /* days past due is a number, not an alarm (D6). the old >=180 coral had no source (B1). */
 const dpdBadge=a=>`<span class="badge q">${esc(t().days(dpd(a)))}</span>`;
+/* card form: the same figure with its bucket track beside it */
+const dpdMini=a=>`<span class="dpd-mini">${dpdBadge(a)}${aging(dpd(a))}</span>`;
 /* the one stat component (3.3): label, value, sub, optional bar. a missing value is said
    in body text at the value's line height, so a null never sits at hero size (2.2) and
    the row below does not move (1.8). */
 function stat(label,value,sub,o={}){
  return `<div class="stat"${o.g?` data-g="${o.g}"`:''}><span class="stat-k">${esc(label)}${o.ann||''}</span>
   ${value==null?`<div class="stat-v is-null">${esc(o.none||'–')}</div>`:`<div class="stat-v t-display${o.sm?' sm':''}">${value}</div>`}
-  <span class="stat-sub">${sub||'&nbsp;'}</span>${o.bar!=null?`<div class="bar"><i style="inline-size:${o.bar}%"></i></div>`:''}</div>`;
+  <span class="stat-sub">${sub||'&nbsp;'}</span>${o.bar!=null?`<div class="bar"><i style="inline-size:${o.bar}%"></i></div>`:''}${o.viz||''}</div>`;
+}
+/* ═══ 5.0 · charts. each restates a figure already printed beside it as text, so the
+   number stays the source of truth and the shape is a second reading (2.2). ═══ */
+/* borrower outstanding split by account, in the card order (outstanding desc); the selected account is the one cobalt segment */
+function splitBar(list,sel){
+ const T_=t(),lab=list.map(a=>`${L(a.lender)} ${M(a.out)}`).join(', ');
+ return `<div class="split" role="img" aria-label="${esc(T_.viz.split)}: ${esc(lab)}">${list.map((a,i)=>
+  `<i class="${i===sel?'on':''}" style="flex-grow:${a.out};--i:${i}" title="${esc(L(a.lender))} · ${M(a.out)}"></i>`).join('')}</div>`;
+}
+/* days past due on the collections buckets 0/30/60/90/180/360: equal width per bucket, so early days get room */
+const AGE=[0,30,60,90,180,360];
+function agePos(d){
+ if(d>=360) return 100;
+ const k=AGE.findIndex((b,i)=>d<AGE[i+1]);
+ return Math.round((k+(d-AGE[k])/(AGE[k+1]-AGE[k]))*100/(AGE.length-1));
+}
+function aging(d,big){
+ const p=agePos(Math.max(0,d));
+ return `<div class="aging${big?' lg':''}" role="img" aria-label="${esc(t().days(d))} ${esc(t().viz.age)}">
+  <div class="aging-t"><i style="inline-size:${p}%"></i><b style="inset-inline-start:${p}%"></b></div>
+  ${big?`<div class="aging-l num">${AGE.map(b=>`<span>${N(b)}${b===360?'+':''}</span>`).join('')}</div>`:''}</div>`;
+}
+/* payment plan: one segment per instalment, paid ones filled, the next one ringed */
+function instTrack(p){
+ return `<div class="inst" role="img" aria-label="${N(p.paid)} ${esc(t().of)} ${N(p.of)} ${esc(t().viz.inst)}">${
+  Array.from({length:p.of},(_,k)=>`<i class="${k<p.paid?'paid':k===p.paid?'next':''}" style="--i:${k}"></i>`).join('')}</div>`;
 }
 function row(k,v,mono,wide){
  const e=v==null||v==='';
@@ -26,9 +54,13 @@ function row(k,v,mono,wide){
 }
 /* 3.5: a field the agent can change is a visible control; read-only values stay text.
    same row anatomy, so the label column does not move. */
+/* a two- or three-way choice is a segmented toggle: every option visible, one click, no menu to open.
+   the hidden input keeps .value and a change event, so callers read it like any form control. */
 function rowEdit(k,id,opts,cur){
+ const v0=(opts.find(([v])=>v===cur)||opts[0])[0];
  return `<div class="row edit"><span class="k" id="${id}-l" title="${esc(k)}">${esc(k)}</span>
-  <span class="v">${selectMenu(id,opts,id+'-l',cur,1)}</span></div>`;
+  <span class="v"><input type="hidden" id="${id}" value="${v0}"><span class="seg" role="radiogroup" aria-labelledby="${id}-l">${
+   opts.map(([v,l])=>`<button type="button" role="radio" data-v="${v}" aria-checked="${v===v0}" tabindex="${v===v0?0:-1}">${esc(l)}</button>`).join('')}</span></span></div>`;
 }
 /* field grid: every line is full. spans come from how many short rows there are, so no row floats beside empty space.
    short rows first, wide rows after. --s3 is the span on the 6-track grid (3 columns, or 2 when it divides better), --s2 on the 2-track grid.
