@@ -10,19 +10,25 @@ function statusBadge(a){
   :`<span class="status-plain">${esc(E('status',a.status))}</span>`;
 }
 /* days past due is a number, not an alarm (D6). the old >=180 coral had no source (B1). */
-const dpdBadge=a=>`<span class="badge q">${N(dpd(a))} ${esc(t().dUnit)}</span>`;
+const dpdBadge=a=>`<span class="badge q">${esc(t().days(dpd(a)))}</span>`;
 /* the one stat component (3.3): label, value, sub, optional bar. a missing value is said
    in body text at the value's line height, so a null never sits at hero size (2.2) and
    the row below does not move (1.8). */
 function stat(label,value,sub,o={}){
  return `<div class="stat"${o.g?` data-g="${o.g}"`:''}><span class="stat-k">${esc(label)}${o.ann||''}</span>
-  ${value==null?`<div class="stat-v is-null">${esc(o.none||'–')}</div>`:`<div class="stat-v t-display">${value}</div>`}
+  ${value==null?`<div class="stat-v is-null">${esc(o.none||'–')}</div>`:`<div class="stat-v t-display${o.sm?' sm':''}">${value}</div>`}
   <span class="stat-sub">${sub||'&nbsp;'}</span>${o.bar!=null?`<div class="bar"><i style="inline-size:${o.bar}%"></i></div>`:''}</div>`;
 }
 function row(k,v,mono,wide){
  const e=v==null||v==='';
  return `<div class="row${e?' is-empty':''}${wide?' wide':''}"><span class="k" title="${esc(k)}">${esc(k)}</span>
   <span class="v${mono?' num':''}">${e?dash():v}</span></div>`;
+}
+/* 3.5: a field the agent can change is a visible control; read-only values stay text.
+   same row anatomy, so the label column does not move. */
+function rowEdit(k,id,opts,cur){
+ return `<div class="row edit"><span class="k" id="${id}-l" title="${esc(k)}">${esc(k)}</span>
+  <span class="v">${selectMenu(id,opts,id+'-l',cur,1)}</span></div>`;
 }
 function block(key,body,head){
  return `<div class="blk"><div class="blk-h"><span class="eyebrow">${esc(t().blk[key])}</span>${head||''}</div>
@@ -45,14 +51,14 @@ function icon(name,cls){ return `<i class="ph ph-${PH[name]||name} icon${cls?' '
 /* ═══ 5.2 · select + date picker, modelled on shadcn/ui's Select and Popover+Calendar.
    A hidden input carries the value, so forms read .value exactly as with a native
    control. Behaviour (open/close, keyboard, calendar grid) is wired in app.js. ═══ */
-function selectMenu(id,opts,labelId){
- const [v0,l0]=opts[0];
- return `<div class="dd" data-dd="select">
+function selectMenu(id,opts,labelId,cur,sm){
+ const [v0,l0]=opts.find(([v])=>v===cur)||opts[0];
+ return `<div class="dd${sm?' sm':''}" data-dd="select">
   <input type="hidden" id="${id}" value="${v0}">
   <button type="button" class="dd-trigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="${labelId} ${id}-v">
    <span class="dd-val" id="${id}-v">${esc(l0)}</span>${icon('caret')}</button>
   <div class="dd-pop" role="listbox" aria-labelledby="${labelId}" hidden>
-   ${opts.map(([v,l],i)=>`<div class="dd-opt" role="option" tabindex="-1" data-v="${v}" aria-selected="${i===0}">
+   ${opts.map(([v,l])=>`<div class="dd-opt" role="option" tabindex="-1" data-v="${v}" aria-selected="${v===v0}">
     <span>${esc(l)}</span>${icon('check')}</div>`).join('')}
   </div></div>`;
 }

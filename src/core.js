@@ -26,21 +26,26 @@ const maskId=s=>{const n=s.replace(/\D/g,'').length;let i=0;return s.replace(/\d
    src null = no regulation found: shown as the client's own policy, never as law. ═══ */
 const SRC={
  cbuae:{t:'CBUAE 5.2.5',u:'https://rulebook.centralbank.ae/en/rulebook/article-5-business-conduct'},
- sama:{t:'SAMA IV (2018)',u:'https://rulebook.sama.gov.sa/en/node/1696'},
+ /* current SAMA Debt Collection Regulations (node/10400). the 2018 text (node/1696) is marked "no longer applicable".
+    articles as read by the council's compliance reviewer from a summary, to be checked against the PDF before production */
+ sama43:{t:'SAMA Art. 4(3)',u:'https://rulebook.sama.gov.sa/en/node/10400'},
+ sama51:{t:'SAMA Art. 5(1)',u:'https://rulebook.sama.gov.sa/en/node/10400'},
+ sama64:{t:'SAMA Art. 6(4)',u:'https://rulebook.sama.gov.sa/en/node/10400'},
  cg:{t:'cg',u:'https://cleargrid.co'}};
 function chRule(k,m){
  const sa=m==='SA';
  return {window:{r:'window',s:sa?null:SRC.cbuae},
-  cap:{r:sa?'capSama':'capClient',s:sa?SRC.sama:null},
+  cap:{r:sa?'capSama':'capClient',s:sa?SRC.sama43:null},
   consent:{r:'consent',s:SRC.cbuae},
-  notPermitted:{r:'notPermitted',s:SRC.sama},
+  notPermitted:{r:'notPermitted',s:SRC.sama51},
+  complaint:{r:'complaint',s:SRC.sama64},
   review:{r:'review',s:null},
   dnc:{r:'dnc',s:SRC.cg}}[k]||null;
 }
 
 /* mode: 'queue' (case list, screen zero) | 'profile' | 'compare' | 'wrapup' (post-call write) */
 let S={rec:'stress',lang:'en',sel:0,tab:'i',scope:'all',mode:'profile',wrapDone:false,justLogged:null,navCollapsed:false,showId:false,
- step:0,paused:false,ann:false,prop:false,card:null,prevMode:'profile'};
+ step:0,paused:false,ann:false,prop:false,state:null,dispatch:null,card:null,prevMode:'profile'};
 
 const t=()=>T[S.lang];
 const L=o=>o==null?null:(typeof o==='string'?o:(o[S.lang]??o.en));
@@ -55,6 +60,11 @@ const ltr=(s,plain)=>s?`<span class="ltr${plain?'':' num'}" title="${esc(s)}">${
 /* plain-text bidi isolate (FSI…PDI) for an ID inside a sentence that is escaped as text */
 const iso=s=>'\u2068'+s+'\u2069';
 const E=(g,k)=>(t().e[g]&&t().e[g][k])||k;
+/* a Latin-script name inside Arabic UI text: tagged lang=en and isolated (bdi), so screen readers and bidi both treat it as English */
+const lat=s=>S.lang==='ar'&&s&&!/[؀-ۿ]/.test(s)?`<bdi lang="en">${esc(s)}</bdi>`:esc(s);
+/* nationality is stored as ISO-3; shown as the country name in the UI language (Intl, never hand-written) */
+const NAT2={JOR:'JO',SAU:'SA',ARE:'AE',IND:'IN',LBN:'LB'};
+const natName=c=>{try{return new Intl.DisplayNames(S.lang,{type:'region'}).of(NAT2[c]||c)}catch(e){return c}};
 
 /* accounts always sorted by outstanding desc. deterministic, never by flag.
    takes an optional record so the queue screen can sort accounts of a borrower

@@ -39,8 +39,9 @@
   /* type (2.1): four sizes per script. EN 12/13/14/24 (Carbon productive); AR below. */
   --sans:'Geist',system-ui,-apple-system,sans-serif;
   --ar:'IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
-  --mono:'Geist Mono',ui-monospace,monospace;
-  --fs-meta:12px; --fs-body:13px; --fs-title:14px; --fs-display:24px;
+  /* Geist Mono has no Arabic: the Arabic face sits second so currency codes and month names are not drawn by a letter-spaced monospace fallback */
+  --mono:'Geist Mono','IBM Plex Sans Arabic','Noto Sans Arabic',ui-monospace,monospace;
+  --fs-meta:12px; --fs-body:13px; --fs-title:14px; --fs-display:24px; --chrome-fs:12px; --chrome-lh:16px;
   --lh-meta:16px; --lh-body:20px; --lh-title:20px; --lh-display:28px;
   --fw-regular:400; --fw-strong:600; --fw-figure:500;
   --track-tight:-.01em;
@@ -82,6 +83,11 @@ html[lang="ar"] .badge,html[lang="ar"] .tag,html[lang="ar"] .src{block-size:auto
 .ltr{direction:ltr;unicode-bidi:isolate;display:inline-block;max-inline-size:100%;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* Geist Mono ships 400/500 here. a mono run inside a 600 context (field values, today's
+   date) was faux-bolded by the browser and looked smeared; use the real 500 and forbid
+   synthesis so a missing weight falls back to a real file instead of a fake one. */
+:is(.v,b,strong,.t-pri,.cal-day) .num,.v.num,.cal-day{font-weight:var(--fw-figure)}
+.num,.t-display,.cal-day,.st-count{font-synthesis:none}
 
 /* type roles: display / title / emphasis / label. a new need is a modifier, never a size. */
 .t-display{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:var(--fs-display);line-height:var(--lh-display);
@@ -93,10 +99,10 @@ html[lang="ar"] .badge,html[lang="ar"] .tag,html[lang="ar"] .src{block-size:auto
 .dim{color:var(--text-muted)} .empty{color:var(--text-null)}
 
 /* ── interaction states, shared (2.8). every control: hover, focus-visible, active, disabled. ── */
-.nav-lang button,.act,.mini,.qrow,.card{transition:transform var(--dur-press) var(--ease-out)}
-.nav-lang button:active,.act:not(.off):active,.mini:not(.off):active,.qrow:active{transform:scale(.97)}
+.nav-lang button,.act,.mini,.card{transition:transform var(--dur-press) var(--ease-out)}
+.nav-lang button:active,.act:not(.off):active,.mini:not(.off):active{transform:scale(.97)}
 .card:active{transform:scale(.99)}
-:is(.act,.mini,.card,.qrow,.tabs button,.nav-lang button,.linkbtn,.src,.nav .item,.nav-foot button,.dd-trigger,.dd-opt,
+:is(.act,.mini,.card,.tabs button,.nav-lang button,.linkbtn,.src,.nav .item,.nav-foot button,.dd-trigger,.dd-opt,
   .cal-day,.wrap input,.rbar select,.rbar button,.fb-actions button):focus-visible{outline:none;box-shadow:var(--focus-ring)}
 
 /* ── button family (3.3): one shape, two sizes, three variants.
@@ -112,8 +118,8 @@ html[lang="ar"] .badge,html[lang="ar"] .tag,html[lang="ar"] .src{block-size:auto
 .act:not(.off):hover,.mini:not(.pri):not(.off):hover{background:var(--surface-hover);border-color:var(--border-control)}
 .act:not(.off):not(.primary):active,.mini:not(.pri):not(.off):active{background:var(--surface-sunken)}
 .act.primary,.mini.pri{background:var(--action-primary);border-color:var(--action-primary);color:var(--text-on-action)}
-.act.primary:hover,.mini.pri:hover,.qrow:hover .mini.pri{background:var(--action-primary-hover);border-color:var(--action-primary-hover)}
-.act.off,.mini.off{background:var(--surface-sunken);border-color:var(--border);color:var(--text-muted);cursor:not-allowed}
+.act.primary:hover,.mini.pri:hover,tbody tr:hover .mini.pri{background:var(--action-primary-hover);border-color:var(--action-primary-hover)}
+.act.off,.mini.off,.act:disabled,.mini:disabled{background:var(--surface-sunken);border-color:var(--border);color:var(--text-muted);cursor:not-allowed}
 .linkbtn{border:0;background:none;padding:0;margin-inline-start:var(--space-050);font:inherit;font-size:var(--fs-meta);
   font-weight:var(--fw-regular);color:var(--link);text-decoration:underline;text-underline-offset:2px;cursor:pointer;border-radius:var(--radius-sm)}
 .linkbtn:hover{color:var(--action-primary-hover);text-decoration-thickness:2px}
@@ -226,6 +232,8 @@ html[dir="rtl"] .nav.collapsed .nav-foot .icon{transform:scaleX(1)}
 .band{margin-block-start:var(--space-150);display:flex;flex-direction:column;gap:var(--space-050)}
 .why{display:flex;align-items:center;gap:var(--space-100);background:var(--escalation-bg);border-radius:var(--radius-sm);padding:var(--space-050) var(--space-100)}
 .why.calm{background:var(--surface-sunken)}
+/* council R-B: hue alone did not survive greyscale. a start-edge rule gives the banner luminance weight too. */
+.why[data-role=escalation]{border-inline-start:var(--space-050) solid var(--escalation-mark)}
 .why .badge{padding:0}
 
 .rail{display:flex;align-items:center;gap:var(--space-100);margin-block-start:var(--space-150);flex-wrap:wrap}
@@ -305,9 +313,12 @@ a.src:active{background:var(--surface-sunken)}
 .rows .row{display:flex;align-items:baseline;gap:var(--space-100);padding-block:var(--space-050);border-block-end:var(--stroke) solid var(--divider)}
 .rows .row:last-child{border-block-end:0}
 .grid2>.row:nth-last-child(2):not(.wide):nth-child(odd){border-block-end:0}
-.row .k{flex:0 0 auto;max-inline-size:70%;font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text-muted);
+.row .k{flex:0 1 auto;min-inline-size:0;max-inline-size:70%;font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text-muted);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row .v{font-weight:var(--fw-strong);margin-inline-start:auto;text-align:end;flex:1;min-inline-size:0;overflow-wrap:anywhere}
+/* council: a figure or date never breaks mid-token. in a short row the value keeps its width and the
+   label gives way (ellipsis); prose values are flagged wide and still wrap. */
+.row:not(.wide):not(.prose) .v{flex:0 0 auto;white-space:nowrap;overflow-wrap:normal}
 .grid2{display:grid;grid-template-columns:1fr 1fr;column-gap:var(--space-300)}
 .grid2 .row.wide{grid-column:1/-1}
 .row.prose{display:block;padding-block:var(--space-100);border-block-end:var(--stroke) solid var(--divider)}
@@ -351,6 +362,7 @@ a.src:active{background:var(--surface-sunken)}
   border-radius:var(--radius-md);background:var(--surface);color:var(--text)}
 .wrap input::placeholder{color:var(--text-muted)}
 .wrap input:hover{border-color:var(--text-muted)}
+.wrap input[aria-invalid=true]{border-color:var(--care-fg)}
 .wrap input:disabled{background:var(--surface-sunken);border-color:var(--border);color:var(--text-muted)}
 
 /* ── select + date picker (shadcn Select / Popover+Calendar) ── */
@@ -402,30 +414,7 @@ td.n,th.n{text-align:end;font-family:var(--mono);font-variant-numeric:tabular-nu
 tbody tr{cursor:pointer} tbody tr:hover{background:var(--selected-wash)}
 tbody tr:hover .mini{border-color:var(--border-control)}
 
-/* ── queue screen: same parts; one panel, ruled rows ── */
-.queue{flex:1;min-block-size:0;overflow:auto;padding:var(--space-300);background:var(--canvas)}
-.qhead{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-150);margin-block-end:var(--space-200)}
-/* overflow:clip, not hidden: hidden would make this the scroll container and break the sticky header */
-.qbody{background:var(--surface);border:var(--stroke) solid var(--border);border-radius:var(--radius-md);overflow:clip}
-.qrow,.qcols{display:grid;grid-template-columns:minmax(240px,1.4fr) minmax(260px,1.8fr) 140px 150px 96px 112px;
-  align-items:center;column-gap:var(--space-300);padding:var(--space-150) var(--space-200)}
-.qcols{position:sticky;inset-block-start:0;z-index:2;background:var(--surface);border-block-end:var(--stroke) solid var(--border);
-  padding-block:var(--space-100);font-size:var(--fs-meta);line-height:var(--lh-meta);font-weight:var(--fw-strong);color:var(--text-muted)}
-.qcols .n{text-align:end}
-.qrow{min-block-size:64px;cursor:pointer;border-block-end:var(--stroke) solid var(--border)}
-.qrow:last-child{border-block-end:0}
-.qrow:hover{background:var(--surface-hover)}
-.qrow-id{display:flex;gap:var(--space-150);align-items:center;min-inline-size:0}
-.qrow-id .who{display:flex;flex-direction:column;min-inline-size:0}
-.qrow-id .who>*{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qrow-why{display:flex;flex-direction:column;gap:var(--space-050);min-inline-size:0}
-.qrow-why .top{display:flex;align-items:center;gap:var(--space-100)}
-.qrow-why .detail{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qrow-num{text-align:end;min-inline-size:0}
-.qrow-contact{display:flex;align-items:center;justify-content:flex-end;gap:var(--space-050);color:var(--text-muted);font-size:var(--fs-meta)}
-.qrow-contact .icon{font-size:var(--icon-sm)}
-.qrow-contact .icon+.num+.icon{margin-inline-start:var(--space-100)}
-.qrow>.mini{justify-self:end}
+/* queue screen: no rules of its own (3.7). it is the panel, compare table, stat, badge and button. */
 
 /* icon atom: Phosphor's .ph carries the font; this keeps icons from shrinking and aligned */
 .icon{vertical-align:-0.15em;flex:0 0 auto;line-height:1}
@@ -433,12 +422,12 @@ tbody tr:hover .mini{border-color:var(--border-control)}
 /* reduced motion keeps opacity, drops movement (emil-design-eng) */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{transition-property:opacity!important;animation:none!important}
-  .act:active,.mini:active,.qrow:active,.card:active,.nav-lang button:active{transform:none!important}
+  .act:active,.mini:active,.card:active,.nav-lang button:active{transform:none!important}
 }
 
 /* ── reviewer bar (H0). chrome, not product: black, 36px, labelled, fixed 12px in both languages ── */
-.rbar{flex:0 0 var(--rbar-h);display:flex;align-items:center;gap:var(--space-200);padding:0 var(--space-200);background:var(--chrome-bar);color:var(--chrome-text);
-  font-size:12px;line-height:16px;white-space:nowrap;overflow:hidden}
+.rbar{flex:0 0 var(--rbar-h);display:flex;align-items:center;gap:var(--space-150);padding:0 var(--space-200);background:var(--chrome-bar);color:var(--chrome-text);
+  font-size:var(--chrome-fs);line-height:var(--chrome-lh);white-space:nowrap;overflow:hidden}
 .rbar .rb-label,.rb-note{color:var(--chrome-text-muted)}
 .rb-fx{display:flex;align-items:center;gap:var(--space-100)}
 .rb-fx select{font:inherit;block-size:var(--control-xs);background:var(--chrome-bg);color:var(--chrome-text);border:var(--stroke) solid var(--chrome-control);
@@ -457,7 +446,7 @@ tbody tr:hover .mini{border-color:var(--border-control)}
 .fallback[hidden]{display:none}
 .fallback section{margin-block-end:var(--space-300)}
 .fallback h1{font-size:var(--fs-display);line-height:var(--lh-display);margin:0 0 var(--space-100)}
-.fallback p,.fallback li{font-size:16px;line-height:1.6}
+.fallback p,.fallback li{font-size:var(--fs-body);line-height:var(--lh-body)}
 .fallback [lang="ar"] p,.fallback [lang="ar"] li{line-height:1.7}
 .fb-meta{color:var(--text-muted)}
 .fb-actions{display:flex;flex-wrap:wrap;gap:var(--space-100)}
@@ -497,7 +486,6 @@ body.story-on .app{padding-block-end:var(--story-strip-h)}
 .st-claim{flex:1;min-inline-size:0;margin:0;font-size:var(--fs-title);line-height:var(--lh-title);font-weight:var(--fw-strong);
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .st-act{display:flex;gap:var(--space-100);flex:0 0 auto}
-.mini:disabled{background:var(--surface-sunken);border-color:var(--border);color:var(--text-null);cursor:not-allowed;transform:none}
 .st-chip{position:fixed;inset-block-end:var(--space-200);inset-inline-end:var(--space-200);z-index:100;
   font:inherit;font-size:var(--fs-meta);font-weight:var(--fw-strong);block-size:var(--control-md);padding:0 var(--space-200);
   border-radius:var(--radius-md);border:var(--stroke) solid var(--selected);background:var(--surface);color:var(--link);
@@ -516,7 +504,7 @@ body.story-on .app{padding-block-end:var(--story-strip-h)}
 .log-page{flex:1;min-block-size:0;overflow:auto;background:var(--canvas);padding:var(--space-300)}
 .log-top{display:flex;align-items:center;gap:var(--space-200);margin-block-end:var(--space-200)}
 html[dir="rtl"] .log-top .icon{transform:none}
-.log-doc{max-inline-size:var(--read-max);font-family:var(--sans);font-size:13px;line-height:20px}
+.log-doc{max-inline-size:var(--read-max);font-family:var(--sans);font-size:var(--fs-body);line-height:var(--lh-body)}
 .log-doc h1{margin:0 0 var(--space-050)}
 .log-doc>p{margin:0 0 var(--space-200)}
 .dcard{background:var(--surface);border:var(--stroke) solid var(--border);border-radius:var(--radius-md);margin-block-end:var(--space-100);
@@ -524,7 +512,7 @@ html[dir="rtl"] .log-top .icon{transform:none}
 .dcard.on{border-color:var(--selected);box-shadow:0 0 0 var(--stroke) var(--selected)}
 .dcard-h{display:flex;align-items:center;gap:var(--space-100);padding-block-end:var(--space-100);border-block-end:var(--stroke) solid var(--border)}
 .dcard-h .t-sec{margin-inline-start:auto}
-.dcard .row.prose .k{display:block;font-size:12px;line-height:16px;color:var(--text-muted);margin-block-end:var(--space-025)}
+.dcard .row.prose .k{display:block;font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text-muted);margin-block-end:var(--space-025)}
 .dcard .row.prose:last-child{border-block-end:0}
 .dcard a{color:var(--link)}
 .rb-links{display:inline-flex;gap:var(--space-050)}
@@ -533,3 +521,26 @@ html[dir="rtl"] .log-top .icon{transform:none}
 .rb-links button:hover{background:var(--chrome-raised)}
 .rb-links button[aria-pressed="true"]{background:var(--surface);color:var(--chrome-bar)}
 @media(prefers-reduced-motion:reduce){#spot{transition:opacity var(--story-dim-out) linear!important}}
+
+/* ═══ P4 component variants ═══ */
+/* 3.5: editable field. same row; the value is a small select, so read and write look different */
+.dd.sm .dd-trigger{block-size:var(--control-sm);font-size:var(--fs-meta);padding:0 var(--space-100);font-weight:var(--fw-strong)}
+.row.edit{align-items:center}
+.row.edit .v{flex:0 0 auto}
+/* 1.5 system states */
+.why.stale{background:var(--care-bg);color:var(--care-fg)}
+.why.stale .mini{margin-inline-start:auto}
+.dispatch{display:flex;align-items:center;gap:var(--space-100);margin-block-start:var(--space-100);padding:var(--space-050) var(--space-100);
+  border-radius:var(--radius-sm);background:var(--care-bg);color:var(--care-fg);font-size:var(--fs-meta);line-height:var(--lh-meta);
+  transition:opacity var(--dur-enter) var(--ease-out)}
+@starting-style{.dispatch{opacity:0}}
+.save-fail{margin-block-end:var(--space-200);padding:var(--space-100) var(--space-150);border-radius:var(--radius-sm);
+  background:var(--care-bg);color:var(--care-fg);font-size:var(--fs-meta);line-height:var(--lh-meta);max-inline-size:var(--form-max)}
+.sk{display:block;block-size:var(--space-150);border-radius:var(--radius-sm);background:var(--surface-sunken);margin-block:var(--space-100)}
+.sk.lg{block-size:var(--space-300);inline-size:60%}
+/* component sheet (3.8): a reviewer page, laid out with the same panels */
+.sheet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--space-100);align-items:start}
+.spec{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-100);padding-block:var(--space-100)}
+.spec>.card,.spec>.stat,.spec>.blk{flex:1 1 220px;margin:0}
+.swatch{inline-size:var(--control-sm);block-size:var(--control-sm);border-radius:var(--radius-sm);border:var(--stroke) solid var(--border);flex:0 0 auto}
+.log-doc.wide{max-inline-size:none}

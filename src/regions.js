@@ -16,11 +16,13 @@ function spine(){
     : (brokenN?esc(T_.brokenN(brokenN)):''),
    {g:'ptp',none:T_.noPromise});
 
- const rule=k=>k&&chRule(r.ch[k],r.market);
+ /* KSA: an open complaint stops reminders on every channel (SAMA Art. 6(4)), not one */
+ const complaint=r.market==='SA'&&r.accts.some(a=>a.dispute);
+ const rule=k=>k&&chRule(complaint?'complaint':r.ch[k],r.market);
  const btn=(k,label,ic,pri,id)=>{
    const ru=rule(k);
    /* aria-disabled, not disabled: stays focusable; the reason is described, not hidden */
-   return `<button ${id?`id="${id}" `:''}class="act${pri&&!ru?' primary':''}${ru?' off':''}"${ru?` aria-disabled="true" aria-describedby="cr-${k}"`:''}>
+   return `<button ${id?`id="${id}" `:''}${k?`data-ch="${k}" `:''}class="act${pri&&!ru?' primary':''}${ru?' off':''}"${ru?` aria-disabled="true" aria-describedby="cr-${k}"`:''}>
      ${icon(ru?'lock':ic)}<span>${esc(label)}</span></button>`;
  };
  const chNames={call:T_.call,sms:T_.sms,wa:T_.wa,email:T_.email};
@@ -29,7 +31,9 @@ function spine(){
  /* Q4: last thing said, across all accounts, whatever the activity column's scope */
  const last=[...r.logs].sort((x,y)=>when(y.at)-when(x.at))[0];
  const lastLine=last?`<div class="lastc" data-g="last"><span class="k">${esc(T_.lastContact)}</span>
-   <span class="num">${DT(last.at)}</span><span>${esc(E('src',last.src))} · <b>${esc(E('out',last.out))}</b>${last.note?` · ${esc(L(last.note))}`:''}</span></div>`:'';
+   <span class="num">${DT(last.at)}</span><span>${esc(E('src',last.src))} · <b>${esc(E('out',last.out))}</b>${last.note?` · ${esc(L(last.note))}`:''}</span></div>`
+  /* Q4 is answered even when there is nothing to say: the line stays, it says so */
+  :`<div class="lastc" data-g="last"><span class="k">${esc(T_.lastContact)}</span><span class="empty">${esc(T_.noContact)}</span></div>`;
 
  const band=rs.length
   ? `<div class="why" data-alert="1" data-role="escalation" data-g="why"><span class="badge alert"><i class="dot"></i>${esc(T_.why)}</span>${proposedTag()}${ann('D2')}
@@ -47,7 +51,7 @@ function spine(){
       <span class="badge q">${esc(E('stage',r.stage))}</span>
       <span>${esc(T_.market)}: <b>${esc(T_.mk[r.market])}</b></span>
       <span>${esc(T_.f.lang)}: <b>${r.lang?esc(T_.langName[r.lang]):dash()}</b></span>
-      <span>${esc(T_.f.owner)}: ${r.owner?esc(r.owner):dash()}</span>
+      <span>${esc(T_.f.owner)}: ${r.owner?lat(r.owner):dash()}</span>
      </div>
     </div>
    </div>
@@ -58,7 +62,7 @@ function spine(){
    </div>
   </div>
   <div class="band">
-   ${band}${lastLine}
+   ${staleBand()}${band}${lastLine}
   </div>
   <div class="rail" data-g="rail">
    ${btn('call',T_.call,'phone',true)}${btn('sms',T_.sms,'chat')}${btn('wa',T_.wa,'wa')}${btn('email',T_.email,'mail')}
@@ -68,15 +72,15 @@ function spine(){
    <button class="act log-btn" id="b-entry">${icon('pencil')}<span>${esc(T_.logOutcome)}</span></button>
   </div>
   ${notes?`<div class="cnotes">${notes}${ann('D4')}</div>`:''}
+  ${dispatchNote()}
  </div>`;
 }
-/* ═══ 7 · REGION 2 · borrower column ═══ */
-function borrowerCol(){
- const r=rec(),T_=t(),h=hot(r),list=accts();
- const cards=list.map((a,i)=>{
-  const flag=h.has(a.ref),p=Math.round((a.out/a.total)*100);
-  /* the only coral on a card: one cue, on the accounts the escalation line names (2.4) */
-  return `<div class="card${i===S.sel?' on':''}${flag?' hot':''}" data-a="${i}" tabindex="0" role="button">
+/* ═══ 6.1 · account card (3.3: one component; the sheet renders the same function).
+   the only coral on a card: one cue, on the accounts the escalation line names (2.4).
+   static = specimen with no selection behaviour. ═══ */
+function acctCard(a,i,flag,on,staticCard){
+ const T_=t(),p=Math.round((a.out/a.total)*100);
+ return `<div class="card${on?' on':''}${flag?' hot':''}"${staticCard?'':` data-a="${i}" tabindex="0" role="button"`}>
    ${i<9?`<span class="kbd">${i+1}</span>`:''}
    <div class="t-pri">${esc(L(a.lender))}</div>
    <div class="t-sec">${esc(E('product',a.product))} · ${ltr(a.ref)}</div>
@@ -88,7 +92,20 @@ function borrowerCol(){
     ${a.plan?`<span class="badge ok">${M(a.plan.emi)}/${esc(T_.perMo)}</span>`:''}</div>
    ${flag?`<div class="reasoncue" data-alert="1" data-role="escalation"><i class="dot"></i>${esc(T_.reasonCue)}</div>`:''}
   </div>`;
- }).join('');
+}
+/* ═══ 6.2 · log row (3.3). cls: '' | 'ai' | 'new' | 'new enter' ═══ */
+function logRow(x,r,cls){
+ const an=(r.accts.find(z=>z.ref===x.a)||{}).lender;
+ return `<div class="log ${cls}"><span class="when num">${DT(x.at)}</span><span>
+    <b class="t-pri">${esc(E('out',x.out))}</b>
+    <span class="t-sec"> ${esc(E('src',x.src))} · ${esc(E('dir',x.dir))}</span>
+    ${x.note?`<div>${esc(L(x.note))}</div>`:''}
+    <div class="meta">${lat(E('by',x.by))}${S.scope==='all'&&an?` · ${esc(L(an))}`:''}</div></span></div>`;
+}
+/* ═══ 7 · REGION 2 · borrower column ═══ */
+function borrowerCol(){
+ const r=rec(),T_=t(),h=hot(r),list=accts();
+ const cards=list.map((a,i)=>acctCard(a,i,h.has(a.ref),i===S.sel)).join('');
 
  const c=r.calls||{};
  const contactHistory=(c.h||c.ai)?`<div class="rows">
@@ -112,7 +129,7 @@ function borrowerCol(){
     <div class="blk-b"><div class="rows grid2">
      ${row(T_.f.dob,r.dob?D(r.dob):null)}
      ${row(T_.f.gender,r.gender?esc(E('gender',r.gender)):null)}
-     ${row(T_.f.nat,r.nat?esc(r.nat):null)}
+     ${row(T_.f.nat,r.nat?esc(natName(r.nat)):null)}
      ${row(T_.f.submit,r.submit?D(r.submit):null)}
      ${row(T_.f.phone,r.phone?ltr(r.phone,true):null)}
      ${row(T_.f.mail,r.mail?ltr(r.mail,true):null,false,true)}
@@ -159,14 +176,14 @@ function accountCol(){
  const pf=[['verif'],['churn'],['repo'],['hardship'],['employer'],['settle',1]].filter(([k])=>f[k]!==undefined);
  const fields=block('fields',`<div class="rows grid2">
    ${row(T_.f.disputed,a.dispute?`<span class="badge q">${esc(T_.yes)}</span>`:esc(T_.no))}
-   ${pf.map(([k,w])=>row(T_.f[k],fv(k),false,!!w)).join('')}
+   ${pf.map(([k,w])=>k==='verif'?rowEdit(T_.f.verif,'f-verif',[['yes',T_.yes],['no',T_.no]],f.verif):row(T_.f[k],fv(k),false,!!w)).join('')}
    ${a.dispute?row(T_.f.disputeWhy,esc(L(a.dispute.why)),false,true):''}
   </div>`);
 
  const m=a.meta||{};
  const meta=block('meta',`<div class="rows grid2">
-   ${row(T_.f.cby,esc(E('by',m.cby)))}${row(T_.f.cat,D(m.cat))}
-   ${row(T_.f.uby,esc(E('by',m.uby)))}${row(T_.f.uat,D(m.uat))}
+   ${row(T_.f.cby,lat(E('by',m.cby)))}${row(T_.f.cat,D(m.cat))}
+   ${row(T_.f.uby,lat(E('by',m.uby)))}${row(T_.f.uat,D(m.uat))}
    ${row(T_.f.lenderId,ltr(a.lid),false,true)}
   </div>`);
 
@@ -185,16 +202,8 @@ function activityCol(){
  let body='';
  if(S.tab==='i'||S.tab==='m'){
   const list=filt(S.tab==='i'?r.logs:r.msgs).sort((x,y)=>when(y.at)-when(x.at));
-  body=list.length?list.map(x=>{
-   const an=(r.accts.find(z=>z.ref===x.a)||{}).lender;
-   /* the saved row enters once (2.9); later renders show it static */
-   const cls=x===S.justLogged?(S.enter?(S.enter=false,'new enter'):'new'):(x.src==='ai'?'ai':'');
-   return `<div class="log ${cls}"><span class="when num">${DT(x.at)}</span><span>
-    <b class="t-pri">${esc(E('out',x.out))}</b>
-    <span class="t-sec"> ${esc(E('src',x.src))} · ${esc(E('dir',x.dir))}</span>
-    ${x.note?`<div>${esc(L(x.note))}</div>`:''}
-    <div class="meta">${esc(E('by',x.by))}${S.scope==='all'&&an?` · ${esc(L(an))}`:''}</div></span></div>`;
-  }).join(''):`<div class="emptyline">${esc(S.scope==='all'?T_.noContact:T_.noLogs)}</div>`;
+  /* the saved row enters once (2.9); later renders show it static */
+  body=list.length?list.map(x=>logRow(x,r,x===S.justLogged?(S.enter?(S.enter=false,'new enter'):'new'):(x.src==='ai'?'ai':''))).join(''):`<div class="emptyline">${esc(S.scope==='all'?T_.noContact:T_.noLogs)}</div>`;
  } else if(S.tab==='t'){
   body=r.time.length?r.time.map(x=>`<div class="log"><span class="when num">${D(x.at)}</span>
    <span>${esc(L(x.t))}</span></div>`).join(''):`<div class="emptyline">${esc(T_.noTimeline)}</div>`;
@@ -249,38 +258,32 @@ function queueView(){
      the detail line carries the specifics. top-1 reason only: one coral badge per flagged
      row holds the fixtures at exactly 3, the existing budget cap (see spec.md). */
   const why=top
-    ?`<div class="top"><span class="badge alert" data-alert="1" data-role="escalation"><i class="dot"></i>${esc(T_.rk[top.k])}</span>
+    ?`<div class="card-b"><span class="badge alert" data-alert="1" data-role="escalation"><i class="dot"></i>${esc(T_.rk[top.k])}</span>
       ${rs.length>1?`<span class="t-sec">${esc(T_.more(rs.length-1))}</span>`:''}</div>
-     <span class="t-sec detail" title="${esc(top.x)}">${esc(top.d)}</span>`
+     <div class="t-sec" title="${esc(top.x)}">${esc(top.d)}</div>`
     :`<span class="t-sec">${esc(T_.q.noFlag)}</span>`;
-  return `<div class="qrow" data-q="${k}" tabindex="0" role="button">
-   <div class="qrow-id">
-    <div class="avatar">${esc(r.ini)}</div>
-    <div class="who"><span class="t-title">${esc(L(r.name))}</span>
-     <span class="t-sec" lang="${S.lang==='en'?'ar':'en'}">${esc(S.lang==='en'?r.name.ar:r.name.en)}</span></div>
-   </div>
-   <div class="qrow-why">${why}</div>
-   <div class="qrow-num"><div class="t-display sm">${M(sumOut(r),r)}</div>
-    <span class="t-sec">${esc(T_.across(r.accts.length))}</span></div>
-   <div class="qrow-num"><div class="t-display sm">${N(dpd(w))}</div>
-    <span class="t-sec">${esc(T_.on)} ${esc(L(w.lender))}</span></div>
-   <div class="qrow-contact">${icon('robot')}<span class="num">${N(r.calls.ai)}</span>
-    ${icon('phone')}<span class="num">${N(r.calls.h)}</span></div>
-   <span class="mini pri" aria-hidden="true">${esc(T_.q.openCase)}</span>
-  </div>`;
+  /* 3.7: built from existing parts only: panel, compare table, stat, badge, button */
+  return `<tr class="qrow" data-q="${k}">
+   <td><div class="idb"><div class="avatar">${esc(r.ini)}</div>
+    <div><div class="t-title">${esc(L(r.name))}</div>
+     <div class="t-sec" lang="${S.lang==='en'?'ar':'en'}">${esc(S.lang==='en'?r.name.ar:r.name.en)}</div></div></div></td>
+   <td>${why}</td>
+   <td><div class="stats">${stat('',M(sumOut(r),r),esc(T_.across(r.accts.length)),{sm:1})}</div></td>
+   <td><div class="stats">${stat('',N(dpd(w)),`${esc(T_.on)} ${esc(L(w.lender))}`,{sm:1})}</div></td>
+   <td><div class="stats"><span class="t-sec">${icon('robot')} <span class="num">${N(r.calls.ai)}</span></span>
+    <span class="t-sec">${icon('phone')} <span class="num">${N(r.calls.h)}</span></span></div></td>
+   <td><button type="button" class="mini pri">${esc(T_.q.openCase)}</button></td>
+  </tr>`;
  }).join('');
 
  const c=T_.q.cols;
- return `<div class="queue">
-  <div class="qhead">
-   <span class="t-title">${esc(T_.q.title)} · ${esc(T_.q.count(keys.length))}</span>
-   <span class="t-sec">${esc(T_.q.needsAttention(flagged))}</span>
-  </div>
-  <div class="qbody">
-   <div class="qcols" aria-hidden="true"><span>${esc(c.who)}</span><span>${esc(c.why)}</span>
-    <span class="n">${esc(T_.outstanding)}</span><span class="n">${esc(T_.worstDpd)}</span>
-    <span class="n">${esc(c.calls)}</span><span></span></div>
-   ${rows}
+ return `<div class="log-page" id="queue">
+  <div class="blk" id="q-list">
+   <div class="blk-h"><span class="eyebrow">${esc(T_.q.title)} · ${esc(T_.q.count(keys.length))}</span>
+    <span class="t-sec">${esc(T_.q.needsAttention(flagged))}</span></div>
+   <table><thead><tr><th>${esc(c.who)}</th><th>${esc(c.why)}</th>
+    <th class="n">${esc(T_.outstanding)}</th><th class="n">${esc(T_.worstDpd)}</th><th class="n">${esc(c.calls)}</th><th></th></tr></thead>
+   <tbody>${rows}</tbody></table>
   </div>
  </div>`;
 }

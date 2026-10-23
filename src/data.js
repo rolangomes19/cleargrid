@@ -8,7 +8,7 @@ omar:{
   owner:'Faisal Noor',stage:'disp',submit:'2026-04-30',synced:'2026-09-11T08:41',
   phone:'+971 55 321 7740',mail:'omar.h@example.com',
   ch:{call:'ok',sms:'ok',wa:'review',email:'ok'},
-  calls:{h:1,ai:3,lastH:'2026-08-27T16:20',lastAi:'2026-09-09T20:15',
+  calls:{h:2,ai:3,lastH:'2026-08-27T16:20',lastAi:'2026-09-09T20:15',
     ai_sum:{en:'Borrower disputed the card transaction and declined to discuss payment on either account.',
             ar:'اعترض المدين على عملية البطاقة ورفض مناقشة السداد على أي من الحسابين.'}},
   accts:[
@@ -95,6 +95,7 @@ sparse:{
  const b=JSON.parse(JSON.stringify(R.omar));
  b.name={en:'Mohammed Al Suwaidi',ar:'محمد السويدي'};b.ini='MS';b.lang='ar';b.gender='m';b.nat='AE';
  b.dob='1979-11-05';b.eid='784-1979-6620143-2';b.owner='Rabab Abbas';b.stage='rpc';
+ b.nat='ARE';b.phone='+971 50 612 3380';b.mail='m.suwaidi@example.com';
  const seed=[
   ['FB-8802','First Abu Dhabi Bank','بنك أبوظبي الأول','card',56000,44210,'2024-11-02','coll',3,'missed'],
   ['TM-8815','Tamara','تمارا','bnpl',2400,2400,'2026-05-19','disputed',0,null],
@@ -119,9 +120,16 @@ sparse:{
  b.logs=[];
  for(let i=0;i<34;i++){
   const d=new Date(TODAY-((i*3+2)*DAY));
-  b.logs.push({at:d.toISOString().slice(0,16),a:b.accts[i%7].ref,src:i%3?'phone':'ai',
+  /* contact hours 09:00-18:00 so no logged call sits outside the permitted window (varied, not all 20:00) */
+  const at=d.toISOString().slice(0,11)+String(9+(i*7)%10).padStart(2,'0')+':'+['05','20','40','55'][i%4];
+  b.logs.push({at,a:o[i%o.length]==='dispute'?'TM-8815':b.accts[i%7].ref,src:i%3?'phone':'ai',
    dir:i%9?'out':'in',out:o[i%o.length],by:i%3?'Rabab Abbas':'ClearVoice',note:null});
  }
+ /* 1.4: call totals and 'latest answered' come from the log itself, so they cannot disagree */
+ const answered=l=>l.out!=='noans';
+ const last=src=>b.logs.filter(l=>l.src===src&&answered(l)).map(l=>l.at).sort().pop()||null;
+ b.calls.h=b.logs.filter(l=>l.src==='phone').length; b.calls.ai=b.logs.filter(l=>l.src==='ai').length;
+ b.calls.lastH=last('phone'); b.calls.lastAi=last('ai');
  R.stress=b;
 })();
 
