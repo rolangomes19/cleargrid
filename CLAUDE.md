@@ -31,6 +31,28 @@ untested output.
 
 Read only the file you need. Do not read `dist/` — it is generated.
 
+## Visual redesign (branch `visual-redesign`, 23 Oct 2026) — overrides the sections below where they disagree
+
+User guardrails: light mode only; grouping and usability over polish; charts where a figure has a shape; gradients and motion allowed.
+- **Field tiles, not hairline rows.** Every field is a well (`--tile`) with the label above its own value. A value can never be read against the
+  neighbouring label. 2 per line, 3 once the account column is 620px+. Spine stats already used label-over-value: one grammar now.
+- **Colour roles (OKLCH):** cobalt = interactive and selection (was teal), slate = data marks, coral = escalation only (budget unchanged, 3),
+  green = plan, amber = care. Raw values only in the palette layer; gradients are role tokens (`--grad-*`), RTL variants where a gradient has direction.
+- **Display figures** are Geist 600 with tabular digits (`--figure`), not Geist Mono. Mono stays for IDs, references and timestamps.
+- **Charts** (`components.js`): `splitBar` (spine, outstanding by account, selected account cobalt), `aging` (0/30/60/90/180/360 buckets, account
+  hero and cards via `dpdMini`), `instTrack` (plan instalments). Each restates a printed figure; none uses coral.
+- **Light nav**; the white logo is darkened with `--logo-ink`. Activity list is a timeline (rail + ring coloured by outcome).
+- **Motion:** case-open only. `render()` sets `#stack[data-enter="1"]` when the case or screen changes; panels rise, charts grow, under 450ms.
+  Tab, account and language changes stay instant. Reduced motion drops it. The harness waits for (and finishes) animations before measuring.
+- **Context survives a render.** `render()` rebuilds the stack, so it saves every pane's scroll (`SCROLL`, by pane id) and the focused
+  control, and restores both. Cleared only when a different case or screen opens; a tab change resets the activity list only.
+- **Editable fields are segmented toggles** (`rowEdit` -> `.seg` radiogroup, arrows move the choice), changed in place without a render.
+  Disputed is plain text. Borrower reference opens with the national ID on its own line; phone and email take full lines.
+- **The tour speaks the viewer's language** (`S.tourLang`). A step's `lang` changes only the product screen (step 8 shows the Arabic
+  mirror); the strip's text, buttons, direction and arrow keys stay in the viewer's language, other steps return to it, and leaving the
+  tour restores it. Changing language mid-tour updates it. `verify.js` fails if the narration or a lang-less step switches.
+- Harness after the change: all checks 36/36 except T1 27/36 (was 29/36): taller tiles make the account column scroll more often.
+
 ## Locked architecture — do not change without being asked
 
 1. **Three scopes, one column each.** Borrower (1), account (1..n), event (0..m).
@@ -47,7 +69,8 @@ Read only the file you need. Do not read `dist/` — it is generated.
    Bank". A borrower total and an account total must never look like the same number.
 6. **One canonical home per field.** Repetition is allowed only across scopes, and only
    when both instances are labelled.
-7. **Account sort is outstanding descending, always.** Never sorted by flag. A list that
+7. **Account sort: disputed accounts first, then the rest, outstanding descending inside each group** (user review, 23 Oct 2026;
+   `accts()` in core.js). No other flag reorders the list. A list that
    reorders as flags change destroys the positional memory it exists to build.
 
 ## Typography

@@ -46,7 +46,7 @@ function chRule(k,m){
 }
 
 /* mode: 'queue' (case list, screen zero) | 'profile' | 'compare' | 'wrapup' (post-call write) */
-let S={rec:'stress',lang:'en',sel:0,tab:'i',scope:'all',mode:'profile',wrapDone:false,justLogged:null,navCollapsed:false,showId:false,bar:false,
+let S={rec:'stress',lang:'en',tourLang:null,sel:0,tab:'i',scope:'all',mode:'profile',wrapDone:false,justLogged:null,navCollapsed:false,showId:false,bar:false,
  step:0,paused:false,ann:false,prop:false,state:null,dispatch:null,card:null,prevMode:'profile'};
 
 const t=()=>T[S.lang];
@@ -71,7 +71,10 @@ const natName=c=>{try{return new Intl.DisplayNames(S.lang,{type:'region'}).of(NA
 /* accounts always sorted by outstanding desc. deterministic, never by flag.
    takes an optional record so the queue screen can sort accounts of a borrower
    that isn't the currently-loaded one, without duplicating this logic. */
-const accts=(r=rec())=>[...r.accts].sort((a,b)=>b.out-a.out);
+/* disputed accounts first (the one the agent has to resolve), then the rest; outstanding descending inside each group.
+   a dispute is a lasting state, not a flag that flickers, so positions stay learnable */
+const disputed=a=>!!a.dispute||a.status==='disputed';
+const accts=(r=rec())=>[...r.accts].sort((a,b)=>disputed(b)-disputed(a)||b.out-a.out);
 const acc=()=>accts()[Math.min(S.sel,accts().length-1)];
 const dpd=a=>days(a.due);
 const sumOut=r=>r.accts.reduce((s,a)=>s+a.out,0);

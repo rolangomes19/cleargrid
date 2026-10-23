@@ -86,9 +86,11 @@ for(const r of ['omar','aisha','stress','sparse','blocked','ksa']){
   behav.push(['open promise visible in glance', !!doc.querySelector('[data-g="ptp"] .t-display:not(.empty)')]);
   behav.push(['call cap shown as client policy, not law', /Client policy/.test(doc.querySelector('#cr-call')?.textContent||'')]);
  } else if(r==='stress'){
-  const outs=[...doc.querySelectorAll('.card .card-r .t-display')].map(e=>parseFloat(e.textContent.replace(/[^\d.]/g,'')));
-  const sorted=outs.every((v,i)=>i===0||outs[i-1]>=v);
-  behav.push(['cards sorted outstanding-descending', sorted]);
+  /* disputed first, then outstanding descending inside each group */
+  const cards=[...doc.querySelectorAll('#c-bor .card')].map(c=>({d:/Disputed/.test(c.textContent),
+   v:parseFloat(c.querySelector('.card-r .t-display').textContent.replace(/[^\d.]/g,''))}));
+  const sorted=cards.every((c,i)=>i===0||(cards[i-1].d&&!c.d)||(cards[i-1].d===c.d&&cards[i-1].v>=c.v));
+  behav.push(['cards sorted disputed-first, then outstanding-descending', sorted&&cards[0].d]);
   click(doc.getElementById('b-compare'));
   const inCompare=!!doc.querySelector('.cols.compare');
   const compareRows=doc.querySelectorAll('tbody tr').length;
@@ -146,7 +148,8 @@ click(doc.getElementById('b-scope'));
 console.log('scope ->',doc.getElementById('b-scope').textContent);
 click(doc.getElementById('b-scope'));
 click(doc.querySelector('[data-t="i"]'));
-// wrap-up screen round trip
+// wrap-up screen round trip, on the disputed account (sorted first since 23 Oct 2026; picked by state, not position)
+click([...doc.querySelectorAll('#c-bor .card')].find(c=>/Disputed/.test(c.textContent)));
 click(doc.getElementById('b-entry'));
 if(!doc.querySelector('.wrap')) errs.push('WRAPUP: opening "Log outcome" did not render the wrap-up pane');
 doc.getElementById('w-out').value='promise';
@@ -188,7 +191,7 @@ if(errs.length) process.exitCode=1;
 {
  const key=k=>doc.body.dispatchEvent(new window.KeyboardEvent('keydown',{key:k,bubbles:true}));
  click(doc.getElementById('rb-tour'));
- const STEPS=window.eval('STEPS'),CARDS=window.eval('CARDS'),ids=CARDS.map(c=>c[0]);
+ const STEPS=window.eval('STEPS'),CARDS=window.eval('CARDS'),ids=CARDS.map(c=>c[0]),lang0=window.eval('S.lang');
  for(let i=1;i<=STEPS.length;i++){
   const st=STEPS[i-1];
   if(window.eval('S.step')!==i) errs.push(`P3: expected step ${i}, at ${window.eval('S.step')}`);
@@ -196,9 +199,13 @@ if(errs.length) process.exitCode=1;
   if(st.t&&!doc.querySelector(st.t)) errs.push(`P3: step ${i} target ${st.t} missing`);
   if(st.card&&!ids.includes(st.card)) errs.push(`P3: step ${i} cites unknown card ${st.card}`);
   if(!st.en||!st.ar) errs.push(`P3: step ${i} missing EN or AR claim`);
-  if(i<STEPS.length) key(window.eval("S.lang==='ar'?'ArrowLeft':'ArrowRight'"));
+  /* the narration keeps the viewer's language even when a step shows the product in the other one */
+  if(doc.querySelector('#story .strip')?.getAttribute('lang')!==lang0) errs.push(`P3: step ${i} narration switched language`);
+  if(!st.lang&&window.eval('S.lang')!==lang0) errs.push(`P3: step ${i} screen left the viewer's language`);
+  if(i<STEPS.length) key(window.eval("(S.tourLang||S.lang)==='ar'?'ArrowLeft':'ArrowRight'"));
  }
  key('Escape');
+ if(window.eval('S.lang')!==lang0) errs.push("P3: leaving the tour did not return to the viewer's language");
  if(doc.querySelector('#story .strip')||/step=/.test(window.location.search)) errs.push('P3: Esc did not leave the tour');
  if(CARDS.length!==17) errs.push(`P3: ${CARDS.length} decision cards, expected 17`);
  toQueue();openCase('omar');setLang('en');
@@ -265,10 +272,10 @@ if(errs.length) process.exitCode=1;
  W("S.state=null;S.mode='profile';render()");
  // 3.5: an editable field is a control and writes back
  click(doc.querySelectorAll('.card')[1]);
- const ed=doc.querySelector('.row.edit .dd-trigger');
+ const ed=doc.querySelector('.row.edit .seg[role="radiogroup"]');
  if(!ed) errs.push('3.5: editable field is not a control');
- else { click(ed); click(doc.querySelector('.row.edit .dd-opt[data-v="yes"]'));
-  if(W('acc().fields.verif')!=='yes') errs.push('3.5: editable field did not write back'); }
+ else { const o=ed.querySelector('[aria-checked="false"]'); click(o);
+  if(W('acc().fields.verif')!==o.dataset.v) errs.push('3.5: editable field did not write back'); }
  // council pass 2: entry validation, ID mask, channel gating, plurals
  {
   toQueue();openCase('omar');setLang('en');

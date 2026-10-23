@@ -35,7 +35,8 @@ const dispatchNote=()=>S.dispatch?`<div class="dispatch" role="status">${icon('l
 
 /* ═══ 15.2 · component sheet (3.8). anatomy · variants · states · usage rule, live. ═══ */
 function sheetView(){
- const r=R.omar,a0=accts(r)[1],a1=accts(r)[0],T_=t();
+ /* specimens by role, not position: a0 the disputed card, a1 the one with a plan */
+ const r=R.omar,a0=accts(r).find(disputed),a1=accts(r).find(a=>a.plan),T_=t();
  const spec=(name,rule,body,note)=>`<section class="blk"><div class="blk-h"><span class="eyebrow">${esc(name)}</span></div>
   <div class="blk-b"><div class="spec">${body}</div><p class="t-sec">${esc(rule)}</p>${note?`<p class="t-sec">${esc(note)}</p>`:''}</div></section>`;
  const roles=['--text','--text-muted','--text-null','--canvas','--surface','--border','--divider','--action-primary','--link','--selected',
@@ -73,9 +74,9 @@ function sheetView(){
     `${stat(T_.outstanding,M(12860,r),`${esc(T_.across(2))}`)}${stat(T_.promise,null,'',{none:T_.noPromise})}${stat(T_.f.out,M(4860,r),'69%',{bar:69})}`)}
    ${spec('Field row','Label start, value end, hairline between rows so the pair reads as one. Nulls are an en dash; the label stays. An editable value is a control.',
     `<div class="rows" style="flex:1 1 100%">${row(T_.f.over,M(4860,r))}${row(T_.f.merchant,null)}
-     ${row(T_.f.flags,esc(L(accts(r)[0].plan.flags)),false,true)}${rowEdit(T_.f.verif,'sheet-verif',[['yes',T_.yes],['no',T_.no]],'no')}</div>`,
+     ${row(T_.f.flags,esc(L(a1.plan.flags)),false,true)}${rowEdit(T_.f.verif,'sheet-verif',[['yes',T_.yes],['no',T_.no]],'no')}</div>`,
     'Long labels truncate with the full text in a tooltip; prose values take the full row (wide).')}
-   ${spec('Account card','Selectable panel. Sorted by outstanding, never by flag. One coral cue only on accounts the escalation line names.',
+   ${spec('Account card','Selectable panel. Disputed accounts first, then outstanding descending. One coral cue only on accounts the escalation line names.',
     `${acctCard(a1,0,false,false,true)}${acctCard(a0,1,true,true,true)}`, 'Second card: selected and named by the escalation line.')}
    ${spec('Escalation band','The one coral surface. Calm variant when nothing is flagged.',
     `<div class="why" style="flex:1 1 100%"><span class="badge alert"><i class="dot"></i>${esc(T_.why)}</span><span>${esc(reasons(r)[0].x)}</span></div>

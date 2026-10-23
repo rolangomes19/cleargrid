@@ -58,7 +58,7 @@ function spine(){
     </div>
    </div>
    <div class="stats">
-    ${stat(T_.outstanding,M(sumOut(r)),`${esc(T_.across(n))} · ${esc(T_.original)} ${M(sumTot(r))}`,{g:'out',ann:ann('D1')})}
+    ${stat(T_.outstanding,M(sumOut(r)),`${esc(T_.across(n))} · ${esc(T_.original)} ${M(sumTot(r))}`,{g:'out',ann:ann('D1'),viz:n>1?splitBar(accts(),S.sel):''})}
     ${stat(T_.worstDpd,N(dpd(w)),`${esc(T_.on)} ${esc(L(w.lender))} · ${esc(T_.asOf)} ${D(TODAY_ISO)}`,{g:'dpd'})}
     ${promise}
    </div>
@@ -89,7 +89,7 @@ function acctCard(a,i,flag,on,staticCard){
    <div class="card-r"><span><span class="t-display sm">${M(a.out)}</span> <span class="t-sec">${esc(T_.owed)}</span></span>
     <span class="t-sec">${N(paid)}% ${esc(T_.paid)} ${esc(T_.of)} ${M(a.total)}</span></div>
    <div class="bar" role="img" aria-label="${N(paid)}% ${esc(T_.paid)}"><i style="inline-size:${paid}%"></i></div>
-   <div class="card-b">${statusBadge(a)}${dpdBadge(a)}
+   <div class="card-b">${statusBadge(a)}${dpdMini(a)}
     ${a.broken?`<span class="badge q">${esc(T_.brokenN(a.broken))}</span>`:''}
     ${a.plan?`<span class="badge ok">${M(a.plan.emi)}/${esc(T_.perMo)}</span>`:''}</div>
    ${flag?`<div class="reasoncue" data-alert="1" data-role="escalation"><i class="dot"></i>${esc(T_.reasonCue)}</div>`:''}
@@ -98,7 +98,7 @@ function acctCard(a,i,flag,on,staticCard){
 /* ═══ 6.2 · log row (3.3). cls: '' | 'ai' | 'new' | 'new enter' ═══ */
 function logRow(x,r,cls){
  const an=(r.accts.find(z=>z.ref===x.a)||{}).lender;
- return `<div class="log ${cls}"><span class="when num">${DT(x.at)}</span><span>
+ return `<div class="log ${cls}" data-out="${x.out}"><span class="when num">${DT(x.at)}</span><span>
     <b class="t-pri">${esc(E('out',x.out))}</b>
     <span class="t-sec"> ${esc(E('src',x.src))} · ${esc(E('dir',x.dir))}</span>
     ${x.note?`<div>${esc(L(x.note))}</div>`:''}
@@ -126,17 +126,18 @@ function borrowerCol(){
    ${block('calls',contactHistory)}
    <!-- single-column on purpose: at 320px this column only has ~64px of label space, and
         labels like "Emirates ID" / "Date of birth" need close to that — a 2-column split
-        would wrap them. Fields ordered narrow-first, wide-last so no row goes stranded. -->
+        would wrap them. Fields ordered narrow-first, wide-last so no row goes stranded.
+        The national ID is the identity check an agent does first, so it gets its own line above the rest. -->
    <div class="blk"><div class="blk-h"><span class="eyebrow">${esc(T_.reference)}</span></div>
-    <div class="blk-b">${fieldGrid([
+    <div class="blk-b">${fieldGrid([row(T_.natId[r.market]||T_.f.eid,r.eid?`<span id="eid-v">${ltr(S.showId?r.eid:maskId(r.eid))}</span> <button class="linkbtn" id="b-id" aria-pressed="${S.showId}" title="${S.showId?esc(T_.idShown):''}">${esc(S.showId?T_.hideId:T_.showId)}</button>`:null,false,true)])}
+     ${fieldGrid([
      row(T_.f.dob,r.dob?D(r.dob):null),
      row(T_.f.gender,r.gender?esc(E('gender',r.gender)):null),
      row(T_.f.nat,r.nat?esc(natName(r.nat)):null),
      row(T_.f.submit,r.submit?D(r.submit):null),
-     row(T_.f.phone,r.phone?ltr(r.phone,true):null),
+     row(T_.f.phone,r.phone?ltr(r.phone,true):null,false,true),
      row(T_.f.mail,r.mail?ltr(r.mail,true):null,false,true),
-     row(T_.f.visa,r.visa?esc(L(r.visa)):null),
-     row(T_.natId[r.market]||T_.f.eid,r.eid?`<span id="eid-v">${ltr(S.showId?r.eid:maskId(r.eid))}</span> <button class="linkbtn" id="b-id" aria-pressed="${S.showId}" title="${S.showId?esc(T_.idShown):''}">${esc(S.showId?T_.hideId:T_.showId)}</button>`:null,false,true)])}
+     row(T_.f.visa,r.visa?esc(L(r.visa)):null)])}
     </div></div>
   </div></div>`;
 }
@@ -147,7 +148,7 @@ function accountCol(){
  const balance=block('balance',`
   <div class="hero">
    ${stat(T_.f.out,M(a.out),`${N(paid)}% ${esc(T_.paid)} ${esc(T_.of)} ${M(a.total)}`,{bar:paid})}
-   ${stat(T_.f.dpd,N(d),`${esc(T_.asOf)} ${D(TODAY_ISO)}`)}
+   ${stat(T_.f.dpd,N(d),`${esc(T_.asOf)} ${D(TODAY_ISO)}`,{viz:aging(d,true)})}
   </div>
   ${fieldGrid([row(T_.f.over,M(a.over)),row(T_.f.due,D(a.due)),
    row(T_.f.principal,M(a.principal)),row(T_.f.interest,a.interest?esc(L(a.interest)):null),
@@ -159,7 +160,7 @@ function accountCol(){
  const plan=block('plan',a.plan?`${fieldGrid([row(T_.f.emi,M(a.plan.emi)),row(T_.f.next,D(a.plan.next)),
    row(T_.f.paid,`${N(a.plan.paid)} ${esc(T_.of)} ${N(a.plan.of)}`),
    row(T_.f.flags,esc(L(a.plan.flags)),false,true)])}
-  <div class="bar plan"><i style="inline-size:${Math.round(a.plan.paid/a.plan.of*100)}%"></i></div>`
+  ${instTrack(a.plan)}`
   :`<div class="emptyline">${esc(T_.noPlan)}</div>`);
 
  const promises=block('promises',(a.ptp||a.broken)?`${fieldGrid([row(T_.f.ptpAmt,a.ptp?M(a.ptp.amt):null),row(T_.f.ptpDate,a.ptp?D(a.ptp.date):null),
@@ -174,7 +175,7 @@ function accountCol(){
     order; a vertical adds keys without a layout change. disputed always shows (brief). */
  const pf=[['verif'],['churn'],['repo'],['hardship'],['employer'],['settle',1]].filter(([k])=>f[k]!==undefined);
  const fields=block('fields',fieldGrid([
-   row(T_.f.disputed,a.dispute?`<span class="badge q">${esc(T_.yes)}</span>`:esc(T_.no)),
+   row(T_.f.disputed,esc(a.dispute?T_.yes:T_.no)),
    ...pf.map(([k,w])=>k==='verif'?rowEdit(T_.f.verif,'f-verif',[['yes',T_.yes],['no',T_.no]],f.verif):row(T_.f[k],fv(k),false,!!w)),
    a.dispute?row(T_.f.disputeWhy,esc(L(a.dispute.why)),false,true):'']));
 
@@ -268,7 +269,7 @@ function queueView(){
    <td><div class="stats">${stat('',N(dpd(w)),`${esc(T_.on)} ${esc(L(w.lender))}`,{sm:1})}</div></td>
    <td><div class="stats"><span class="t-sec">${icon('robot')} <span class="num">${N(r.calls.ai)}</span></span>
     <span class="t-sec">${icon('phone')} <span class="num">${N(r.calls.h)}</span></span></div></td>
-   <td><button type="button" class="mini pri">${esc(T_.q.openCase)}</button></td>
+   <td><button type="button" class="mini">${esc(T_.q.openCase)}</button></td>
   </tr>`;
  }).join('');
 

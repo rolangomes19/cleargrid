@@ -24,7 +24,7 @@ const CARDS=[
  ['D2','Escalation line: why this reached you','This field doesn’t exist. Aren’t you inventing data?','It is computed from fields that exist (dispute, hardship, broken promises, first human contact) and shown as a finished field, so agents can use it. It is disclosed as a proposal in the tour, here, and by the reviewer bar’s “Proposed fields” switch. ClearGrid routes by borrower state, so the state likely exists. If not, it is the top data ask.','Routing claims on [R1]; Disputed field on screen 03; competitors rank cases but do not explain why [R17].','Shows a computed reason that may not match the router’s.','S1, A, R'],
  ['D3','AI outcome summary','Why show an AI summary that doesn’t exist?','Agents see AI call counts but not what was said. ClearVoice already keeps transcripts and captures promises. The field is a proposal, disclosed in the tour and the log rather than on the agent’s screen.','Screens 01 and 03; ClearVoice on [R1].','Without an on-screen tag, a reader could take it for an existing feature; the tour and this log say otherwise.','S4, A'],
  ['D4','Channel state on every button','Who decides WhatsApp is blocked?','Regulators do, per market: UAE allows other channels only with consent; KSA lists five channels and excludes WhatsApp. ClearGrid stops attempts before dispatch; the agent should see why before clicking.','[R3]; [R4]; 12,904 attempts stopped before dispatch on [R1].','The rail gets taller; reasons must not read as errors.','S5, A, R'],
- ['D5','Sort accounts by outstanding, never by flag','Shouldn’t risky accounts be first?','Places must not move between records, so agents learn where things are. Urgency is carried by the escalation line and the default selection, not by order.','Spatial stability (goals 1.8). No external evidence: judgement.','The most urgent account may not be first.','S11, A'],
+ ['D5','Disputed accounts first, then by outstanding','Shouldn’t the biggest account be first?','The disputed account is the one the agent has to resolve, so it leads. Inside each group the order is outstanding, largest first. A dispute is a lasting state, not a flag that flickers, so places stay learnable.','User review, 23 Oct 2026. Spatial stability (goals 1.8) kept within each group.','The largest balance may sit below a smaller disputed one.','S11, A'],
  ['D6','One alert hue','Isn’t red for overdue standard?','When everything is red, nothing is. Coral means one thing: why this reached you. Overdue is a number, not an alarm.','Healey and Ancker, cited in the earlier audit; not reopened this round.','Less colour cueing for days past due.','S9'],
  ['D7','Inline labels','Labels above are more readable.','Inline labels halve row height in dense panels; scanning runs down one value column. Hairlines tie each label to its value.','Salesforce compact density, cited in the earlier audit; not reopened. Review of P2: spacing-only rows read as floating.','Long labels can truncate in narrow columns.',''],
  ['D8','Mono for numbers and IDs','Mono looks technical.','Tabular figures line digits up in columns. Geist Mono pairs with Geist.','Not re-verified this round: judgement.','Wider numerals.',''],
@@ -54,8 +54,8 @@ const STEPS=[
   en:'Before you dial: which channels you may use now. A locked channel says why, and cites the rule or the client’s policy.',
   ar:'قبل أن تتصل: أي القنوات يمكنك استخدامها الآن. القناة المقفلة تذكر السبب والقاعدة أو سياسة الجهة الدائنة.'},
  {fx:'stress',t:'#c-bor .card.hot',card:'D5',
-  en:'Seven accounts, always biggest first, so places never move. The account named in the reason is marked, so you know which one to talk about.',
-  ar:'سبعة حسابات، الأكبر أولاً دائماً، فلا تتغير الأماكن. الحساب المذكور في السبب مُعلَّم لتعرف أيها تتحدث عنه.'},
+  en:'Seven accounts. The disputed one comes first, because that is the one to resolve; the rest follow, biggest first. The account named in the reason is marked.',
+  ar:'سبعة حسابات. الحساب المعترض عليه أولاً لأنه ما يجب حلّه، ثم البقية من الأكبر إلى الأصغر. الحساب المذكور في السبب مُعلَّم.'},
  {fx:'stress',t:'#c-acc .hero',card:'D6',
   en:'What exactly is owed on that account. The figure is what is owed; the bar shows how much has been paid down.',
   ar:'ما المستحق بالضبط على ذلك الحساب. الرقم هو المستحق، ويُظهر الشريط ما سُدد منه.'},
@@ -75,8 +75,8 @@ const STEPS=[
   en:'Not every case is rich. A new borrower with little history: empty fields say so, and the room goes to the columns that have something to show.',
   ar:'ليست كل حالة غنية بالبيانات. مدين جديد وسجل قصير: الحقول الفارغة تقول ذلك، والمساحة تذهب إلى الأعمدة التي فيها ما يُعرض.'},
  {fx:'stress',t:null,card:null,
-  en:'Trade-offs accepted: no accordions, so columns run longer; accounts sort by amount, not risk, so places stay put. The decision log has the evidence for each. Press P for the prototype controls.',
-  ar:'تنازلات مقبولة: لا طيّ للأقسام فتطول الأعمدة؛ وترتيب الحسابات حسب المبلغ لا المخاطر فتبقى الأماكن ثابتة. سجل القرارات فيه الدليل لكل منها. اضغط P لإظهار أدوات النموذج الأولي.'}];
+  en:'Trade-offs accepted: no accordions, so columns run longer; disputed accounts lead, the rest sort by amount, so places stay learnable. The decision log has the evidence for each. Press P for the prototype controls.',
+  ar:'تنازلات مقبولة: لا طيّ للأقسام فتطول الأعمدة؛ والحسابات المعترض عليها أولاً ثم البقية حسب المبلغ فتبقى الأماكن مألوفة. سجل القرارات فيه الدليل لكل منها. اضغط P لإظهار أدوات النموذج الأولي.'}];
 
 /* ═══ 14.3 · in-context why links (X2). six, each opens its card in the log. ═══ */
 const ann=id=>S.ann?`<a class="ann" href="?view=log&card=${id}" data-card="${id}">${esc(t().st.why)}</a>`:'';
@@ -105,13 +105,13 @@ function logView(){
 /* ═══ 14.5 · strip + spotlight. story motion lives in the --story-* namespace (SM2) and
    never runs on a product component (SM1). ═══ */
 function strip(){
- const T_=t(),n=S.step,st=STEPS[n-1],last=n===STEPS.length;
- if(S.paused) return `<button type="button" class="st-chip" id="st-resume">${esc(T_.st.paused(N(n),N(STEPS.length)))}</button>`;
- return `<div class="strip" role="region" aria-label="${esc(T_.st.tour)}">
+ const TL=S.tourLang||S.lang,T_=T[TL],n=S.step,st=STEPS[n-1],last=n===STEPS.length;
+ if(S.paused) return `<button type="button" class="st-chip" id="st-resume" lang="${TL}" dir="${TL==='ar'?'rtl':'ltr'}">${esc(T_.st.paused(N(n),N(STEPS.length)))}</button>`;
+ return `<div class="strip" role="region" aria-label="${esc(T_.st.tour)}" lang="${TL}" dir="${TL==='ar'?'rtl':'ltr'}">
   <div class="st-prog">${STEPS.map((_,i)=>`<button type="button" class="st-seg${i<n?' done':''}${i===n-1?' on':''}" data-step="${i+1}" aria-label="${esc(T_.st.go(N(i+1)))}"></button>`).join('')}</div>
   <div class="st-row">
    <span class="st-count num">${N(n)} / ${N(STEPS.length)}</span>
-   <p class="st-claim" id="st-claim" aria-live="polite">${esc(st[S.lang]||st.en)}${!st.card&&last?'':''}</p>
+   <p class="st-claim" id="st-claim" aria-live="polite">${esc(st[TL]||st.en)}${!st.card&&last?'':''}</p>
    ${st.card?`<a class="ann" href="?view=log&card=${st.card}" data-card="${st.card}">${esc(T_.st.why)} · ${st.card}</a>`
      :`<a class="ann" href="?view=log" data-card="">${esc(T_.st.log)}</a><a class="ann" href="?view=test" data-view="test">${esc(T_.st.testLink)}</a>`}
    <div class="st-act">
@@ -154,13 +154,17 @@ function goStep(n,push){
  S.step=n; S.paused=false;
  if(st.fx&&st.fx!==S.rec){S.rec=st.fx;S.showId=false;}
  S.sel=defaultSel();
- if(st.lang) S.lang=st.lang;
+ /* the tour speaks the viewer's language. a step may show the product in another language (the Arabic mirror),
+    but the narration stays put and the next step returns the screen to the viewer's language */
+ if(!S.tourLang) S.tourLang=S.lang;
+ S.lang=st.lang||S.tourLang;
  S.mode=st.mode||'profile'; S.tab='i'; S.scope='all';
  PUSH=!!push; render(); PUSH=false;
  const f=document.getElementById('st-next'); if(f) f.focus({preventScroll:true});
 }
 function exitStory(){
  S.step=0; S.paused=false;
+ if(S.tourLang){S.lang=S.tourLang;S.tourLang=null;}
  try{localStorage.setItem('cg-toured','1');}catch(e){}
  PUSH=true; render(); PUSH=false;
 }
