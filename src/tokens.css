@@ -275,8 +275,6 @@ a.src:active{background:var(--surface-sunken)}
   #c-bor .colbody>.blk{grid-column:1/-1}
 }
 @container bor (min-width:760px){#c-bor .colbody{grid-template-columns:1fr 1fr 1fr}}
-@container acc (min-width:760px){#c-acc .grid2{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@container bor (max-width:439px){#c-bor .grid2{grid-template-columns:minmax(0,1fr)}}
 
 /* containers: columns on the canvas; each group is a white panel with a ruled head; field rows
    carry a hairline so a label stays tied to its value across a wide row. (P2 tried spacing-only
@@ -320,14 +318,25 @@ a.src:active{background:var(--surface-sunken)}
    label gives way (ellipsis); prose values are flagged wide and still wrap. */
 .row:not(.wide):not(.prose) .v{flex:0 0 auto;white-space:nowrap;overflow-wrap:normal}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--space-300)}
-.grid2 .row.wide{grid-column:1/-1}
-/* council: dividers sit on top of each row and skip the first line, so rows line up across columns whatever the last line holds */
-.grid2>.row{border-block-end:0;border-block-start:var(--stroke) solid var(--divider)}
-.grid2>.row:nth-child(-n+2){border-block-start:0}
-/* a long value drops under its label instead of squeezing it; grid lines take the tallest row, so the columns stay aligned */
-.grid2>.row{flex-wrap:wrap;row-gap:0}
-@container acc (min-width:760px){#c-acc .grid2>.row:nth-child(3){border-block-start:0}}
-@container bor (max-width:439px){#c-bor .grid2>.row:nth-child(2){border-block-start:var(--stroke) solid var(--divider)}}
+/* field grid: every row is centred on one line height, dividers sit above each row except the first line, and the spans
+   (set per row by fieldGrid) make every line full, so nothing floats beside empty space */
+.grid2>.row{grid-column:span var(--s2,1);align-items:center;min-block-size:var(--control-sm);flex-wrap:wrap;row-gap:0;
+  border-block-end:0;border-block-start:var(--stroke) solid var(--divider)}
+.grid2>.row.wide{grid-column:1/-1}
+.grid2>.row .v:has(>.badge){display:flex;align-items:center;justify-content:flex-end}
+.grid2>.row.f2,.grid2>.row:nth-child(-n+2):not([style]){border-block-start:0}
+@container acc (min-width:760px){
+  #c-acc .grid2{grid-template-columns:repeat(6,minmax(0,1fr))}
+  #c-acc .grid2>.row{grid-column:span var(--s3,2);border-block-start:var(--stroke) solid var(--divider)}
+  #c-acc .grid2>.row.wide{grid-column:1/-1}
+  #c-acc .grid2>.row.f3{border-block-start:0}
+}
+@container bor (max-width:439px){
+  #c-bor .grid2{grid-template-columns:minmax(0,1fr)}
+  #c-bor .grid2>.row{grid-column:auto}
+  #c-bor .grid2>.row.f2{border-block-start:var(--stroke) solid var(--divider)}
+  #c-bor .grid2>.row.f1{border-block-start:0}
+}
 .row.prose{display:block;padding-block:var(--space-100);border-block-end:var(--stroke) solid var(--divider)}
 .prose-h{display:flex;align-items:center;justify-content:space-between;gap:var(--space-100);margin-block-end:var(--space-050)}
 .prose-h .k{font-size:var(--fs-meta);line-height:var(--lh-meta);color:var(--text-muted)}

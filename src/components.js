@@ -30,6 +30,21 @@ function rowEdit(k,id,opts,cur){
  return `<div class="row edit"><span class="k" id="${id}-l" title="${esc(k)}">${esc(k)}</span>
   <span class="v">${selectMenu(id,opts,id+'-l',cur,1)}</span></div>`;
 }
+/* field grid: every line is full. spans come from how many short rows there are, so no row floats beside empty space.
+   short rows first, wide rows after. --s3 is the span on the 6-track grid (3 columns, or 2 when it divides better), --s2 on the 2-track grid.
+   f3/f2/f1 mark the first line at each column count, so the hairlines line up. */
+function fieldGrid(items){
+ const isWide=h=>/class="row[^"]*\bwide\b/.test(h);
+ const all=items.filter(Boolean), nar=all.filter(h=>!isWide(h)), wide=all.filter(isWide), n=nar.length;
+ const c3=n===1?1:n===2?2:n===4?2:3, r3=n%c3, r2=n%2;
+ const cells=nar.map((h,i)=>{
+  const s3=(r3&&i>=n-r3)?6/r3:6/c3;
+  const s2=n===1?2:(r2&&i===n-1)?2:1;
+  const f=(i<c3?' f3':'')+(i<(n===1?1:2)?' f2':'')+(i===0?' f1':'');
+  return h.replace('<div class="row','<div style="--s3:'+s3+';--s2:'+s2+'" class="row'+f);
+ });
+ return `<div class="rows grid2">${cells.join('')}${wide.join('')}</div>`;
+}
 function block(key,body,head){
  return `<div class="blk"><div class="blk-h"><span class="eyebrow">${esc(t().blk[key])}</span>${head||''}</div>
   <div class="blk-b">${body}</div></div>`;

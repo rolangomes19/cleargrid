@@ -128,16 +128,16 @@ function borrowerCol(){
         labels like "Emirates ID" / "Date of birth" need close to that — a 2-column split
         would wrap them. Fields ordered narrow-first, wide-last so no row goes stranded. -->
    <div class="blk"><div class="blk-h"><span class="eyebrow">${esc(T_.reference)}</span></div>
-    <div class="blk-b"><div class="rows grid2">
-     ${row(T_.f.dob,r.dob?D(r.dob):null)}
-     ${row(T_.f.gender,r.gender?esc(E('gender',r.gender)):null)}
-     ${row(T_.f.nat,r.nat?esc(natName(r.nat)):null)}
-     ${row(T_.f.submit,r.submit?D(r.submit):null)}
-     ${row(T_.f.phone,r.phone?ltr(r.phone,true):null)}
-     ${row(T_.f.mail,r.mail?ltr(r.mail,true):null,false,true)}
-     ${row(T_.f.visa,r.visa?esc(L(r.visa)):null)}
-     ${row(T_.natId[r.market]||T_.f.eid,r.eid?`<span id="eid-v">${ltr(S.showId?r.eid:maskId(r.eid))}</span> <button class="linkbtn" id="b-id" aria-pressed="${S.showId}" title="${S.showId?esc(T_.idShown):''}">${esc(S.showId?T_.hideId:T_.showId)}</button>`:null,false,true)}
-    </div></div></div>
+    <div class="blk-b">${fieldGrid([
+     row(T_.f.dob,r.dob?D(r.dob):null),
+     row(T_.f.gender,r.gender?esc(E('gender',r.gender)):null),
+     row(T_.f.nat,r.nat?esc(natName(r.nat)):null),
+     row(T_.f.submit,r.submit?D(r.submit):null),
+     row(T_.f.phone,r.phone?ltr(r.phone,true):null),
+     row(T_.f.mail,r.mail?ltr(r.mail,true):null,false,true),
+     row(T_.f.visa,r.visa?esc(L(r.visa)):null),
+     row(T_.natId[r.market]||T_.f.eid,r.eid?`<span id="eid-v">${ltr(S.showId?r.eid:maskId(r.eid))}</span> <button class="linkbtn" id="b-id" aria-pressed="${S.showId}" title="${S.showId?esc(T_.idShown):''}">${esc(S.showId?T_.hideId:T_.showId)}</button>`:null,false,true)])}
+    </div></div>
   </div></div>`;
 }
 /* ═══ 8 · REGION 3 · account column. fixed block order, no disclosure controls. ═══ */
@@ -149,45 +149,39 @@ function accountCol(){
    ${stat(T_.f.out,M(a.out),`${N(paid)}% ${esc(T_.paid)} ${esc(T_.of)} ${M(a.total)}`,{bar:paid})}
    ${stat(T_.f.dpd,N(d),`${esc(T_.asOf)} ${D(TODAY_ISO)}`)}
   </div>
-  <div class="rows grid2">
-   ${row(T_.f.over,M(a.over))}${row(T_.f.due,D(a.due))}
-   ${row(T_.f.principal,M(a.principal))}${row(T_.f.interest,a.interest?esc(L(a.interest)):null)}
-   ${row(T_.f.status,statusBadge(a))}${row(T_.f.product,esc(E('product',a.product)))}
-   ${row(T_.f.lender,esc(L(a.lender)))}${row(T_.f.merchant,a.merchant?esc(L(a.merchant)):null)}
-   ${row(T_.f.ref,ltr(a.ref))}${row(T_.f.acctRef,ltr(a.aref))}
-  </div>`);
+  ${fieldGrid([row(T_.f.over,M(a.over)),row(T_.f.due,D(a.due)),
+   row(T_.f.principal,M(a.principal)),row(T_.f.interest,a.interest?esc(L(a.interest)):null),
+   row(T_.f.status,statusBadge(a)),row(T_.f.product,esc(E('product',a.product))),
+   row(T_.f.lender,esc(L(a.lender))),row(T_.f.merchant,a.merchant?esc(L(a.merchant)):null),
+   row(T_.f.ref,ltr(a.ref)),row(T_.f.acctRef,ltr(a.aref))])}
+  `);
 
- const plan=block('plan',a.plan?`<div class="rows grid2">
-   ${row(T_.f.emi,M(a.plan.emi))}${row(T_.f.next,D(a.plan.next))}
-   ${row(T_.f.paid,`${N(a.plan.paid)} ${esc(T_.of)} ${N(a.plan.of)}`)}
-   ${row(T_.f.flags,esc(L(a.plan.flags)),false,true)}
-  </div><div class="bar plan"><i style="inline-size:${Math.round(a.plan.paid/a.plan.of*100)}%"></i></div>`
+ const plan=block('plan',a.plan?`${fieldGrid([row(T_.f.emi,M(a.plan.emi)),row(T_.f.next,D(a.plan.next)),
+   row(T_.f.paid,`${N(a.plan.paid)} ${esc(T_.of)} ${N(a.plan.of)}`),
+   row(T_.f.flags,esc(L(a.plan.flags)),false,true)])}
+  <div class="bar plan"><i style="inline-size:${Math.round(a.plan.paid/a.plan.of*100)}%"></i></div>`
   :`<div class="emptyline">${esc(T_.noPlan)}</div>`);
 
- const promises=block('promises',(a.ptp||a.broken)?`<div class="rows grid2">
-   ${row(T_.f.ptpAmt,a.ptp?M(a.ptp.amt):null)}${row(T_.f.ptpDate,a.ptp?D(a.ptp.date):null)}
-   ${row(T_.f.ptpState,a.ptp?`<span class="badge ${a.ptp.state==='broken'?'q':'ok'}">${esc(E('ptp',a.ptp.state))}</span>`:null)}
-   ${row(T_.f.broken,N(a.broken))}
-   ${row(T_.f.brokenLast,a.brokenLast?D(a.brokenLast):null)}
-   ${row(T_.f.brokenType,a.brokenType?esc(E('brokenType',a.brokenType)):null,false,true)}
-  </div>`:`<div class="emptyline">${esc(T_.noPromise)}</div>`);
+ const promises=block('promises',(a.ptp||a.broken)?`${fieldGrid([row(T_.f.ptpAmt,a.ptp?M(a.ptp.amt):null),row(T_.f.ptpDate,a.ptp?D(a.ptp.date):null),
+   row(T_.f.ptpState,a.ptp?`<span class="badge ${a.ptp.state==='broken'?'q':'ok'}">${esc(E('ptp',a.ptp.state))}</span>`:null),
+   row(T_.f.broken,N(a.broken)),
+   row(T_.f.brokenLast,a.brokenLast?D(a.brokenLast):null),
+   row(T_.f.brokenType,a.brokenType?esc(E('brokenType',a.brokenType)):null,false,true)])}
+  `:`<div class="emptyline">${esc(T_.noPromise)}</div>`);
 
  const f=a.fields||{},fv=k=>f[k]===undefined?null:(f[k]==='yes'?esc(T_.yes):f[k]==='no'?esc(T_.no):esc(L(f[k])));
  /* 3.6: label-driven. an account shows the portfolio fields its lender sends, in a fixed
     order; a vertical adds keys without a layout change. disputed always shows (brief). */
  const pf=[['verif'],['churn'],['repo'],['hardship'],['employer'],['settle',1]].filter(([k])=>f[k]!==undefined);
- const fields=block('fields',`<div class="rows grid2">
-   ${row(T_.f.disputed,a.dispute?`<span class="badge q">${esc(T_.yes)}</span>`:esc(T_.no))}
-   ${pf.map(([k,w])=>k==='verif'?rowEdit(T_.f.verif,'f-verif',[['yes',T_.yes],['no',T_.no]],f.verif):row(T_.f[k],fv(k),false,!!w)).join('')}
-   ${a.dispute?row(T_.f.disputeWhy,esc(L(a.dispute.why)),false,true):''}
-  </div>`);
+ const fields=block('fields',fieldGrid([
+   row(T_.f.disputed,a.dispute?`<span class="badge q">${esc(T_.yes)}</span>`:esc(T_.no)),
+   ...pf.map(([k,w])=>k==='verif'?rowEdit(T_.f.verif,'f-verif',[['yes',T_.yes],['no',T_.no]],f.verif):row(T_.f[k],fv(k),false,!!w)),
+   a.dispute?row(T_.f.disputeWhy,esc(L(a.dispute.why)),false,true):'']));
 
  const m=a.meta||{};
- const meta=block('meta',`<div class="rows grid2">
-   ${row(T_.f.cby,lat(E('by',m.cby)))}${row(T_.f.cat,D(m.cat))}
-   ${row(T_.f.uby,lat(E('by',m.uby)))}${row(T_.f.uat,D(m.uat))}
-   ${row(T_.f.lenderId,ltr(a.lid),false,true)}
-  </div>`);
+ const meta=block('meta',fieldGrid([row(T_.f.cby,lat(E('by',m.cby))),row(T_.f.cat,D(m.cat)),
+   row(T_.f.uby,lat(E('by',m.uby))),row(T_.f.uat,D(m.uat)),
+   row(T_.f.lenderId,ltr(a.lid),false,true)]));
 
  return `<div class="col" id="c-acc">
   <div class="colhead"><span class="eyebrow">${esc(T_.selected)} · ${esc(L(a.lender))} · ${esc(E('product',a.product))} · ${ltr(a.ref)}</span>${statusBadge(a)}</div>
